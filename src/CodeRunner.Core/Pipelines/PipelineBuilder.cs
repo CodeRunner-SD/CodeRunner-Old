@@ -7,28 +7,46 @@ namespace CodeRunner.Pipelines
 {
     public class PipelineBuilder<TOrigin, TResult>
     {
-        ServiceProvider Services { get; } = new ServiceProvider();
+        List<(string, object)> Configures { get; } = new List<(string, object)>();
 
         List<PipelineOperator<TOrigin, TResult>> Ops { get; } = new List<PipelineOperator<TOrigin, TResult>>();
 
-        public async Task Configure(string name, Func<ServiceScope, Task> func)
+        public PipelineBuilder<TOrigin, TResult> Configure(string name, Func<ServiceScope, Task> func)
         {
-            await func.Invoke(await Services.CreateScope(name));
+            Configures.Add((name, func));
+            return this;
         }
 
-        public async Task Configure(string name, Action<ServiceScope> func)
+        public PipelineBuilder<TOrigin, TResult> Configure(string name, Action<ServiceScope> func)
         {
-            func.Invoke(await Services.CreateScope(name));
+            Configures.Add((name, func));
+            return this;
         }
 
-        public void Use(PipelineOperator<TOrigin, TResult> op)
+        public PipelineBuilder<TOrigin, TResult> Use(PipelineOperator<TOrigin, TResult> op)
         {
             Ops.Add(op);
+            return this;
         }
 
-        public Task<Pipeline<TOrigin, TResult>> Build(TOrigin origin, Logger logger)
+        public async Task<Pipeline<TOrigin, TResult>> Build(TOrigin origin, Logger logger)
         {
-            return Task.FromResult(new Pipeline<TOrigin, TResult>(origin, logger, Services, Ops));
+            var services = new ServiceProvider();
+            foreach(var (name,func) in Configures)
+            {
+                switch (func)
+                {
+                    case Func<ServiceScope, Task> f:
+                        await f(await services.CreateScope(name));
+                        break;
+                    case Action<ServiceScope> a:
+                        a(await services.CreateScope(name));
+                        break;
+                    default:
+                        throw new Exception("Not support configure method.");
+                }
+            }
+            return new Pipeline<TOrigin, TResult>(origin, logger, services, Ops.ToArray());
         }
     }
 }

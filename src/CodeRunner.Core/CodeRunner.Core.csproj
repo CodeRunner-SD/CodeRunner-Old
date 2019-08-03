@@ -7,4 +7,8 @@
     <RootNamespace>CodeRunner</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
+
 </Project>

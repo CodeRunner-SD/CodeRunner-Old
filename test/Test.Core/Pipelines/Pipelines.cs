@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 namespace Test.Core
 {
     [TestClass]
-    public class PipelineTest
+    public class Pipelines
     {
-        async Task<PipelineBuilder<int, int>> GetBasicBuilder(int arg)
+        PipelineBuilder<int, int> GetBasicBuilder(int arg)
         {
-            var builder = new PipelineBuilder<int, int>();
-            await builder.Configure("arg", service =>
+            var builder = new PipelineBuilder<int, int>().Configure("arg", service =>
             {
                 service.Add(1);
                 return Task.CompletedTask;
-            });
-            await builder.Configure("arg-fix", service =>
+            }).Configure("arg-fix", service =>
             {
                 service.Replace(arg);
             });
@@ -26,7 +24,7 @@ namespace Test.Core
 
         PipelineOperator<int, int> initial = context =>
         {
-            context.Logs.Info($"initial with {context.Origin}");
+            context.Logs.Warning($"initial with {context.Origin}");
             return Task.FromResult(context.Origin);
         };
 
@@ -46,19 +44,14 @@ namespace Test.Core
 
         PipelineOperator<int, int> expNotImp = context =>
         {
-            var arg = context.Services.Get<int>();
-            context.Logs.Info($"multiply with {arg}");
+            context.Logs.Error("exception!");
             throw new NotImplementedException();
         };
 
         [TestMethod]
         public void Basic()
         {
-            var builder = GetBasicBuilder(2).Result;
-            builder.Use(initial);
-            builder.Use(plus); // + 2
-            builder.Use(plus); // + 2
-            builder.Use(multiply); // * 2
+            var builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(multiply);
             {
                 var pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
                 var res = pipeline.Consume().Result;
@@ -70,12 +63,7 @@ namespace Test.Core
         [TestMethod]
         public void Exception()
         {
-            var builder = GetBasicBuilder(2).Result;
-            builder.Use(initial);
-            builder.Use(plus); // + 2
-            builder.Use(plus); // + 2
-            builder.Use(expNotImp);
-            builder.Use(multiply); // * 2
+            var builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(expNotImp).Use(multiply);
             {
                 var pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
                 var res = pipeline.Consume().Result;

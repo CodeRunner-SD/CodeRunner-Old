@@ -7,7 +7,7 @@ using System.Text;
 namespace Test.Core
 {
     [TestClass]
-    public class ServiceTest
+    public class Services
     {
         [TestMethod]
         public void Provider()
