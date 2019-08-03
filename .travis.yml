@@ -8,6 +8,7 @@ jobs:
       filter_secrets: false
       install:
         - choco install dotnetcore-sdk --pre
+        - choco install python
       before_script:
         - dotnet build
       script:
@@ -44,6 +45,8 @@ jobs:
         # - sudo apt-get install dotnet-sdk-2.2
         - sudo snap install dotnet-sdk --channel=beta --classic
         - sudo snap alias dotnet-sdk.dotnet dotnet
+        - sudo apt update
+        - sudo apt install python3
         - dotnet --version
       script:
         - dotnet build

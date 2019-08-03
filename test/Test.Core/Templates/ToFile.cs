@@ -1,4 +1,5 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.IO;
+using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
@@ -10,10 +11,12 @@ namespace Test.Core.Templates
         [TestMethod]
         public void Text()
         {
-            TextFileTemplate tf = new TextFileTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"), new string[] { "name" }));
-            var fi = tf.Resolve(new TemplateResolveContext().With("name", "lily").With(TextFileTemplate.VarFilePath, Path.GetTempFileName())).Result;
+            using TempFile temp = new TempFile();
+            var context = new TemplateResolveContext().With("name", "lily").With(TextFileTemplate.VarFilePath, temp.File.FullName);
+            context.With("rs", "abc").Without("rs");
+            TextFileTemplate tf = new TextFileTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"), new string[] { "name", "home" }));
+            var fi = tf.Resolve(context).Result;
             Assert.AreEqual("lily", File.ReadAllText(fi.FullName, tf.Encoding));
-            fi.Delete();
         }
     }
 }

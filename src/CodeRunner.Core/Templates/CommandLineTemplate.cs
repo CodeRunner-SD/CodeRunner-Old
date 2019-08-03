@@ -25,10 +25,11 @@ namespace CodeRunner.Templates
         public CommandLineTemplate WithOption(StringTemplate id, StringTemplate value, string prefix = "")
         {
             id.Content = prefix + id.Content;
-            if (Options.ContainsKey(id))
-                Options[id] = value;
-            else
+            var f = Options.Where(x => x.Key.Content == id.Content).Select(x => x.Key).FirstOrDefault();
+            if (f == null)
                 Options.Add(id, value);
+            else
+                Options[f] = value;
             return this;
         }
 

@@ -13,9 +13,10 @@ namespace Test.Core.Templates
                 CommandLineTemplate builder = new CommandLineTemplate();
                 builder.Commands.Add("gcc");
                 builder.Arguments.Add("a.c");
+                builder.Raw = "--version";
                 builder.WithFlag("ff", "-").WithFlag("O2", "-");
-                builder.WithOption("o", "a.out", "-").WithOption("cc", 1, "--").WithoutFlag("-ff").WithoutOption("--cc");
-                Assert.AreEqual("gcc a.c -O2 -o a.out", builder.Resolve().Result);
+                builder.WithOption("o", "a.out", "-").WithOption("cc", 1, "--").WithOption("cc", "a", "--").WithoutFlag("-ff").WithoutOption("--cc");
+                Assert.AreEqual("gcc a.c -O2 -o a.out --version", builder.Resolve().Result);
             }
         }
     }

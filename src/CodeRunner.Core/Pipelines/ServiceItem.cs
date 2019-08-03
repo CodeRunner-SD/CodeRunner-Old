@@ -1,15 +1,15 @@
 ﻿namespace CodeRunner.Pipelines
 {
-    internal readonly struct ServiceItem
+    public readonly struct ServiceItem
     {
-        public ServiceItem(object value, string from)
+        public ServiceItem(object value, string source)
         {
             Value = value;
-            From = from;
+            Source = source;
         }
 
         public object Value { get; }
 
-        public string From { get; }
+        public string Source { get; }
     }
 }

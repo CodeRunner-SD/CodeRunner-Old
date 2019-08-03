@@ -22,7 +22,10 @@ namespace CodeRunner.Templates
             StringBuilder sb = new StringBuilder(Content);
             foreach (var name in Variables)
             {
-                sb.Replace(GetVariableTemplate(name), context.GetVariable<string>(name));
+                if (context.TryGetVariable<string>(name, out var value))
+                {
+                    sb.Replace(GetVariableTemplate(name), value);
+                }
             }
             return Task.FromResult(sb.ToString());
         }

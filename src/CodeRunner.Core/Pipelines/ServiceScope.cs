@@ -65,6 +65,11 @@ namespace CodeRunner.Pipelines
             return (T)FindSubDictionary<T>()![id].Value;
         }
 
+        public string GetSource<T>(string id = "") where T : notnull
+        {
+            return FindSubDictionary<T>()![id].Source;
+        }
+
         public bool TryGet<T>(out T value, string id = "")
         {
             var list = FindSubDictionary<T>();

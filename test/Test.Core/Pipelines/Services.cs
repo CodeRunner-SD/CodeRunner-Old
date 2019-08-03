@@ -20,6 +20,7 @@ namespace Test.Core
 
                 scope.Add("str");
                 Assert.AreEqual("str", scope.Get<string>());
+                Assert.AreEqual("a", scope.GetSource<string>());
 
                 scope.Add("str-id", "id");
                 Assert.AreEqual("str-id", scope.Get<string>("id"));
@@ -28,11 +29,14 @@ namespace Test.Core
                 Assert.IsFalse(scope.TryGet<string>(out _));
                 Assert.IsTrue(scope.TryGet<string>(out _, "id"));
 
-                scope.Add(0);
+                scope.Replace(0);
                 Assert.AreEqual(0, scope.Get<int>());
 
                 scope.Replace(1);
                 Assert.AreEqual(1, scope.Get<int>());
+
+                scope.Add(1.2);
+                scope.Remove<double>();
             }
             {
                 var scope = provider.CreateScope("b").Result;

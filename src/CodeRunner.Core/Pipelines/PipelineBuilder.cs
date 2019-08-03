@@ -42,8 +42,6 @@ namespace CodeRunner.Pipelines
                     case Action<ServiceScope> a:
                         a(await services.CreateScope(name));
                         break;
-                    default:
-                        throw new Exception("Not support configure method.");
                 }
             }
             return new Pipeline<TOrigin, TResult>(origin, logger, services, Ops.ToArray());
