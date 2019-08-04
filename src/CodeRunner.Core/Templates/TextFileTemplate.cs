@@ -4,23 +4,21 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
-    public class TextFileTemplate : BaseTemplate<FileInfo>
+    public class TextFileTemplate : FileTemplate
     {
-        public const string VarFilePath = "filePath";
-
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        public TextFileTemplate(StringTemplate content) : base(new string[] { VarFilePath })
+        public TextFileTemplate(StringTemplate content) : base(null)
         {
             Content = content;
         }
 
         public StringTemplate Content { get; set; }
 
-        public override async Task<FileInfo> Resolve(TemplateResolveContext context)
+        public override async Task<FileInfo> ResolveTo(TemplateResolveContext context, string path)
         {
             string content = await Content.Resolve(context);
-            FileInfo res = new FileInfo(context.GetVariable<string>(VarFilePath));
+            FileInfo res = new FileInfo(path);
             using (var fs = res.Open(FileMode.Create))
             {
                 using var ss = new StreamWriter(fs, Encoding);
