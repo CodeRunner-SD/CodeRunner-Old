@@ -13,9 +13,11 @@ namespace CodeRunner.Templates
 
         protected FileTemplate(string[]? variables = null) : base(null)
         {
-            var list = new List<string>(variables ?? Array.Empty<string>());
-            list.Add(VarFilePath);
-            base.Variables = list.ToArray();
+            List<string> list = new List<string>(variables ?? Array.Empty<string>())
+            {
+                VarFilePath
+            };
+            base.Variables = list;
         }
 
         public abstract Task<FileInfo> ResolveTo(TemplateResolveContext context, string path);

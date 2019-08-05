@@ -11,6 +11,10 @@ namespace CodeRunner.Templates
             Name = name;
         }
 
+        public PackageFileTemplate() : this("")
+        {
+        }
+
         public string Name { get; set; }
 
         public FileAttributes Attributes { get; set; }

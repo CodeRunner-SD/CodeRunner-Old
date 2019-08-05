@@ -6,7 +6,9 @@ namespace CodeRunner.Templates
 {
     public class TextFileTemplate : FileTemplate
     {
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public TextFileTemplate() : this("")
+        {
+        }
 
         public TextFileTemplate(StringTemplate content) : base(null)
         {
@@ -21,7 +23,7 @@ namespace CodeRunner.Templates
             FileInfo res = new FileInfo(path);
             using (var fs = res.Open(FileMode.Create))
             {
-                using var ss = new StreamWriter(fs, Encoding);
+                using var ss = new StreamWriter(fs);
                 await ss.WriteAsync(content);
             }
             return res;

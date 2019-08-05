@@ -17,7 +17,7 @@ namespace CodeRunner.Templates
             {
                 VarDirectoryPath
             };
-            Variables = list.ToArray();
+            Variables = list;
         }
 
         public abstract Task<DirectoryInfo> ResolveTo(TemplateResolveContext context, string path);

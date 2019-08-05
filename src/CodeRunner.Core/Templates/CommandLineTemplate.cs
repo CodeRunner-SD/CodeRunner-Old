@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
@@ -14,11 +16,11 @@ namespace CodeRunner.Templates
 
         Dictionary<StringTemplate, StringTemplate> Options { get; } = new Dictionary<StringTemplate, StringTemplate>();
 
-        public List<StringTemplate> Arguments { get; } = new List<StringTemplate>();
+        public List<StringTemplate> Arguments { get; set; } = new List<StringTemplate>();
 
-        List<StringTemplate> Flags { get; } = new List<StringTemplate>();
+        List<StringTemplate> Flags { get; set; } = new List<StringTemplate>();
 
-        public List<StringTemplate> Commands { get; } = new List<StringTemplate>();
+        public List<StringTemplate> Commands { get; set; } = new List<StringTemplate>();
 
         public StringTemplate? Raw { get; set; } = null;
 

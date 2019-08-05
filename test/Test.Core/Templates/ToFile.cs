@@ -2,6 +2,7 @@
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Linq;
 
 namespace Test.Core.Templates
 {
@@ -16,7 +17,14 @@ namespace Test.Core.Templates
             context.With("rs", "abc").Without("rs");
             TextFileTemplate tf = new TextFileTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"), new string[] { "name", "home" }));
             var fi = tf.Resolve(context).Result;
-            Assert.AreEqual("lily", File.ReadAllText(fi.FullName, tf.Encoding));
+            Assert.AreEqual("lily", File.ReadAllText(fi.FullName));
+            using (var st = temp.File.OpenWrite())
+                tf.Save(st).Wait();
+            using (var st = temp.File.OpenRead())
+            {
+                var ctf = BaseTemplate.Load<TextFileTemplate>(st).Result;
+                Assert.IsTrue(ctf.Content.Variables.Contains("name"));
+            }
         }
     }
 }

@@ -10,9 +10,13 @@ namespace CodeRunner.Templates
     {
         public static string GetVariableTemplate(string name) => $"{{name}}";
 
-        public StringTemplate(string content, string[]? variables = null) : base(variables)
+        public StringTemplate(string content = "", string[]? variables = null) : base(variables)
         {
             Content = content;
+        }
+
+        public StringTemplate() : this("", null)
+        {
         }
 
         public string Content { get; set; }

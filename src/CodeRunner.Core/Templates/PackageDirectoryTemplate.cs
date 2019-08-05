@@ -11,13 +11,17 @@ namespace CodeRunner.Templates
             Name = name;
         }
 
+        public PackageDirectoryTemplate() : this("", null)
+        {
+        }
+
         public string Name { get; set; }
 
         public FileAttributes Attributes { get; set; } = FileAttributes.Directory;
 
-        public IList<PackageDirectoryTemplate> Directories { get; } = new List<PackageDirectoryTemplate>();
+        public IList<PackageDirectoryTemplate> Directories { get; set; } = new List<PackageDirectoryTemplate>();
 
-        public IList<PackageFileTemplate> Files { get; } = new List<PackageFileTemplate>();
+        public IList<PackageFileTemplate> Files { get; set; } = new List<PackageFileTemplate>();
 
         public override async Task<DirectoryInfo> ResolveTo(TemplateResolveContext context, string path)
         {
