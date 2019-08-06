@@ -1,12 +1,15 @@
 ﻿using CodeRunner.Executors;
 using CodeRunner.Templates;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managers.Configurations
 {
+    public delegate Task<bool> OperationCommandExecutingHandler(Operation sender, int index);
+
+    public delegate Task<bool> OperationCommandExecutedHandler(Operation sender, int index, ExecutorResult result);
+
     public class Operation : BaseTemplate<bool>
     {
         public static readonly Variable VarShell = new Variable("shell").Required().ReadOnly();
@@ -22,9 +25,9 @@ namespace CodeRunner.Managers.Configurations
 
         public IList<CommandLineTemplate> Items { get; }
 
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
-        public Func<ExecutorResult, Task<bool>>? Handler { get; set; }
+        public event OperationCommandExecutingHandler CommandExecuting;
+
+        public event OperationCommandExecutedHandler CommandExecuted;
 
         public Operation Use(CommandLineTemplate command)
         {
@@ -35,22 +38,32 @@ namespace CodeRunner.Managers.Configurations
         public override async Task<bool> Resolve(ResolveContext context)
         {
             string shell = context.GetVariable<string>(VarShell);
-            foreach (var v in Items)
+            for (int index = 0; index < Items.Count; index++)
             {
-                var cmd = await v.Resolve(context);
+                CommandLineTemplate v = Items[index];
+                string cmd = await v.Resolve(context);
+
+                if (CommandExecuting != null)
+                {
+                    if (!await CommandExecuting.Invoke(this, index))
+                    {
+                        return false;
+                    }
+                }
+
                 ProcessStartInfo res = new ProcessStartInfo
                 {
                     FileName = shell,
                     Arguments = $"-c {cmd}"
                 };
-                using (CLIExecutor exe = new CLIExecutor(res))
+                using CLIExecutor exe = new CLIExecutor(res);
+                ExecutorResult result = await exe.Run();
+                if (CommandExecuted != null)
                 {
-                    var result = await exe.Run();
-                    if (Handler != null)
-                        if (!await Handler.Invoke(result))
-                        {
-                            break;
-                        }
+                    if (!await CommandExecuted.Invoke(this, index, result))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -58,10 +71,13 @@ namespace CodeRunner.Managers.Configurations
 
         public override VariableCollection GetVariables()
         {
-            var res = base.GetVariables();
+            VariableCollection res = base.GetVariables();
             res.Add(VarShell);
-            foreach (var v in Items)
+            foreach (CommandLineTemplate v in Items)
+            {
                 res.Collect(v);
+            }
+
             return res;
         }
     }

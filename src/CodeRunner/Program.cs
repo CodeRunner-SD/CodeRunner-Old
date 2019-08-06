@@ -1,4 +1,5 @@
 ﻿using CodeRunner.Commands;
+using CodeRunner.Helpers;
 using CodeRunner.IO;
 using CodeRunner.Managers;
 using System.CommandLine;
@@ -32,6 +33,7 @@ namespace CodeRunner
         public static void Initialize()
         {
             RootCommand = new RootCommand("Code-runner");
+            RootCommand.TreatUnmatchedTokensAsErrors = false;
             RootCommand.AddCommand(new InitCommand().Build());
             RootCommand.AddCommand(new NewCommand().Build());
             RootCommand.AddCommand(new RunCommand().Build());
@@ -53,8 +55,7 @@ namespace CodeRunner
                     Console = new SystemConsole();
                     break;
                 case EnvironmentType.Develop:
-                    TestDir = new TempDirectory();
-                    Workspace = new Workspace(TestDir.Directory);
+                    Workspace = new Workspace(new DirectoryInfo(Path.Join(Directory.GetCurrentDirectory(), "temp")));
                     Input = System.Console.In;
                     Console = new SystemConsole();
                     Console.Out.WriteLine(Workspace.PathRoot.FullName);
@@ -85,21 +86,16 @@ namespace CodeRunner
                 return await RootCommand.InvokeAsync(args, Console);
             }
 
-            while (Prompt())
+            while (Prompt() && !Console.IsEndOfInput())
             {
-                if (Environment == EnvironmentType.Test && Program.Input.Peek() == -1)
-                {
-                    break;
-                }
-
-                string? line = Program.Input.ReadLine();
+                string? line = Console.InputLine();
                 if (line != null)
                 {
                     if (line == "quit")
-                    {
                         break;
-                    }
-                    _ = await RootCommand.InvokeAsync(line, Console);
+                    int exitCode = await RootCommand.InvokeAsync(line, Console);
+                    if (exitCode != 0)
+                        Console.Error.WriteLine($"Executed with code {exitCode}.");
                 }
             }
 

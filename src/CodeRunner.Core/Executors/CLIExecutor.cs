@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -101,26 +100,13 @@ namespace CodeRunner.Executors
             });
 
             await Task.WhenAll(running, getMemory);
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 Result!.ExitCode = Process!.ExitCode;
                 Result.EndTime = DateTimeOffset.Now;
 
-                List<string> output = new List<string>();
-                while (!Process.StandardOutput.EndOfStream)
-                {
-                    output.Add(Process.StandardOutput.ReadLine()!);
-                }
-
-                Result.Output = output.ToArray();
-
-                List<string> error = new List<string>();
-                while (!Process.StandardError.EndOfStream)
-                {
-                    error.Add(Process.StandardError.ReadLine()!);
-                }
-
-                Result.Error = error.ToArray();
+                Result.Output = await Process.StandardOutput.ReadToEndAsync();
+                Result.Error = await Process.StandardError.ReadToEndAsync();
 
                 if (Result.State == ExecutorState.Running)
                 {

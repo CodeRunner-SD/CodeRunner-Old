@@ -3,7 +3,6 @@ using CodeRunner.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Test.Core.Executors
@@ -41,7 +40,7 @@ for i in range(0, 10**5):
                 using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(GetPythonFile(), tmp.File.FullName));
                 ExecutorResult res = cli.Run().Result;
                 Assert.AreEqual(0, res.ExitCode);
-                Assert.AreEqual("Hello World!", res.Output.FirstOrDefault());
+                StringAssert.Contains(res.Output, "Hello World!");
             }
             using (TempFile tmp = new TempFile())
             {

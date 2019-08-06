@@ -1,5 +1,7 @@
-﻿using CodeRunner.Managers.Configurations;
+﻿using CodeRunner.Helpers;
+using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading;
@@ -36,6 +38,10 @@ namespace CodeRunner.Commands
                     Name = nameof(CArgument.Template),
                     Arity = ArgumentArity.ExactlyOne,
                 };
+                argTemplate.AddSuggestionSource(text =>
+                {
+                    return Program.Workspace.Templates.Settings.Result?.Items?.Keys ?? Array.Empty<string>();
+                });
                 res.AddArgument(argTemplate);
             }
 
@@ -46,22 +52,8 @@ namespace CodeRunner.Commands
         {
             ResolveContext resolveContext = new ResolveContext();
             resolveContext.WithVariable(DirectoryTemplate.Var.Name, Program.Workspace.PathRoot.FullName);
-            foreach (Variable v in argument.Template!.GetVariables())
-            {
-                if (resolveContext.HasVariable(v.Name))
-                {
-                    continue;
-                }
-
-                console.Out.Write($">> {v.Name} ");
-                console.Out.Write(v.IsRequired ? "(*)" : $"({v.Default?.ToString()})");
-                console.Out.Write(" ");
-                string? line = Program.Input.ReadLine();
-                if (!string.IsNullOrEmpty(line))
-                {
-                    resolveContext.WithVariable(v.Name, line);
-                }
-            }
+            if (!console.FillVariables(argument.Template!.GetVariables(), resolveContext))
+                return -1;
             await argument.Template.DoResolve(resolveContext);
             return 0;
         }
@@ -70,7 +62,5 @@ namespace CodeRunner.Commands
         {
             public BaseTemplate? Template { get; set; } = null;
         }
-
-
     }
 }

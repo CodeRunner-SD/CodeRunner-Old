@@ -1,7 +1,10 @@
-﻿using CodeRunner.Managers.Configurations;
+﻿using CodeRunner.Helpers;
+using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,6 +39,10 @@ namespace CodeRunner.Commands
                     Name = nameof(CArgument.Operation),
                     Arity = ArgumentArity.ExactlyOne,
                 };
+                argOperator.AddSuggestionSource(text =>
+                {
+                    return Program.Workspace.Operations.Settings.Result?.Items?.Keys ?? Array.Empty<string>();
+                });
                 res.AddArgument(argOperator);
             }
 
@@ -45,42 +52,21 @@ namespace CodeRunner.Commands
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
         {
             ResolveContext resolveContext = new ResolveContext();
-            var settings = (await Program.Workspace.Settings)!;
+            AppSettings settings = (await Program.Workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
-            foreach (Variable v in argument.Operation!.GetVariables())
+            if (!console.FillVariables(argument.Operation!.GetVariables(), resolveContext))
+                return -1;
+            argument.Operation.CommandExecuted += (sender, index, result) =>
             {
-                if (resolveContext.HasVariable(v.Name))
+                if (result.State != Executors.ExecutorState.Ended || result.ExitCode != 0)
                 {
-                    continue;
+                    return Task.FromResult(false);
                 }
 
-                console.Out.Write($">> {v.Name} ");
-                console.Out.Write(v.IsRequired ? "(*)" : $"({v.Default?.ToString()})");
-                console.Out.Write(" ");
-                string? line = Program.Input.ReadLine();
-                if (!string.IsNullOrEmpty(line))
-                {
-                    resolveContext.WithVariable(v.Name, line);
-                }
-            }
-            argument.Operation.Handler = async (result) =>
-            {
-                if (result.State != Executors.ExecutorState.Ended)
-                    return false;
-                if (result.ExitCode != 0)
-                    return false;
+                console.Out.Write(result.Output);
+                console.Error.Write(result.Error);
 
-                foreach(var s in result.Output)
-                {
-                    console.Out.WriteLine(s);
-                }
-
-                foreach (var s in result.Error)
-                {
-                    console.Error.WriteLine(s);
-                }
-
-                return true;
+                return Task.FromResult(true);
             };
             await argument.Operation.DoResolve(resolveContext);
             return 0;

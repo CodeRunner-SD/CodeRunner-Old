@@ -1,9 +1,8 @@
-﻿using CodeRunner.Managers.Configurations;
+﻿using CodeRunner.IO;
+using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
-using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
-using CodeRunner.IO;
 
 namespace CodeRunner.Managers.Templates
 {

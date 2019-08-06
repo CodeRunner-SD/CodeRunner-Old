@@ -56,8 +56,10 @@ namespace CodeRunner.Templates
 
         public void Collect(IEnumerable<BaseTemplate> from)
         {
-            foreach (var item in from)
+            foreach (BaseTemplate item in from)
+            {
                 Collect(item);
+            }
         }
     }
 }

@@ -5,9 +5,10 @@ namespace CodeRunner.IO
 {
     public class TempDirectory : IDisposable
     {
-        public TempDirectory()
+        public TempDirectory(string? rootPath = null)
         {
-            Directory = new DirectoryInfo(Path.Join(Path.GetTempPath(), Path.GetRandomFileName()));
+            rootPath ??= Path.GetTempPath();
+            Directory = new DirectoryInfo(Path.Join(rootPath, Path.GetRandomFileName()));
             Directory.Create();
         }
 

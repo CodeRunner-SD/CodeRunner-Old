@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CodeRunner.IO
@@ -11,9 +8,9 @@ namespace CodeRunner.IO
     {
         public static string Serialize(object obj)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
             });
         }
 

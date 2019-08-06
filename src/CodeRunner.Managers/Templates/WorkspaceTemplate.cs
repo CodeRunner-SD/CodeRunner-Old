@@ -1,7 +1,6 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;

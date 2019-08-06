@@ -2,7 +2,6 @@
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Managers.Templates;
 using CodeRunner.Templates;
-using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 

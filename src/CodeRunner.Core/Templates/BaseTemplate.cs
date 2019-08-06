@@ -6,7 +6,10 @@ namespace CodeRunner.Templates
 {
     public abstract class BaseTemplate
     {
-        public static Task<T> Load<T>(Stream stream) => JsonFormatter.Deserialize<T>(stream);
+        public static Task<T> Load<T>(Stream stream)
+        {
+            return JsonFormatter.Deserialize<T>(stream);
+        }
 
         public virtual VariableCollection GetVariables()
         {
@@ -25,6 +28,9 @@ namespace CodeRunner.Templates
 
         public abstract Task<TResult> Resolve(ResolveContext context);
 
-        public virtual Task Save(Stream stream) => JsonFormatter.Serialize(this, stream);
+        public virtual Task Save(Stream stream)
+        {
+            return JsonFormatter.Serialize(this, stream);
+        }
     }
 }

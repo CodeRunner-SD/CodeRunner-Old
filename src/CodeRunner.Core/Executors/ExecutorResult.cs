@@ -4,9 +4,9 @@ namespace CodeRunner.Executors
 {
     public class ExecutorResult
     {
-        public string[] Output { get; set; } = Array.Empty<string>();
+        public string Output { get; set; } = "";
 
-        public string[] Error { get; set; } = Array.Empty<string>();
+        public string Error { get; set; } = "";
 
         public long MaximumMemory { get; set; }
 

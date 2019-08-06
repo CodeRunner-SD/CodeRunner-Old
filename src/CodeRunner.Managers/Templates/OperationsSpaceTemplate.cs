@@ -1,7 +1,6 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
-using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -32,7 +31,14 @@ namespace CodeRunner.Managers.Templates
             OperationsSettings settings = new OperationsSettings();
 
             AppendOperationTemplate("hello", settings, new CommandLineTemplate()
-                .UseCommand("echo").UseArgument("hello!"));
+                .UseCommand("echo")
+                .UseArgument(
+                    new StringTemplate(
+                        $"'hello {StringTemplate.GetVariableTemplate("name")}!'", 
+                        new Variable[] { new Variable("name").NotRequired("world") }
+                    )
+                )
+            );
 
             Package.AddFile(Workspace.P_Settings).Template = new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings)));
         }
