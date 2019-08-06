@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,7 +8,7 @@ namespace CodeRunner.Executors
 {
     public class CLIExecutor : IDisposable
     {
-        ProcessStartInfo StartInfo { get; set; }
+        private ProcessStartInfo StartInfo { get; set; }
 
         public string Input { get; set; } = "";
 
@@ -20,7 +18,7 @@ namespace CodeRunner.Executors
 
         public Process? Process { get; private set; }
 
-        ExecutorResult? Result { get; set; }
+        private ExecutorResult? Result { get; set; }
 
         public CLIExecutor(ProcessStartInfo startInfo)
         {
@@ -34,7 +32,9 @@ namespace CodeRunner.Executors
         public void Initialize()
         {
             if (Result != null && Result.State == ExecutorState.Running)
+            {
                 throw new Exception("The process is running.");
+            }
 
             Result = new ExecutorResult();
             Process = new Process { StartInfo = StartInfo, EnableRaisingEvents = true };
@@ -43,15 +43,20 @@ namespace CodeRunner.Executors
         public async Task<ExecutorResult> Run()
         {
             if (Result == null)
+            {
                 Initialize();
+            }
+
             if (Result!.State != ExecutorState.Pending)
+            {
                 throw new Exception("Can't run before initialized.");
+            }
 
             Result.State = ExecutorState.Running;
             Result.StartTime = DateTimeOffset.Now;
 
             Process!.Start();
-            var getMemory = Task.Run(() =>
+            Task getMemory = Task.Run(() =>
             {
                 Result!.MaximumMemory = 0;
                 while (Result.State == ExecutorState.Running && Process?.HasExited == false)
@@ -75,7 +80,7 @@ namespace CodeRunner.Executors
                 Process.StandardInput.Close();
             }
 
-            var running = Task.Run(() =>
+            Task running = Task.Run(() =>
             {
                 if (TimeLimit.HasValue)
                 {
@@ -101,18 +106,26 @@ namespace CodeRunner.Executors
                 Result!.ExitCode = Process!.ExitCode;
                 Result.EndTime = DateTimeOffset.Now;
 
-                var output = new List<string>();
+                List<string> output = new List<string>();
                 while (!Process.StandardOutput.EndOfStream)
+                {
                     output.Add(Process.StandardOutput.ReadLine()!);
+                }
+
                 Result.Output = output.ToArray();
 
-                var error = new List<string>();
+                List<string> error = new List<string>();
                 while (!Process.StandardError.EndOfStream)
+                {
                     error.Add(Process.StandardError.ReadLine()!);
+                }
+
                 Result.Error = error.ToArray();
 
                 if (Result.State == ExecutorState.Running)
+                {
                     Result.State = ExecutorState.Ended;
+                }
             });
 
             Process.Dispose();
@@ -130,7 +143,9 @@ namespace CodeRunner.Executors
                 if (disposing)
                 {
                     if (Process != null)
+                    {
                         Process!.Dispose();
+                    }
                 }
 
                 disposedValue = true;

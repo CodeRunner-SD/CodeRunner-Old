@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.Json;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.IO
@@ -16,8 +13,12 @@ namespace CodeRunner.IO
         {
             try
             {
-                using (var st = File.OpenRead())
-                    return await JsonSerializer.DeserializeAsync<T>(st);
+                using FileStream st = File.OpenRead();
+                using StreamReader sr = new StreamReader(st);
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(await sr.ReadToEndAsync(), new Newtonsoft.Json.JsonSerializerSettings
+                {
+                    TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto
+                });
             }
             catch
             {

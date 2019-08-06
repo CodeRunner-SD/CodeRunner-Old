@@ -10,6 +10,7 @@ jobs:
         - choco install dotnetcore-sdk --pre
         - choco install python
       before_script:
+        - dotnet restore -s https://api.nuget.org/v3/index.json
         - dotnet build
       script:
         - powershell -c "dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1"
@@ -48,8 +49,10 @@ jobs:
         - sudo apt update
         - sudo apt install python3
         - dotnet --version
-      script:
+      before_script:
+        - dotnet restore -s https://api.nuget.org/v3/index.json
         - dotnet build
+      script:
         - dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
         - dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
         - curl -s https://codecov.io/bash > codecov

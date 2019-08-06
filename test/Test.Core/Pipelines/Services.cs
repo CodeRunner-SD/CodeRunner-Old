@@ -1,8 +1,5 @@
 ﻿using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Test.Core
 {
@@ -14,7 +11,7 @@ namespace Test.Core
         {
             ServiceProvider provider = new ServiceProvider();
             {
-                var scope = provider.CreateScope("a").Result;
+                ServiceScope scope = provider.CreateScope("a").Result;
                 Assert.AreEqual("a", scope.Name);
                 Assert.IsFalse(scope.TryGet<object>(out _));
 
@@ -39,7 +36,7 @@ namespace Test.Core
                 scope.Remove<double>();
             }
             {
-                var scope = provider.CreateScope("b").Result;
+                ServiceScope scope = provider.CreateScope("b").Result;
                 Assert.AreEqual("b", scope.Name);
                 Assert.IsFalse(scope.TryGet<object>(out _));
 

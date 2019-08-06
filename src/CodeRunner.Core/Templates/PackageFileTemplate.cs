@@ -1,41 +1,51 @@
 ﻿using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
     public class PackageFileTemplate : DirectoryTemplate
     {
-        public PackageFileTemplate(string name = "") : base(null)
+        public PackageFileTemplate(StringTemplate? name = null)
         {
-            Name = name;
+            Name = name ?? new StringTemplate("");
         }
 
-        public PackageFileTemplate() : this("")
+        public PackageFileTemplate() : this(null)
         {
         }
 
-        public string Name { get; set; }
+        public StringTemplate Name { get; set; }
 
         public FileAttributes Attributes { get; set; }
 
         public FileTemplate? Template { get; set; }
 
-        public override async Task<DirectoryInfo> ResolveTo(TemplateResolveContext context, string path)
+        public override async Task<DirectoryInfo> ResolveTo(ResolveContext context, string path)
         {
-            var res = new DirectoryInfo(path);
-            if (!res.Exists) res.Create();
+            DirectoryInfo res = new DirectoryInfo(path);
+            if (!res.Exists)
+            {
+                res.Create();
+            }
+
             if (Template != null)
             {
-                var file = await Template!.ResolveTo(context, Path.Join(res.FullName, Name));
+                string name = await Name.Resolve(context);
+                FileInfo file = await Template!.ResolveTo(context, Path.Join(res.FullName, name));
                 file.Attributes = Attributes;
             }
             return res;
         }
 
-        public PackageFileTemplate UseName(string name = "")
+        public PackageFileTemplate UseName(StringTemplate? name = null)
         {
-            Name = name;
+            Name = name ?? new StringTemplate("");
+            return this;
+        }
+
+        public PackageFileTemplate UseTemplate(FileTemplate? template = null)
+        {
+            Template = template;
             return this;
         }
 
@@ -59,14 +69,24 @@ namespace CodeRunner.Templates
 
         public async Task FromBinary(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes);
-            Template = new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName));
+            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName)));
         }
 
         public async Task FromText(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes);
-            Template = new TextFileTemplate(await File.ReadAllTextAsync(file.FullName));
+            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new TextFileTemplate(await File.ReadAllTextAsync(file.FullName)));
+        }
+
+        public override VariableCollection GetVariables()
+        {
+            VariableCollection res = base.GetVariables();
+            res.Collect(Name);
+            if (Template != null)
+            {
+                res.Collect(Template!);
+                res.Remove(FileTemplate.Var);
+            }
+            return res;
         }
     }
 }

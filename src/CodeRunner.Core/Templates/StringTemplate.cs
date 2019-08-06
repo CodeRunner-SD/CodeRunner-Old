@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,11 +7,15 @@ namespace CodeRunner.Templates
 {
     public class StringTemplate : BaseTemplate<string>
     {
-        public static string GetVariableTemplate(string name) => $"{{name}}";
+        public static string GetVariableTemplate(string name)
+        {
+            return $"{{{name}}}";
+        }
 
-        public StringTemplate(string content = "", string[]? variables = null) : base(variables)
+        public StringTemplate(string content = "", IList<Variable>? variables = null)
         {
             Content = content;
+            Variables = new List<Variable>(variables ?? Array.Empty<Variable>());
         }
 
         public StringTemplate() : this("", null)
@@ -21,22 +24,32 @@ namespace CodeRunner.Templates
 
         public string Content { get; set; }
 
-        public override Task<string> Resolve(TemplateResolveContext context)
+        public IList<Variable> Variables { get; set; }
+
+        public override Task<string> Resolve(ResolveContext context)
         {
             StringBuilder sb = new StringBuilder(Content);
-            foreach (var name in Variables)
+            foreach (Variable v in Variables)
             {
-                if (context.TryGetVariable<string>(name, out var value))
-                {
-                    sb.Replace(GetVariableTemplate(name), value);
-                }
+                sb.Replace(GetVariableTemplate(v.Name), context.GetVariable<string>(v));
             }
             return Task.FromResult(sb.ToString());
         }
 
         public static implicit operator StringTemplate(string content)
         {
-            return new StringTemplate(content, Array.Empty<string>());
+            return new StringTemplate(content, null);
+        }
+
+        public override VariableCollection GetVariables()
+        {
+            VariableCollection res = base.GetVariables();
+            foreach (Variable v in Variables)
+            {
+                res.Add(v);
+            }
+
+            return res;
         }
     }
 }

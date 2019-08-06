@@ -20,12 +20,16 @@ namespace CodeRunner.IO
             get
             {
                 if (data == null || LoadedTime == null)
+                {
                     return Load();
+                }
                 else
                 {
                     File.Refresh();
                     if (File.LastWriteTime > LoadedTime)
+                    {
                         return Load();
+                    }
                 }
                 return Task.FromResult<T?>(data);
             }

@@ -11,27 +11,24 @@ namespace Test.Managers
         [TestMethod]
         public void Basic()
         {
-            using (TempDirectory td = new TempDirectory())
-            {
-                Workspace workspace = new Workspace(td.Directory);
-                Assert.IsFalse(workspace.HasInitialized);
-                Assert.IsFalse(workspace.CheckValid().Result);
-                workspace.Initialize().Wait();
-                Assert.IsTrue(workspace.HasInitialized);
-                Assert.IsTrue(workspace.CheckValid().Result);
-                Assert.IsNotNull(workspace.Settings.Result);
-            }
+            using TempDirectory td = new TempDirectory();
+            Workspace workspace = new Workspace(td.Directory);
+            Assert.IsFalse(workspace.HasInitialized);
+            Assert.IsFalse(workspace.CheckValid().Result);
+            workspace.Initialize().Wait();
+            Assert.IsTrue(workspace.HasInitialized);
+            Assert.IsTrue(workspace.CheckValid().Result);
+            Assert.IsNotNull(workspace.Settings.Result);
         }
 
         [TestMethod]
         public void Templates()
         {
-            using (TempDirectory td = new TempDirectory())
-            {
-                Workspace workspace = new Workspace(td.Directory);
-                workspace.Initialize().Wait();
-                Assert.IsNotNull(workspace.Templates.Get<TextFileTemplate>("c").Result);
-            }
+            using TempDirectory td = new TempDirectory();
+            Workspace workspace = new Workspace(td.Directory);
+            workspace.Initialize().Wait();
+            BaseTemplate tmp = workspace.Templates.Get(workspace.Templates.GetItem("c").Result).Result;
+            Assert.IsNotNull(tmp);
         }
     }
 }

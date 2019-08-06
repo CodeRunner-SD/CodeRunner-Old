@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
     public abstract class DirectoryTemplate : BaseTemplate<DirectoryInfo>
     {
-        public const string VarDirectoryPath = "directoryPath";
+        private const string VarDirectoryPath = "directoryPath";
 
-        public override Task<DirectoryInfo> Resolve(TemplateResolveContext context) => ResolveTo(context, context.GetVariable<string>(VarDirectoryPath));
+        public static readonly Variable Var = new Variable(VarDirectoryPath).Required().ReadOnly();
 
-        protected DirectoryTemplate(string[]? variables = null) : base(null)
+        public override Task<DirectoryInfo> Resolve(ResolveContext context)
         {
-            var list = new List<string>(variables ?? Array.Empty<string>())
-            {
-                VarDirectoryPath
-            };
-            Variables = list;
+            return ResolveTo(context, context.GetVariable<string>(Var));
         }
 
-        public abstract Task<DirectoryInfo> ResolveTo(TemplateResolveContext context, string path);
+        public abstract Task<DirectoryInfo> ResolveTo(ResolveContext context, string path);
+
+        public override VariableCollection GetVariables()
+        {
+            VariableCollection res = base.GetVariables();
+            res.Add(Var);
+            return res;
+        }
     }
 }

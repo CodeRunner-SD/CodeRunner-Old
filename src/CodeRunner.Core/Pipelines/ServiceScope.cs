@@ -5,7 +5,7 @@ namespace CodeRunner.Pipelines
 {
     public class ServiceScope
     {
-        Dictionary<Type, Dictionary<string, ServiceItem>> Pool { get; }
+        private Dictionary<Type, Dictionary<string, ServiceItem>> Pool { get; }
 
         public string Name { get; set; }
 
@@ -15,10 +15,10 @@ namespace CodeRunner.Pipelines
             Name = name;
         }
 
-        Dictionary<string, ServiceItem> OpenOrCreateSubDictionary<T>()
+        private Dictionary<string, ServiceItem> OpenOrCreateSubDictionary<T>()
         {
-            var type = typeof(T);
-            if (!Pool.TryGetValue(type, out var list))
+            Type type = typeof(T);
+            if (!Pool.TryGetValue(type, out Dictionary<string, ServiceItem>? list))
             {
                 list = new Dictionary<string, ServiceItem>();
                 Pool.Add(type, list);
@@ -26,12 +26,16 @@ namespace CodeRunner.Pipelines
             return list;
         }
 
-        Dictionary<string, ServiceItem>? FindSubDictionary<T>()
+        private Dictionary<string, ServiceItem>? FindSubDictionary<T>()
         {
-            if (Pool.TryGetValue(typeof(T), out var list))
+            if (Pool.TryGetValue(typeof(T), out Dictionary<string, ServiceItem>? list))
+            {
                 return list;
+            }
             else
+            {
                 return null;
+            }
         }
 
         public void Add<T>(T item, string id = "") where T : notnull
@@ -41,22 +45,27 @@ namespace CodeRunner.Pipelines
 
         public void Replace<T>(T item, string id = "") where T : notnull
         {
-            var list = OpenOrCreateSubDictionary<T>();
+            Dictionary<string, ServiceItem> list = OpenOrCreateSubDictionary<T>();
             if (list.ContainsKey(id))
             {
                 list[id] = new ServiceItem(item, Name);
             }
-            else list.Add(id, new ServiceItem(item, Name));
+            else
+            {
+                list.Add(id, new ServiceItem(item, Name));
+            }
         }
 
         public void Remove<T>(string id = "")
         {
-            var list = FindSubDictionary<T>();
+            Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
             if (list != null)
             {
                 list.Remove(id);
                 if (list.Count == 0)
+                {
                     Pool.Remove(typeof(T));
+                }
             }
         }
 
@@ -72,8 +81,8 @@ namespace CodeRunner.Pipelines
 
         public bool TryGet<T>(out T value, string id = "")
         {
-            var list = FindSubDictionary<T>();
-            if (list != null && list.TryGetValue(id, out var _value))
+            Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
+            if (list != null && list.TryGetValue(id, out ServiceItem _value))
             {
                 value = (T)_value.Value;
                 return true;

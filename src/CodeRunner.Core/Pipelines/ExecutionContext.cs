@@ -2,7 +2,7 @@
 
 namespace CodeRunner.Pipelines
 {
-    public class ExecutionContext<TOrigin,TResult>
+    public class ExecutionContext<TOrigin, TResult>
     {
         public ExecutionContext(ServiceScope services, TOrigin origin, TResult result, LogScope logs)
         {

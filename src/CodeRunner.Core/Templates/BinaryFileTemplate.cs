@@ -6,13 +6,9 @@ namespace CodeRunner.Templates
 {
     public class BinaryFileTemplate : FileTemplate
     {
-        public BinaryFileTemplate() : this(null)
+        public BinaryFileTemplate(byte[]? content = null)
         {
-        }
-
-        public BinaryFileTemplate(byte[]? content = null) : base(null)
-        {
-            if(content == null)
+            if (content == null)
             {
                 Content = "";
             }
@@ -24,12 +20,12 @@ namespace CodeRunner.Templates
 
         public string Content { get; set; }
 
-        public override Task<FileInfo> ResolveTo(TemplateResolveContext context, string path)
+        public override Task<FileInfo> ResolveTo(ResolveContext context, string path)
         {
             FileInfo res = new FileInfo(path);
-            using (var fs = res.Open(FileMode.Create))
+            using (FileStream fs = res.Open(FileMode.Create))
             {
-                using var bw = new BinaryWriter(fs);
+                using BinaryWriter bw = new BinaryWriter(fs);
                 bw.Write(Convert.FromBase64String(Content));
             }
             return Task.FromResult(res);

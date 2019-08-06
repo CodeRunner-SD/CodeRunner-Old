@@ -7,9 +7,9 @@ namespace CodeRunner.Pipelines
 {
     public class PipelineBuilder<TOrigin, TResult>
     {
-        List<(string, object)> Configures { get; } = new List<(string, object)>();
+        private List<(string, object)> Configures { get; } = new List<(string, object)>();
 
-        List<PipelineOperator<TOrigin, TResult>> Ops { get; } = new List<PipelineOperator<TOrigin, TResult>>();
+        private List<PipelineOperator<TOrigin, TResult>> Ops { get; } = new List<PipelineOperator<TOrigin, TResult>>();
 
         public PipelineBuilder<TOrigin, TResult> Configure(string name, Func<ServiceScope, Task> func)
         {
@@ -31,8 +31,8 @@ namespace CodeRunner.Pipelines
 
         public async Task<Pipeline<TOrigin, TResult>> Build(TOrigin origin, Logger logger)
         {
-            var services = new ServiceProvider();
-            foreach(var (name,func) in Configures)
+            ServiceProvider services = new ServiceProvider();
+            foreach ((string name, object func) in Configures)
             {
                 switch (func)
                 {

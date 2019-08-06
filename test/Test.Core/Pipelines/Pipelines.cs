@@ -9,9 +9,9 @@ namespace Test.Core
     [TestClass]
     public class Pipelines
     {
-        PipelineBuilder<int, int> GetBasicBuilder(int arg)
+        private PipelineBuilder<int, int> GetBasicBuilder(int arg)
         {
-            var builder = new PipelineBuilder<int, int>().Configure("arg", service =>
+            PipelineBuilder<int, int> builder = new PipelineBuilder<int, int>().Configure("arg", service =>
             {
                 service.Add(1);
                 return Task.CompletedTask;
@@ -22,27 +22,24 @@ namespace Test.Core
             return builder;
         }
 
-        PipelineOperator<int, int> initial = context =>
+        private readonly PipelineOperator<int, int> initial = context =>
         {
             context.Logs.Warning($"initial with {context.Origin}");
             return Task.FromResult(context.Origin);
         };
-
-        PipelineOperator<int, int> plus = context =>
+        private readonly PipelineOperator<int, int> plus = context =>
         {
-            var arg = context.Services.Get<int>();
+            int arg = context.Services.Get<int>();
             context.Logs.Info($"plus with {arg}");
             return Task.FromResult(context.Result + arg);
         };
-
-        PipelineOperator<int, int> multiply = context =>
+        private readonly PipelineOperator<int, int> multiply = context =>
         {
-            var arg = context.Services.Get<int>();
+            int arg = context.Services.Get<int>();
             context.Logs.Info($"multiply with {arg}");
             return Task.FromResult(context.Result * arg);
         };
-
-        PipelineOperator<int, int> expNotImp = context =>
+        private readonly PipelineOperator<int, int> expNotImp = context =>
         {
             context.Logs.Error("exception!");
             throw new NotImplementedException();
@@ -51,10 +48,10 @@ namespace Test.Core
         [TestMethod]
         public void Basic()
         {
-            var builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(multiply);
+            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(multiply);
             {
-                var pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
-                var res = pipeline.Consume().Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
+                PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.IsTrue(res.IsOk);
                 Assert.AreEqual(8, res.Result);
             }
@@ -63,10 +60,10 @@ namespace Test.Core
         [TestMethod]
         public void Exception()
         {
-            var builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(expNotImp).Use(multiply);
+            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(expNotImp).Use(multiply);
             {
-                var pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
-                var res = pipeline.Consume().Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
+                PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.AreEqual(4, res.Result);
                 Assert.IsTrue(res.IsError);
                 Assert.IsInstanceOfType(res.Exception, typeof(NotImplementedException));

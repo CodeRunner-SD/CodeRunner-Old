@@ -6,7 +6,7 @@ namespace CodeRunner.Pipelines
 {
     public class ServiceProvider
     {
-        readonly Dictionary<Type, Dictionary<string, ServiceItem>> pools = new Dictionary<Type, Dictionary<string, ServiceItem>>();
+        private readonly Dictionary<Type, Dictionary<string, ServiceItem>> pools = new Dictionary<Type, Dictionary<string, ServiceItem>>();
 
         public Task<ServiceScope> CreateScope(string name)
         {

@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
     public abstract class FileTemplate : BaseTemplate<FileInfo>
     {
-        public const string VarFilePath = "filePath";
+        private const string VarFilePath = "filePath";
 
-        public override Task<FileInfo> Resolve(TemplateResolveContext context) => ResolveTo(context, context.GetVariable<string>(VarFilePath));
+        public static readonly Variable Var = new Variable(VarFilePath).Required().ReadOnly();
 
-        protected FileTemplate(string[]? variables = null) : base(null)
+        public override Task<FileInfo> Resolve(ResolveContext context)
         {
-            List<string> list = new List<string>(variables ?? Array.Empty<string>())
-            {
-                VarFilePath
-            };
-            base.Variables = list;
+            return ResolveTo(context, context.GetVariable<string>(Var));
         }
 
-        public abstract Task<FileInfo> ResolveTo(TemplateResolveContext context, string path);
+        public abstract Task<FileInfo> ResolveTo(ResolveContext context, string path);
+
+        public override VariableCollection GetVariables()
+        {
+            VariableCollection res = base.GetVariables();
+            res.Add(Var);
+            return res;
+        }
     }
 }

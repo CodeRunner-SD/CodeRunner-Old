@@ -16,7 +16,7 @@ namespace Test.Core.Templates
                 builder.Raw = "--version";
                 builder.WithFlag("ff", "-").WithFlag("O2", "-");
                 builder.WithOption("o", "a.out", "-").WithOption("cc", 1, "--").WithOption("cc", "a", "--").WithoutFlag("-ff").WithoutOption("--cc");
-                Assert.AreEqual("gcc a.c -O2 -o a.out --version", builder.Resolve().Result);
+                Assert.AreEqual("gcc a.c -O2 -o a.out --version", builder.Resolve(new ResolveContext()).Result);
             }
         }
     }

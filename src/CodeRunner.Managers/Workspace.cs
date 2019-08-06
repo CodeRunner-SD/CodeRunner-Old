@@ -49,7 +49,7 @@ namespace CodeRunner.Managers
 
         public async Task Initialize()
         {
-            await new WorkspaceTemplate().ResolveTo(new CodeRunner.Templates.TemplateResolveContext(), PathRoot.FullName);
+            await new WorkspaceTemplate().ResolveTo(new CodeRunner.Templates.ResolveContext(), PathRoot.FullName);
             await Templates.Initialize();
         }
     }

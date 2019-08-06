@@ -10,7 +10,7 @@ namespace CodeRunner.Loggers
             Name = name;
         }
 
-        Logger Inner { get; }
+        private Logger Inner { get; }
 
         public string Name { get; }
 

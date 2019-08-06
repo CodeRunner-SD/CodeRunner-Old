@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
     public class CommandLineTemplate : BaseTemplate<string>
     {
-        public CommandLineTemplate() : base(null)
-        {
-        }
-
-        Dictionary<StringTemplate, StringTemplate> Options { get; } = new Dictionary<StringTemplate, StringTemplate>();
+        private Dictionary<StringTemplate, StringTemplate> Options { get; } = new Dictionary<StringTemplate, StringTemplate>();
 
         public List<StringTemplate> Arguments { get; set; } = new List<StringTemplate>();
 
-        List<StringTemplate> Flags { get; set; } = new List<StringTemplate>();
+        private List<StringTemplate> Flags { get; set; } = new List<StringTemplate>();
 
         public List<StringTemplate> Commands { get; set; } = new List<StringTemplate>();
 
@@ -27,11 +19,16 @@ namespace CodeRunner.Templates
         public CommandLineTemplate WithOption(StringTemplate id, StringTemplate value, string prefix = "")
         {
             id.Content = prefix + id.Content;
-            var f = Options.Where(x => x.Key.Content == id.Content).Select(x => x.Key).FirstOrDefault();
+            StringTemplate f = Options.Where(x => x.Key.Content == id.Content).Select(x => x.Key).FirstOrDefault();
             if (f == null)
+            {
                 Options.Add(id, value);
+            }
             else
+            {
                 Options[f] = value;
+            }
+
             return this;
         }
 
@@ -42,9 +39,12 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate WithoutOption(string fullContent)
         {
-            var f = Options.Where(x => x.Key.Content == fullContent).Select(x => x.Key).FirstOrDefault();
+            StringTemplate f = Options.Where(x => x.Key.Content == fullContent).Select(x => x.Key).FirstOrDefault();
             if (f != null)
+            {
                 Options.Remove(f);
+            }
+
             return this;
         }
 
@@ -57,29 +57,60 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate WithoutFlag(string fullContent)
         {
-            var f = Flags.Where(x => x.Content == fullContent).FirstOrDefault();
+            StringTemplate f = Flags.Where(x => x.Content == fullContent).FirstOrDefault();
             if (f != null)
+            {
                 Flags.Remove(f);
+            }
+
             return this;
         }
 
-        public override async Task<string> Resolve(TemplateResolveContext context)
+        public override async Task<string> Resolve(ResolveContext context)
         {
             List<string> items = new List<string>();
-            foreach (var v in Commands)
+            foreach (StringTemplate v in Commands)
+            {
                 items.Add(await v.Resolve(context));
-            foreach (var v in Arguments)
+            }
+
+            foreach (StringTemplate v in Arguments)
+            {
                 items.Add(await v.Resolve(context));
-            foreach (var v in Flags)
+            }
+
+            foreach (StringTemplate v in Flags)
+            {
                 items.Add(await v.Resolve(context));
-            foreach (var (id, value) in Options)
+            }
+
+            foreach ((StringTemplate id, StringTemplate value) in Options)
             {
                 items.Add(await id.Resolve(context));
                 items.Add(await value.Resolve(context));
             }
             if (Raw != null)
+            {
                 items.Add(await Raw!.Resolve(context));
+            }
+
             return string.Join(' ', items);
+        }
+
+        public override VariableCollection GetVariables()
+        {
+            VariableCollection res = base.GetVariables();
+            res.Collect(Commands);
+            res.Collect(Flags);
+            res.Collect(Arguments);
+            res.Collect(Options.Keys);
+            res.Collect(Options.Values);
+            if (Raw != null)
+            {
+                res.Collect(Raw!);
+            }
+
+            return res;
         }
     }
 }
