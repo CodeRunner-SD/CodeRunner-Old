@@ -34,7 +34,7 @@ namespace CodeRunner.Managers.Templates
                 .UseCommand("echo")
                 .UseArgument(
                     new StringTemplate(
-                        $"'hello {StringTemplate.GetVariableTemplate("name")}!'", 
+                        $"'hello {StringTemplate.GetVariableTemplate("name")}!'",
                         new Variable[] { new Variable("name").NotRequired("world") }
                     )
                 )

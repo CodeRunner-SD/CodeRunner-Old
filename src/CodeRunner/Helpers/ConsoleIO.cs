@@ -1,33 +1,39 @@
 ﻿using CodeRunner.Templates;
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Rendering;
-using System.Text;
 
 namespace CodeRunner.Helpers
 {
     public static class ConsoleIO
     {
-        public static string? InputVariableValue(this IConsole console, Variable variable)
+        public static string? InputVariableValue(this ITerminal terminal, Variable variable)
         {
-            console.Out.Write($"  {variable.Name}");
-            console.Out.Write(variable.IsRequired ? "*" : $"({variable.Default?.ToString()})");
-            console.Out.Write(": ");
-            return console.InputLine();
+            terminal.Output("  ");
+            if (variable.IsRequired)
+            {
+                terminal.OutputEmphasize(variable.Name);
+            }
+            else
+            {
+                terminal.OutputBold(variable.Name);
+                terminal.Output($"({ variable.Default?.ToString()})");
+            }
+            terminal.Output(": ");
+            return terminal.InputLine();
         }
 
-        public static string? InputLine(this IConsole console)
+        public static string? InputLine(this IConsole _)
         {
             return Program.Input.ReadLine();
         }
 
-        public static bool IsEndOfInput(this IConsole console)
+        public static bool IsEndOfInput(this IConsole _)
         {
             return Program.Environment == EnvironmentType.Test && Program.Input.Peek() == -1;
         }
 
-        public static bool FillVariables(this IConsole console, IEnumerable<Variable> variables, ResolveContext context)
+        public static bool FillVariables(this ITerminal terminal, IEnumerable<Variable> variables, ResolveContext context)
         {
             bool isFirst = true;
             foreach (Variable v in variables)
@@ -39,11 +45,11 @@ namespace CodeRunner.Helpers
 
                 if (isFirst)
                 {
-                    console.Out.WriteLine("Please input variable value:");
+                    terminal.OutputLine("Please input variable value:");
                     isFirst = false;
                 }
 
-                string? line = console.InputVariableValue(v);
+                string? line = terminal.InputVariableValue(v);
                 if (string.IsNullOrEmpty(line))
                 {
                     if (v.IsRequired)
@@ -57,6 +63,99 @@ namespace CodeRunner.Helpers
                 }
             }
             return true;
+        }
+
+        public static void OutputEmphasize(this ITerminal terminal, string content)
+        {
+            terminal.Render(StyleSpan.BoldOn());
+            terminal.Render(StyleSpan.UnderlinedOn());
+            terminal.Output(content);
+            terminal.Render(StyleSpan.BoldOff());
+            terminal.Render(StyleSpan.UnderlinedOff());
+        }
+
+        public static void OutputStandout(this ITerminal terminal, string content)
+        {
+            terminal.Render(StyleSpan.StandoutOn());
+            terminal.Out.Write(content);
+            terminal.Render(StyleSpan.StandoutOff());
+        }
+
+        public static void OutputBold(this ITerminal terminal, string content)
+        {
+            terminal.Render(StyleSpan.BoldOn());
+            terminal.Output(content);
+            terminal.Render(StyleSpan.BoldOff());
+        }
+
+        public static void OutputUnderline(this ITerminal terminal, string content)
+        {
+            terminal.Render(StyleSpan.UnderlinedOn());
+            terminal.Output(content);
+            terminal.Render(StyleSpan.UnderlinedOff());
+        }
+
+        public static void Output(this ITerminal terminal, string content)
+        {
+            terminal.Out.Write(content);
+        }
+
+        public static void OutputBlink(this ITerminal terminal, string content)
+        {
+            terminal.Render(StyleSpan.BlinkOn());
+            terminal.Output(content);
+            terminal.Render(StyleSpan.BlinkOff());
+        }
+
+        public static void OutputError(this ITerminal terminal, string content)
+        {
+            terminal.Render(ForegroundColorSpan.Red());
+            terminal.Output(content);
+            terminal.Render(ForegroundColorSpan.Reset());
+        }
+
+        public static void OutputWarning(this ITerminal terminal, string content)
+        {
+            terminal.Render(ForegroundColorSpan.Yellow());
+            terminal.Out.Write(content);
+            terminal.Render(ForegroundColorSpan.Reset());
+        }
+
+        public static void OutputInformation(this ITerminal terminal, string content)
+        {
+            terminal.Render(ForegroundColorSpan.Cyan());
+            terminal.Out.Write(content);
+            terminal.Render(ForegroundColorSpan.Reset());
+        }
+
+        public static void OutputLine(this ITerminal terminal, string content)
+        {
+            terminal.Output(content);
+            terminal.OutputLine();
+        }
+
+        public static void OutputLine(this ITerminal terminal)
+        {
+            terminal.Out.Write("\n");
+            terminal.SetCursorPosition(0, terminal.CursorTop);
+        }
+
+        public static void OutputErrorLine(this ITerminal terminal, string content)
+        {
+            OutputError(terminal, content);
+            terminal.OutputLine();
+        }
+
+        public static void OutputWarningLine(this ITerminal terminal, string content)
+        {
+            OutputWarning(terminal, content);
+            terminal.OutputLine();
+        }
+
+        public static void OutputInformationLine(this ITerminal terminal, string content)
+        {
+            OutputInformation(terminal, content);
+            terminal.OutputLine();
         }
     }
 }

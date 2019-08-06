@@ -4,7 +4,9 @@ using CodeRunner.IO;
 using CodeRunner.Managers;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.Rendering;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CodeRunner
@@ -24,7 +26,7 @@ namespace CodeRunner
 
         public static TextReader Input { get; set; }
 
-        public static IConsole Console { get; set; }
+        public static IConsole Console { get; private set; }
 
         private static RootCommand RootCommand { get; set; }
 
@@ -32,8 +34,10 @@ namespace CodeRunner
 
         public static void Initialize()
         {
-            RootCommand = new RootCommand("Code-runner");
-            RootCommand.TreatUnmatchedTokensAsErrors = false;
+            RootCommand = new RootCommand("Code-runner")
+            {
+                TreatUnmatchedTokensAsErrors = false,
+            };
             RootCommand.AddCommand(new InitCommand().Build());
             RootCommand.AddCommand(new NewCommand().Build());
             RootCommand.AddCommand(new RunCommand().Build());
@@ -58,7 +62,6 @@ namespace CodeRunner
                     Workspace = new Workspace(new DirectoryInfo(Path.Join(Directory.GetCurrentDirectory(), "temp")));
                     Input = System.Console.In;
                     Console = new SystemConsole();
-                    Console.Out.WriteLine(Workspace.PathRoot.FullName);
                     break;
                 case EnvironmentType.Test:
                     if (Workspace == null)
@@ -73,10 +76,20 @@ namespace CodeRunner
 
                     if (Console == null)
                     {
-                        Console = new TestConsole();
+                        Console = new TestTerminal();
                     }
 
                     break;
+            }
+
+            ITerminal terminal = Console.GetTerminal();
+
+            System.Console.InputEncoding = Encoding.UTF8;
+            System.Console.OutputEncoding = Encoding.UTF8;
+
+            if (Environment == EnvironmentType.Develop)
+            {
+                terminal.OutputLine(Workspace.PathRoot.FullName);
             }
 
             Initialize();
@@ -92,10 +105,15 @@ namespace CodeRunner
                 if (line != null)
                 {
                     if (line == "quit")
+                    {
                         break;
+                    }
+
                     int exitCode = await RootCommand.InvokeAsync(line, Console);
                     if (exitCode != 0)
-                        Console.Error.WriteLine($"Executed with code {exitCode}.");
+                    {
+                        terminal.OutputErrorLine($"Executed with code {exitCode}.");
+                    }
                 }
             }
 

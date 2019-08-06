@@ -4,6 +4,7 @@ using CodeRunner.Templates;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.Rendering;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +14,10 @@ namespace CodeRunner.Commands
     {
         public override Command Configure()
         {
-            Command res = new Command("new", "Create new item from template.");
+            Command res = new Command("new", "Create new item from template.")
+            {
+                TreatUnmatchedTokensAsErrors = false
+            };
             {
                 Argument<BaseTemplate?> argTemplate = new Argument<BaseTemplate?>(new TryConvertArgument<BaseTemplate?>((SymbolResult symbolResult, out BaseTemplate? value) =>
                 {
@@ -50,10 +54,14 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
         {
-            ResolveContext resolveContext = new ResolveContext();
+            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
             resolveContext.WithVariable(DirectoryTemplate.Var.Name, Program.Workspace.PathRoot.FullName);
-            if (!console.FillVariables(argument.Template!.GetVariables(), resolveContext))
+            ITerminal terminal = console.GetTerminal();
+            if (!terminal.FillVariables(argument.Template!.GetVariables(), resolveContext))
+            {
                 return -1;
+            }
+
             await argument.Template.DoResolve(resolveContext);
             return 0;
         }

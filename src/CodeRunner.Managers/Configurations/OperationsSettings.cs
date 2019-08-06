@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace CodeRunner.Managers.Configurations
+﻿namespace CodeRunner.Managers.Configurations
 {
-    public class OperationsSettings
+    public class OperationsSettings : ItemSettings<OperationItem>
     {
-        public IDictionary<string, OperationItem> Items { get; set; } = new Dictionary<string, OperationItem>();
     }
 }

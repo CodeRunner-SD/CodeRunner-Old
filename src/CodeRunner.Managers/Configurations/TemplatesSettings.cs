@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace CodeRunner.Managers.Configurations
+﻿namespace CodeRunner.Managers.Configurations
 {
-    public class TemplatesSettings
+    public class TemplatesSettings : ItemSettings<TemplateItem>
     {
-        public IDictionary<string, TemplateItem> Items { get; set; } = new Dictionary<string, TemplateItem>();
     }
 }

@@ -6,27 +6,20 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managers
 {
-    public class Workspace
+    public class Workspace : BaseManager<AppSettings>
     {
         public const string P_CRRoot = ".cr";
         public const string P_Settings = "settings.json";
         public const string P_TemplatesRoot = "templates";
         public const string P_OperatorsRoot = "operators";
 
-        private readonly JsonFileLoader<AppSettings> settingsLoader;
-
-        public Workspace(DirectoryInfo pathRoot)
+        public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new WorkspaceTemplate())
         {
-            PathRoot = pathRoot;
             CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, P_CRRoot));
+            SettingsLoader = new JsonFileLoader<AppSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
             Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_TemplatesRoot)));
             Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
-            settingsLoader = new JsonFileLoader<AppSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
         }
-
-        public DirectoryInfo PathRoot { get; }
-
-        public Task<AppSettings?> Settings => settingsLoader.Data;
 
         public TemplateManager Templates { get; }
 
@@ -51,9 +44,9 @@ namespace CodeRunner.Managers
             return Task.FromResult(PathRoot.Exists && CRRoot.Exists);
         }
 
-        public async Task Initialize()
+        public override async Task Initialize()
         {
-            await new WorkspaceTemplate().ResolveTo(new CodeRunner.Templates.ResolveContext(), PathRoot.FullName);
+            await base.Initialize();
             await Templates.Initialize();
             await Operations.Initialize();
         }

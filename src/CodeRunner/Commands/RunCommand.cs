@@ -4,7 +4,7 @@ using CodeRunner.Templates;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Linq;
+using System.CommandLine.Rendering;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +14,10 @@ namespace CodeRunner.Commands
     {
         public override Command Configure()
         {
-            Command res = new Command("run", "Run operation.");
+            Command res = new Command("run", "Run operation.")
+            {
+                TreatUnmatchedTokensAsErrors = false
+            };
             {
                 Argument<Operation?> argOperator = new Argument<Operation?>(new TryConvertArgument<Operation?>((SymbolResult symbolResult, out Operation? value) =>
                 {
@@ -51,11 +54,15 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
         {
-            ResolveContext resolveContext = new ResolveContext();
+            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
             AppSettings settings = (await Program.Workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
-            if (!console.FillVariables(argument.Operation!.GetVariables(), resolveContext))
+            ITerminal terminal = console.GetTerminal();
+            if (!terminal.FillVariables(argument.Operation!.GetVariables(), resolveContext))
+            {
                 return -1;
+            }
+
             argument.Operation.CommandExecuted += (sender, index, result) =>
             {
                 if (result.State != Executors.ExecutorState.Ended || result.ExitCode != 0)
