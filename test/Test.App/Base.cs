@@ -2,6 +2,7 @@ using CodeRunner;
 using CodeRunner.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.CommandLine;
 using System.IO;
 
 namespace Test.App
@@ -57,6 +58,20 @@ namespace Test.App
                 Program.Input = input;
                 Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
                 Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
+            });
+        }
+
+        [TestMethod]
+        public void Run()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "init", "run hello"), input =>
+            {
+                Program.Workspace = new CodeRunner.Managers.Workspace(td.Directory);
+                Program.Input = input;
+                Program.Console = new TestConsole();
+                Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
+                StringAssert.Contains(Program.Console.Out.ToString(), "hello");
             });
         }
     }

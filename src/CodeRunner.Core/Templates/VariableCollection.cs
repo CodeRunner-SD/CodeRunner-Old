@@ -46,7 +46,7 @@ namespace CodeRunner.Templates
             return ((ICollection<Variable>)Variables).GetEnumerator();
         }
 
-        public void Collect<T>(BaseTemplate<T> from)
+        public void Collect(BaseTemplate from)
         {
             foreach (Variable v in from.GetVariables())
             {
@@ -54,12 +54,10 @@ namespace CodeRunner.Templates
             }
         }
 
-        public void Collect<T>(IEnumerable<BaseTemplate<T>> from)
+        public void Collect(IEnumerable<BaseTemplate> from)
         {
-            foreach (BaseTemplate<T> v in from)
-            {
-                Collect(v);
-            }
+            foreach (var item in from)
+                Collect(item);
         }
     }
 }

@@ -34,6 +34,7 @@ namespace CodeRunner
             RootCommand = new RootCommand("Code-runner");
             RootCommand.AddCommand(new InitCommand().Build());
             RootCommand.AddCommand(new NewCommand().Build());
+            RootCommand.AddCommand(new RunCommand().Build());
         }
 
         public static bool Prompt()

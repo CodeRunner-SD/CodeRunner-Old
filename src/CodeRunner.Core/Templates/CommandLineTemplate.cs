@@ -16,6 +16,18 @@ namespace CodeRunner.Templates
 
         public StringTemplate? Raw { get; set; } = null;
 
+        public CommandLineTemplate UseCommand(StringTemplate command)
+        {
+            Commands.Add(command);
+            return this;
+        }
+
+        public CommandLineTemplate UseArgument(StringTemplate argument)
+        {
+            Arguments.Add(argument);
+            return this;
+        }
+
         public CommandLineTemplate WithOption(StringTemplate id, StringTemplate value, string prefix = "")
         {
             id.Content = prefix + id.Content;

@@ -14,11 +14,7 @@ namespace CodeRunner.IO
             try
             {
                 using FileStream st = File.OpenRead();
-                using StreamReader sr = new StreamReader(st);
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(await sr.ReadToEndAsync(), new Newtonsoft.Json.JsonSerializerSettings
-                {
-                    TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto
-                });
+                return await JsonFormatter.Deserialize<T>(st);
             }
             catch
             {

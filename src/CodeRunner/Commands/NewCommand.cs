@@ -1,4 +1,5 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.Managers.Configurations;
+using CodeRunner.Templates;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace CodeRunner.Commands
                 {
                     value = null;
                     string template = symbolResult.Token.Value;
-                    Managers.Configurations.TemplateItem? tplItem = Program.Workspace.Templates.GetItem(template).Result;
+                    TemplateItem? tplItem = Program.Workspace.Templates.GetItem(template).Result;
                     if (tplItem == null)
                     {
                         symbolResult.ErrorMessage = $"No this template: {template}.";
@@ -32,7 +33,7 @@ namespace CodeRunner.Commands
                     return true;
                 }))
                 {
-                    Name = "template",
+                    Name = nameof(CArgument.Template),
                     Arity = ArgumentArity.ExactlyOne,
                 };
                 res.AddArgument(argTemplate);

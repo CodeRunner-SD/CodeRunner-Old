@@ -11,6 +11,7 @@ namespace CodeRunner.Managers
         public const string P_CRRoot = ".cr";
         public const string P_Settings = "settings.json";
         public const string P_TemplatesRoot = "templates";
+        public const string P_OperatorsRoot = "operators";
 
         private readonly JsonFileLoader<AppSettings> settingsLoader;
 
@@ -19,6 +20,7 @@ namespace CodeRunner.Managers
             PathRoot = pathRoot;
             CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, P_CRRoot));
             Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_TemplatesRoot)));
+            Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
             settingsLoader = new JsonFileLoader<AppSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
         }
 
@@ -27,6 +29,8 @@ namespace CodeRunner.Managers
         public Task<AppSettings?> Settings => settingsLoader.Data;
 
         public TemplateManager Templates { get; }
+
+        public OperationManager Operations { get; }
 
         public bool HasInitialized
         {
@@ -51,6 +55,7 @@ namespace CodeRunner.Managers
         {
             await new WorkspaceTemplate().ResolveTo(new CodeRunner.Templates.ResolveContext(), PathRoot.FullName);
             await Templates.Initialize();
+            await Operations.Initialize();
         }
     }
 }

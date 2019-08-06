@@ -1,4 +1,5 @@
-﻿using CodeRunner.Managers.Configurations;
+﻿using CodeRunner.IO;
+using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
 using Newtonsoft.Json;
 using System;
@@ -13,12 +14,9 @@ namespace CodeRunner.Managers.Templates
         {
             PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.P_CRRoot).WithAttributes(FileAttributes.Hidden);
             crRoot.AddDirectory(Workspace.P_TemplatesRoot);
-            crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonConvert.SerializeObject(new AppSettings
+            crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new AppSettings
             {
                 Version = new Version(0, 0, 1, 0)
-            }, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto
             }))));
         }
 

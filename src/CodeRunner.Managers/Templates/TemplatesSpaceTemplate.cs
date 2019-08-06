@@ -3,6 +3,7 @@ using CodeRunner.Templates;
 using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
+using CodeRunner.IO;
 
 namespace CodeRunner.Managers.Templates
 {
@@ -18,17 +19,13 @@ namespace CodeRunner.Managers.Templates
 
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
                 new StringTemplate(
-                    JsonConvert.SerializeObject(
+                    JsonFormatter.Serialize(
                         new PackageFileTemplate(
                             new StringTemplate(
                                 StringTemplate.GetVariableTemplate("name") + $".{ext}",
                                 new Variable[] { new Variable("name").Required() }
                             )
-                        ).UseTemplate(new TextFileTemplate(new StringTemplate(source))),
-                        new JsonSerializerSettings
-                        {
-                            TypeNameHandling = TypeNameHandling.Auto
-                        }
+                        ).UseTemplate(new TextFileTemplate(new StringTemplate(source)))
                     )
                 )
             );
@@ -45,10 +42,7 @@ namespace CodeRunner.Managers.Templates
             AppendCodeFileTemplate("csharp", "cs", Properties.Resources.tpl_csharp, settings);
 
             Package.AddFile(Workspace.P_Settings).Template = new TextFileTemplate(new StringTemplate(
-                JsonConvert.SerializeObject(settings, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto
-                })));
+                JsonFormatter.Serialize(settings)));
         }
 
         private PackageDirectoryTemplate Package { get; set; } = new PackageDirectoryTemplate();

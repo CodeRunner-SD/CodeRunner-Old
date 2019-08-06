@@ -52,10 +52,8 @@ namespace CodeRunner.Managers
                     FileInfo file = new FileInfo(Path.Join(PathRoot.FullName, item.FileName));
                     if (file.Exists)
                     {
-                        using (FileStream ss = file.OpenRead())
-                        {
-                            return await BaseTemplate.Load<PackageFileTemplate>(ss);
-                        }
+                        using FileStream ss = file.OpenRead();
+                        return await BaseTemplate.Load<PackageFileTemplate>(ss);
                     }
                     return null;
             }

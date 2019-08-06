@@ -1,20 +1,12 @@
-﻿using System.IO;
+﻿using CodeRunner.IO;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
     public abstract class BaseTemplate
     {
-        public static async Task<T> Load<T>(Stream stream)
-        {
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(await sr.ReadToEndAsync(), new Newtonsoft.Json.JsonSerializerSettings
-                {
-                    TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto
-                });
-            }
-        }
+        public static Task<T> Load<T>(Stream stream) => JsonFormatter.Deserialize<T>(stream);
 
         public virtual VariableCollection GetVariables()
         {
@@ -33,13 +25,6 @@ namespace CodeRunner.Templates
 
         public abstract Task<TResult> Resolve(ResolveContext context);
 
-        public virtual async Task Save(Stream stream)
-        {
-            using StreamWriter sw = new StreamWriter(stream);
-            await sw.WriteAsync(Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings
-            {
-                TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto
-            }));
-        }
+        public virtual Task Save(Stream stream) => JsonFormatter.Serialize(this, stream);
     }
 }
