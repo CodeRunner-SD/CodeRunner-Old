@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CodeRunner.Loggers
+namespace CodeRunner.Loggings
 {
     public class LogItem
     {

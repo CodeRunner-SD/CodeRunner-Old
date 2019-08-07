@@ -10,6 +10,7 @@ namespace CodeRunner.Helpers
             foreach (string s in args)
             {
                 int id = s.IndexOf('=');
+                if (id == -1) continue;
                 string name = s.Substring(0, id);
                 string value = s.Substring(id + 1);
                 context.WithVariable(name, value);

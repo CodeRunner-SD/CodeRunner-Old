@@ -1,4 +1,6 @@
-﻿using System.CommandLine;
+﻿using CodeRunner.Managers;
+using CodeRunner.Pipelines;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,9 +15,10 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            await Program.Workspace.Initialize();
+            var workspace = operation.Services.Get<Workspace>();
+            await workspace.Initialize();
             return 0;
         }
 

@@ -1,15 +1,15 @@
-﻿using CodeRunner.Loggers;
+﻿using CodeRunner.Loggings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Pipelines
 {
-    public delegate Task<TResult> PipelineOperator<TOrigin, TResult>(ExecutionContext<TOrigin, TResult> context);
+    public delegate Task<TResult> PipelineOperator<TOrigin, TResult>(OperationContext<TOrigin, TResult> context);
 
     public class Pipeline<TOrigin, TResult>
     {
-        public Pipeline(TOrigin origin, Logger logger, ServiceProvider services, IReadOnlyList<PipelineOperator<TOrigin, TResult>> ops)
+        public Pipeline(TOrigin origin, Logger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperator<TOrigin, TResult>)> ops)
         {
             Origin = origin;
             Logger = logger;
@@ -23,7 +23,7 @@ namespace CodeRunner.Pipelines
 
         private ServiceProvider Services { get; }
 
-        private IReadOnlyList<PipelineOperator<TOrigin, TResult>> Ops { get; }
+        private IReadOnlyList<(string, PipelineOperator<TOrigin, TResult>)> Ops { get; }
 
         private Exception? Exception { get; set; }
 
@@ -33,9 +33,11 @@ namespace CodeRunner.Pipelines
 
         public int Position { get; private set; } = 0;
 
+        bool HasEnd { get; set; } = false;
+
         public async Task<bool> Step()
         {
-            if (Exception != null || Position >= Ops.Count)
+            if (Exception != null || Position >= Ops.Count || HasEnd)
             {
                 return false;
             }
@@ -43,8 +45,16 @@ namespace CodeRunner.Pipelines
             LogScope logs = Logger.CreateScope(Position.ToString());
             try
             {
-                ExecutionContext<TOrigin, TResult> context = new ExecutionContext<TOrigin, TResult>(await Services.CreateScope(Position.ToString()), Origin, Result, logs);
-                Result = await Ops[Position].Invoke(context);
+                var op = Ops[Position];
+                OperationContext<TOrigin, TResult> context = new OperationContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, logs);
+                var result = await op.Item2.Invoke(context);
+                if (!context.IgnoreResult)
+                    Result = result;
+                if (context.IsEnd)
+                {
+                    HasEnd = true;
+                    return false;
+                }
             }
             catch (Exception ex)
             {

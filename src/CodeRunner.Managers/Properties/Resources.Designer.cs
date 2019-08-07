@@ -110,5 +110,67 @@ namespace CodeRunner.Managers.Properties {
                 return ResourceManager.GetString("tpl_csharp", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 open System
+        ///
+        ///[&lt;EntryPoint&gt;]
+        ///let main argv = 
+        ///    0
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string tpl_fsharp {
+            get {
+                return ResourceManager.GetString("tpl_fsharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 package main
+        ///import &quot;fmt&quot;
+        ///
+        ///func main() {
+        ///    
+        ///}
+        ///
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string tpl_go {
+            get {
+                return ResourceManager.GetString("tpl_go", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 import java.util.Scanner;
+        ///
+        ///public class Main {
+        ///    public static void main(String[] args) {
+        ///        
+        ///    }
+        ///}
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string tpl_java {
+            get {
+                return ResourceManager.GetString("tpl_java", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 def main():
+        ///
+        ///    return 0
+        ///
+        ///
+        ///if __name__ == &quot;__main__&quot;:
+        ///    exit(main())
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string tpl_python {
+            get {
+                return ResourceManager.GetString("tpl_python", resourceCulture);
+            }
+        }
     }
 }

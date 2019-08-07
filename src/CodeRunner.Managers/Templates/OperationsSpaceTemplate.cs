@@ -40,6 +40,79 @@ namespace CodeRunner.Managers.Templates
                 )
             );
 
+            {
+                var source = new StringTemplate(
+                    StringTemplate.GetVariableTemplate("source"),
+                        new Variable[] {
+                            new Variable("source").Required()
+                        }
+                );
+
+                var output = new StringTemplate(
+                    StringTemplate.GetVariableTemplate("output"),
+                        new Variable[] {
+                            new Variable("output").Required()
+                        }
+                );
+
+                AppendOperationTemplate("c", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("gcc")
+                        .UseArgument(source)
+                        .UseArgument("-Wall")
+                        .UseArgument("-o")
+                        .UseArgument(output),
+                    new CommandLineTemplate()
+                        .UseCommand(output)
+                );
+
+                AppendOperationTemplate("cpp", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("g++")
+                        .UseArgument(source)
+                        .UseArgument("-Wall")
+                        .UseArgument("-o")
+                        .UseArgument(output),
+                    new CommandLineTemplate()
+                        .UseCommand(output)
+                );
+
+                AppendOperationTemplate("csharp", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("csc")
+                        .UseArgument(source)
+                        .UseArgument("-out")
+                        .UseArgument(output),
+                    new CommandLineTemplate()
+                        .UseCommand(output)
+                );
+
+                AppendOperationTemplate("python", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("python")
+                        .UseArgument(source)
+                );
+
+                AppendOperationTemplate("ruby", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("ruby")
+                        .UseArgument(source)
+                );
+
+                AppendOperationTemplate("go", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("go")
+                        .UseCommand("run")
+                        .UseArgument(source)
+                );
+
+                AppendOperationTemplate("javascript", settings,
+                    new CommandLineTemplate()
+                        .UseCommand("node")
+                        .UseArgument(source)
+                );
+            }
+
             Package.AddFile(Workspace.P_Settings).Template = new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings)));
         }
 

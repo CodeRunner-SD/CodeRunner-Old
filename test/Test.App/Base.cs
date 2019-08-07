@@ -1,4 +1,5 @@
 using CodeRunner;
+using CodeRunner.Helpers;
 using CodeRunner.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -28,9 +29,8 @@ namespace Test.App
             using TempDirectory td = new TempDirectory();
             UsingInput("--version", input =>
             {
-                Program.Workspace = new CodeRunner.Managers.Workspace(td.Directory);
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
             });
         }
 
@@ -40,10 +40,9 @@ namespace Test.App
             using TempDirectory td = new TempDirectory();
             UsingInput("init", input =>
             {
-                Program.Workspace = new CodeRunner.Managers.Workspace(td.Directory);
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
-                Assert.IsTrue(Program.Workspace.CheckValid().Result);
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.IsTrue(TestView.Workspace.CheckValid().Result);
             });
         }
 
@@ -53,9 +52,8 @@ namespace Test.App
             using TempDirectory td = new TempDirectory();
             UsingInput(string.Join('\n', "init", "new c", "a"), input =>
             {
-                Program.Workspace = new CodeRunner.Managers.Workspace(td.Directory);
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
                 Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
             });
         }
@@ -64,12 +62,11 @@ namespace Test.App
         public void Run()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "run hello", '\n'), input =>
+            UsingInput(string.Join('\n', "init", "run hello name=sun", '\n'), input =>
              {
-                 Program.Workspace = new CodeRunner.Managers.Workspace(td.Directory);
                  Program.Input = input;
-                 Assert.AreEqual(0, Program.Main(Array.Empty<string>()).Result);
-                 StringAssert.Contains(Program.Console.Out.ToString(), "hello");
+                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                 StringAssert.Contains(TestView.Console.Out.ToString(), "hello");
              });
         }
     }

@@ -30,27 +30,28 @@ namespace Test.Core
         private readonly PipelineOperator<int, int> plus = context =>
         {
             int arg = context.Services.Get<int>();
-            context.Logs.Info($"plus with {arg}");
+            context.Logs.Information($"plus with {arg}");
             return Task.FromResult(context.Result + arg);
         };
         private readonly PipelineOperator<int, int> multiply = context =>
         {
             int arg = context.Services.Get<int>();
-            context.Logs.Info($"multiply with {arg}");
+            context.Logs.Information($"multiply with {arg}");
             return Task.FromResult(context.Result * arg);
         };
         private readonly PipelineOperator<int, int> expNotImp = context =>
         {
             context.Logs.Error("exception!");
+            context.Logs.Fatal("exception!");
             throw new NotImplementedException();
         };
 
         [TestMethod]
         public void Basic()
         {
-            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(multiply);
+            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use("", initial).Use("", plus).Use("", plus).Use("", multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger()).Result;
                 PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.IsTrue(res.IsOk);
                 Assert.AreEqual(8, res.Result);
@@ -60,14 +61,14 @@ namespace Test.Core
         [TestMethod]
         public void Exception()
         {
-            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use(initial).Use(plus).Use(plus).Use(expNotImp).Use(multiply);
+            PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use("", initial).Use("", plus).Use("", plus).Use("", expNotImp).Use("", multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggers.Logger()).Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger()).Result;
                 PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.AreEqual(4, res.Result);
                 Assert.IsTrue(res.IsError);
                 Assert.IsInstanceOfType(res.Exception, typeof(NotImplementedException));
-                Assert.AreEqual(CodeRunner.Loggers.LogLevel.Error, res.Logs.Last().Level);
+                Assert.AreEqual(CodeRunner.Loggings.LogLevel.Error, res.Logs.Last().Level);
             }
         }
     }

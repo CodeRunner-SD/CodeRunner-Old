@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace CodeRunner.Loggers
+namespace CodeRunner.Loggings
 {
     public enum LogLevel
     {
-        Info,
+        Debug,
+        Information,
         Warning,
-        Error
+        Error,
+        Fatal
     }
 
     public class Logger

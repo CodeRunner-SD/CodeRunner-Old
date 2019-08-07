@@ -1,4 +1,4 @@
-﻿using CodeRunner.Loggers;
+﻿using CodeRunner.Loggings;
 using System;
 
 namespace CodeRunner.Pipelines

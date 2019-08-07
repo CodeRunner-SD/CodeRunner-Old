@@ -39,6 +39,10 @@ namespace CodeRunner.Managers.Templates
             AppendCodeFileTemplate("c", "c", Properties.Resources.tpl_c, settings);
             AppendCodeFileTemplate("cpp", "cpp", Properties.Resources.tpl_cpp, settings);
             AppendCodeFileTemplate("csharp", "cs", Properties.Resources.tpl_csharp, settings);
+            AppendCodeFileTemplate("python", "py", Properties.Resources.tpl_python, settings);
+            AppendCodeFileTemplate("fsharp", "fs", Properties.Resources.tpl_fsharp, settings);
+            AppendCodeFileTemplate("go", "go", Properties.Resources.tpl_go, settings);
+            AppendCodeFileTemplate("java", "java", Properties.Resources.tpl_java, settings);
 
             Package.AddFile(Workspace.P_Settings).Template = new TextFileTemplate(new StringTemplate(
                 JsonFormatter.Serialize(settings)));

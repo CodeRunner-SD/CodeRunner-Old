@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managers.Configurations
 {
-    public delegate Task<bool> OperationCommandExecutingHandler(Operation sender, int index);
+    public delegate Task<bool> OperationCommandExecutingHandler(Operation sender, int index, ProcessStartInfo process, string command);
 
     public delegate Task<bool> OperationCommandExecutedHandler(Operation sender, int index, ExecutorResult result);
 
@@ -42,20 +42,20 @@ namespace CodeRunner.Managers.Configurations
             {
                 CommandLineTemplate v = Items[index];
                 string cmd = await v.Resolve(context);
-
-                if (CommandExecuting != null)
-                {
-                    if (!await CommandExecuting.Invoke(this, index))
-                    {
-                        return false;
-                    }
-                }
-
                 ProcessStartInfo res = new ProcessStartInfo
                 {
                     FileName = shell,
                     Arguments = $"-c {cmd}"
                 };
+
+                if (CommandExecuting != null)
+                {
+                    if (!await CommandExecuting.Invoke(this, index, res, cmd))
+                    {
+                        return false;
+                    }
+                }
+
                 using CLIExecutor exe = new CLIExecutor(res);
                 ExecutorResult result = await exe.Run();
                 if (CommandExecuted != null)

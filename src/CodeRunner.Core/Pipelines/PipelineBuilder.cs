@@ -1,4 +1,4 @@
-﻿using CodeRunner.Loggers;
+﻿using CodeRunner.Loggings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace CodeRunner.Pipelines
     {
         private List<(string, object)> Configures { get; } = new List<(string, object)>();
 
-        private List<PipelineOperator<TOrigin, TResult>> Ops { get; } = new List<PipelineOperator<TOrigin, TResult>>();
+        private List<(string, PipelineOperator<TOrigin, TResult>)> Ops { get; } = new List<(string, PipelineOperator<TOrigin, TResult>)>();
 
         public PipelineBuilder<TOrigin, TResult> Configure(string name, Func<ServiceScope, Task> func)
         {
@@ -23,9 +23,9 @@ namespace CodeRunner.Pipelines
             return this;
         }
 
-        public PipelineBuilder<TOrigin, TResult> Use(PipelineOperator<TOrigin, TResult> op)
+        public PipelineBuilder<TOrigin, TResult> Use(string name, PipelineOperator<TOrigin, TResult> op)
         {
-            Ops.Add(op);
+            Ops.Add((name,op));
             return this;
         }
 

@@ -1,5 +1,7 @@
 ﻿using CodeRunner.Helpers;
+using CodeRunner.Managers;
 using CodeRunner.Managers.Configurations;
+using CodeRunner.Pipelines;
 using CodeRunner.Templates;
 using System;
 using System.CommandLine;
@@ -19,56 +21,49 @@ namespace CodeRunner.Commands
                 TreatUnmatchedTokensAsErrors = false
             };
             {
-                Argument<BaseTemplate?> argTemplate = new Argument<BaseTemplate?>(new TryConvertArgument<BaseTemplate?>((SymbolResult symbolResult, out BaseTemplate? value) =>
-                {
-                    value = null;
-                    string template = symbolResult.Token.Value;
-                    TemplateItem? tplItem = Program.Workspace.Templates.GetItem(template).Result;
-                    if (tplItem == null)
-                    {
-                        symbolResult.ErrorMessage = $"No this template: {template}.";
-                        return false;
-                    }
-                    BaseTemplate? tpl = Program.Workspace.Templates.Get(tplItem).Result;
-                    if (tpl == null)
-                    {
-                        symbolResult.ErrorMessage = $"Can not load this template: {template}.";
-                        return false;
-                    }
-                    value = tpl;
-                    return true;
-                }))
+                Argument<string> argTemplate = new Argument<string>()
                 {
                     Name = nameof(CArgument.Template),
                     Arity = ArgumentArity.ExactlyOne,
                 };
-                argTemplate.AddSuggestionSource(text =>
-                {
-                    return Program.Workspace.Templates.Settings.Result?.Items?.Keys ?? Array.Empty<string>();
-                });
                 res.AddArgument(argTemplate);
             }
 
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
+            var workspace = operation.Services.Get<Workspace>();
+            var terminal = console.GetTerminal();
+            string template = argument.Template;
+            TemplateItem? tplItem = await workspace.Templates.GetItem(template);
+            if (tplItem == null)
+            {
+                terminal.OutputErrorLine($"No this template: {template}.");
+                return 1;
+            }
+            BaseTemplate? tpl = await workspace.Templates.Get(tplItem);
+            if (tpl == null)
+            {
+                terminal.OutputErrorLine($"Can not load this template: {template}.");
+                return 1;
+            }
+
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
-            resolveContext.WithVariable(DirectoryTemplate.Var.Name, Program.Workspace.PathRoot.FullName);
-            ITerminal terminal = console.GetTerminal();
-            if (!terminal.FillVariables(argument.Template!.GetVariables(), resolveContext))
+            resolveContext.WithVariable(DirectoryTemplate.Var.Name, workspace.PathRoot.FullName);
+            if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
             {
                 return -1;
             }
 
-            await argument.Template.DoResolve(resolveContext);
+            await tpl.DoResolve(resolveContext);
             return 0;
         }
 
         public class CArgument
         {
-            public BaseTemplate? Template { get; set; } = null;
+            public string Template { get; set; } = "";
         }
     }
 }

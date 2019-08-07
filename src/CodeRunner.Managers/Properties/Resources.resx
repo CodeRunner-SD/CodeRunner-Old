@@ -127,4 +127,16 @@
   <data name="tpl_csharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tpl_csharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
+  <data name="tpl_fsharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tpl_fsharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  </data>
+  <data name="tpl_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tpl_go.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  </data>
+  <data name="tpl_java" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tpl_java.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  </data>
+  <data name="tpl_python" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tpl_python.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  </data>
 </root>

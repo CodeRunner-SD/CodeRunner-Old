@@ -1,5 +1,7 @@
 ﻿using CodeRunner.Helpers;
+using CodeRunner.Managers;
 using CodeRunner.Managers.Configurations;
+using CodeRunner.Pipelines;
 using CodeRunner.Templates;
 using System;
 using System.CommandLine;
@@ -19,69 +21,75 @@ namespace CodeRunner.Commands
                 TreatUnmatchedTokensAsErrors = false
             };
             {
-                Argument<Operation?> argOperator = new Argument<Operation?>(new TryConvertArgument<Operation?>((SymbolResult symbolResult, out Operation? value) =>
-                {
-                    value = null;
-                    string _operator = symbolResult.Token.Value;
-                    OperationItem? tplItem = Program.Workspace.Operations.GetItem(_operator).Result;
-                    if (tplItem == null)
-                    {
-                        symbolResult.ErrorMessage = $"No this operation: {_operator}.";
-                        return false;
-                    }
-                    Operation? tpl = Program.Workspace.Operations.Get(tplItem).Result;
-                    if (tpl == null)
-                    {
-                        symbolResult.ErrorMessage = $"Can not load this operation: {_operator}.";
-                        return false;
-                    }
-                    value = tpl;
-                    return true;
-                }))
+                Argument<string> argOperator = new Argument<string>()
                 {
                     Name = nameof(CArgument.Operation),
                     Arity = ArgumentArity.ExactlyOne,
                 };
-                argOperator.AddSuggestionSource(text =>
-                {
-                    return Program.Workspace.Operations.Settings.Result?.Items?.Keys ?? Array.Empty<string>();
-                });
                 res.AddArgument(argOperator);
             }
 
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
+            var workspace = operation.Services.Get<Workspace>();
+            var terminal = console.GetTerminal();
+            string op = argument.Operation;
+            OperationItem? tplItem = await workspace.Operations.GetItem(op);
+            if (tplItem == null)
+            {
+                terminal.OutputErrorLine($"No this operation: {op}.");
+                return 1;
+            }
+            Operation? tpl = await workspace.Operations.Get(tplItem);
+            if (tpl == null)
+            {
+                terminal.OutputErrorLine($"Can not load this operation: {op}.");
+                return 1;
+            }
+
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
-            AppSettings settings = (await Program.Workspace.Settings)!;
+            AppSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
-            ITerminal terminal = console.GetTerminal();
-            if (!terminal.FillVariables(argument.Operation!.GetVariables(), resolveContext))
+            if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
             {
                 return -1;
             }
 
-            argument.Operation.CommandExecuted += (sender, index, result) =>
+            tpl.CommandExecuting += (sender, index, process, command) =>
             {
-                if (result.State != Executors.ExecutorState.Ended || result.ExitCode != 0)
-                {
-                    return Task.FromResult(false);
-                }
-
-                console.Out.Write(result.Output);
-                console.Error.Write(result.Error);
-
+                terminal.OutputInformationLine($"({index + 1}/{sender.Items.Count}) {command}");
+                process.WorkingDirectory = workspace.PathRoot.FullName;
                 return Task.FromResult(true);
             };
-            await argument.Operation.DoResolve(resolveContext);
+
+            tpl.CommandExecuted += (sender, index, result) =>
+            {
+                if (!string.IsNullOrEmpty(result.Output) || !string.IsNullOrEmpty(result.Error))
+                {
+                    terminal.OutputLine("-----");
+                    terminal.Output(result.Output);
+                    terminal.OutputError(result.Error);
+                    terminal.OutputLine("-----");
+                }
+
+                if (result.State != Executors.ExecutorState.Ended || result.ExitCode != 0)
+                {
+                    terminal.OutputErrorLine($"({index + 1}/{sender.Items.Count}) Exited with {result.ExitCode}.");
+                    return Task.FromResult(false);
+                }
+                terminal.OutputLine($"({index + 1}/{sender.Items.Count}) Exited with {result.ExitCode}.");
+                return Task.FromResult(true);
+            };
+            await tpl.DoResolve(resolveContext);
             return 0;
         }
 
         public class CArgument
         {
-            public Operation? Operation { get; set; } = null;
+            public string Operation { get; set; } = "";
         }
 
 
