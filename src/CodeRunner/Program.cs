@@ -1,12 +1,10 @@
 ﻿using CodeRunner.Commands;
 using CodeRunner.Helpers;
-using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Managers;
 using CodeRunner.Pipelines;
 using System;
 using System.CommandLine;
-using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
 using System.IO;
@@ -35,7 +33,99 @@ namespace CodeRunner
 
         internal static bool EnableRepl { get; set; } = false;
 
-        static bool Prompt(ITerminal terminal)
+        #region pipelines
+
+        private static readonly Action<ServiceScope> config = services =>
+        {
+            Input = Console.In;
+            services.Add<IConsole>(new SystemConsole());
+        };
+
+        private static readonly Action<ServiceScope> create_cmd = services =>
+        {
+            {
+                RootCommand replCommand = new RootCommand("Code-runner")
+                {
+                    TreatUnmatchedTokensAsErrors = false,
+                };
+                replCommand.AddCommand(new InitCommand().Build());
+                replCommand.AddCommand(new NewCommand().Build());
+                replCommand.AddCommand(new RunCommand().Build());
+                replCommand.AddCommand(new DebugCommand().Build());
+                services.Add<Command>(replCommand, ReplCommandId);
+            }
+            {
+                Command cliCommand = new CliCommand().Build();
+                services.Add<Command>(cliCommand, CliCommandId);
+            }
+        };
+
+        private static readonly Action<ServiceScope> config_test = services =>
+        {
+            TestTerminal console = new TestTerminal();
+            services.Add<IConsole>(console);
+            if (Input == null)
+            {
+                throw new ArgumentNullException(nameof(Input));
+            }
+        };
+
+        private static readonly PipelineOperator<string[], int> cli = async (context) =>
+        {
+            Parser cliCommand = CommandLines.CreateParser(context.Services.Get<Command>(CliCommandId), context);
+            IConsole console = context.Services.Get<IConsole>();
+            int exitCode = await cliCommand.InvokeAsync(context.Origin, console);
+            if (!EnableRepl)
+            {
+                context.IsEnd = true;
+                return exitCode;
+            }
+            return 0;
+        };
+
+        private static readonly PipelineOperator<string[], int> test_view = (context) =>
+        {
+            IConsole console = context.Services.Get<IConsole>();
+            Workspace workspace = context.Services.Get<Workspace>();
+            TestView.Console = console;
+            TestView.Workspace = workspace;
+            context.IgnoreResult = true;
+            return Task.FromResult(0);
+        };
+
+        private static readonly PipelineOperator<string[], int> repl = async (context) =>
+        {
+            IConsole console = context.Services.Get<IConsole>();
+            Parser replCommand = CommandLines.CreateParser(context.Services.Get<Command>(ReplCommandId), context);
+            ITerminal terminal = console.GetTerminal();
+            Workspace workspace = context.Services.Get<Workspace>();
+
+            terminal.OutputLine(workspace.PathRoot.FullName);
+
+            while (Prompt(terminal) && !console.IsEndOfInput())
+            {
+                string? line = console.InputLine();
+                if (line != null)
+                {
+                    if (line == "quit")
+                    {
+                        break;
+                    }
+
+                    int exitCode = await replCommand.InvokeAsync(line, console);
+                    if (exitCode != 0)
+                    {
+                        terminal.OutputErrorLine($"Executed with code {exitCode}.");
+                    }
+                }
+            }
+
+            return 0;
+        };
+
+        #endregion
+
+        private static bool Prompt(ITerminal terminal)
         {
             terminal.Output("> ");
             return true;
@@ -46,107 +136,26 @@ namespace CodeRunner
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
 
-            Logger = new Logger();
+            Logger = new Logger(nameof(Main), LogLevel.Debug);
 
-            var builder = new PipelineBuilder<string[], int>();
+            PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>();
 
-            builder.Configure("create-cmd", services =>
-             {
-                 {
-                     var replCommand = new RootCommand("Code-runner")
-                     {
-                         TreatUnmatchedTokensAsErrors = false,
-                     };
-                     replCommand.AddCommand(new InitCommand().Build());
-                     replCommand.AddCommand(new NewCommand().Build());
-                     replCommand.AddCommand(new RunCommand().Build());
-                     services.Add<Command>(replCommand, ReplCommandId);
-                 }
-                 {
-                     var cliCommand = new CliCommand().Build();
-                     services.Add<Command>(cliCommand, CliCommandId);
-                 }
-             });
+            builder.Configure(nameof(create_cmd), create_cmd);
 
             if (Environment == EnvironmentType.Test)
-            {
-                builder.Configure("config-test", services =>
-                  {
-                      var console = new TestTerminal();
-                      services.Add<IConsole>(console);
-                      if (Input == null)
-                          throw new ArgumentNullException(nameof(Input));
-                  });
-            }
+                builder.Configure(nameof(config_test), config_test);
             else
-            {
-                builder.Configure("config", services =>
-                {
-                    Input = Console.In;
-                    services.Add<IConsole>(new SystemConsole());
-                });
-            }
+                builder.Configure(nameof(config), config);
 
-            builder
-                .Use("cli", async (context) =>
-                {
-                    var cliCommand = CommandLines.CreateParser(context.Services.Get<Command>(CliCommandId), context);
-                    var console = context.Services.Get<IConsole>();
-                    int exitCode = await cliCommand.InvokeAsync(args, console);
-                    if (!EnableRepl)
-                    {
-                        context.IsEnd = true;
-                        return exitCode;
-                    }
-                    return 0;
-                });
+            builder.Use(nameof(cli), cli);
 
             if (Environment == EnvironmentType.Test)
-            {
-                builder
-                    .Use("test-view", (context) =>
-                    {
-                        var console = context.Services.Get<IConsole>();
-                        var workspace = context.Services.Get<Workspace>();
-                        TestView.Console = console;
-                        TestView.Workspace = workspace;
-                        context.IgnoreResult = true;
-                        return Task.FromResult(0);
-                    });
-            }
+                builder.Use(nameof(test_view), test_view);
 
-            builder.Use("repl", async (context) =>
-                {
-                    var console = context.Services.Get<IConsole>();
-                    var replCommand = CommandLines.CreateParser(context.Services.Get<Command>(ReplCommandId), context);
-                    var terminal = console.GetTerminal();
-                    var workspace = context.Services.Get<Workspace>();
+            builder.Use(nameof(repl), repl);
 
-                    terminal.OutputLine(workspace.PathRoot.FullName);
-
-                    while (Prompt(terminal) && !console.IsEndOfInput())
-                    {
-                        string? line = console.InputLine();
-                        if (line != null)
-                        {
-                            if (line == "quit")
-                            {
-                                break;
-                            }
-
-                            var exitCode = await replCommand.InvokeAsync(line, console);
-                            if (exitCode != 0)
-                            {
-                                terminal.OutputErrorLine($"Executed with code {exitCode}.");
-                            }
-                        }
-                    }
-
-                    return 0;
-                });
-
-            var pipeline = await builder.Build(args, Logger);
-            var result = await pipeline.Consume();
+            Pipeline<string[], int> pipeline = await builder.Build(args, Logger);
+            PipelineResult<int> result = await pipeline.Consume();
             if (result.IsOk)
             {
                 return result.Result;

@@ -15,6 +15,7 @@ namespace CodeRunner.Pipelines
             Logger = logger;
             Services = services;
             Ops = ops;
+            Logs = Logger.CreateScope("pipeline");
         }
 
         private TOrigin Origin { get; }
@@ -33,7 +34,9 @@ namespace CodeRunner.Pipelines
 
         public int Position { get; private set; } = 0;
 
-        bool HasEnd { get; set; } = false;
+        private LogScope Logs { get; set; }
+
+        private bool HasEnd { get; set; } = false;
 
         public async Task<bool> Step()
         {
@@ -42,11 +45,15 @@ namespace CodeRunner.Pipelines
                 return false;
             }
 
-            LogScope logs = Logger.CreateScope(Position.ToString());
+            var op = Ops[Position];
+
+            Logs.Debug($"Executing {op.Item1} at {Position}.");
+
+            var subLogScope = Logger.CreateScope(op.Item1);
+
             try
             {
-                var op = Ops[Position];
-                OperationContext<TOrigin, TResult> context = new OperationContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, logs);
+                OperationContext<TOrigin, TResult> context = new OperationContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, subLogScope);
                 var result = await op.Item2.Invoke(context);
                 if (!context.IgnoreResult)
                     Result = result;
@@ -59,9 +66,11 @@ namespace CodeRunner.Pipelines
             catch (Exception ex)
             {
                 Exception = ex;
-                logs.Error(ex);
+                subLogScope.Error(ex);
                 return false;
             }
+
+            Logs.Debug($"Executed {op.Item1} at {Position}.");
 
             Position++;
             return true;
@@ -69,12 +78,9 @@ namespace CodeRunner.Pipelines
 
         public async Task<PipelineResult<TResult>> Consume()
         {
-            while (await Step())
-            {
-                ;
-            }
+            while (await Step()) ;
 
-            return new PipelineResult<TResult>(Result, Exception, Logger.Contents.ToArray());
+            return new PipelineResult<TResult>(Result, Exception, Logger.GetAll());
         }
     }
 }

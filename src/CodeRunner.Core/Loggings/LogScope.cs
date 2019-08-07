@@ -4,24 +4,29 @@ namespace CodeRunner.Loggings
 {
     public class LogScope
     {
-        public LogScope(Logger inner, string name)
+        public LogScope(string name, Logger source)
         {
-            Inner = inner;
+            Source = source;
             Name = name;
         }
 
-        private Logger Inner { get; }
+        private Logger Source { get; }
 
         public string Name { get; }
 
         public LogScope CreateScope(string name)
         {
-            return new LogScope(Inner, $"{Name}/{name}");
+            return new LogScope($"{Name}/{name}", Source);
+        }
+
+        public Logger CreateLogger(string name, LogLevel level)
+        {
+            return new Logger($"{Name}/{name}", level, Source);
         }
 
         public void Error(Exception exception)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Error,
                 Content = exception.ToString(),
@@ -32,7 +37,7 @@ namespace CodeRunner.Loggings
 
         public void Fatal(Exception exception)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Fatal,
                 Content = exception.ToString(),
@@ -43,7 +48,7 @@ namespace CodeRunner.Loggings
 
         public void Error(string content)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Error,
                 Content = content,
@@ -54,7 +59,7 @@ namespace CodeRunner.Loggings
 
         public void Warning(string content)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Warning,
                 Content = content,
@@ -65,7 +70,7 @@ namespace CodeRunner.Loggings
 
         public void Information(string content)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Information,
                 Content = content,
@@ -76,7 +81,7 @@ namespace CodeRunner.Loggings
 
         public void Fatal(string content)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Fatal,
                 Content = content,
@@ -87,7 +92,7 @@ namespace CodeRunner.Loggings
 
         public void Debug(string content)
         {
-            Inner.Contents.Add(new LogItem
+            Source.Log(new LogItem
             {
                 Level = LogLevel.Debug,
                 Content = content,

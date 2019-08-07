@@ -51,7 +51,7 @@ namespace Test.Core
         {
             PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use("", initial).Use("", plus).Use("", plus).Use("", multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger()).Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)).Result;
                 PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.IsTrue(res.IsOk);
                 Assert.AreEqual(8, res.Result);
@@ -63,7 +63,7 @@ namespace Test.Core
         {
             PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use("", initial).Use("", plus).Use("", plus).Use("", expNotImp).Use("", multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger()).Result;
+                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)).Result;
                 PipelineResult<int> res = pipeline.Consume().Result;
                 Assert.AreEqual(4, res.Result);
                 Assert.IsTrue(res.IsError);

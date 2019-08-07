@@ -19,7 +19,7 @@ namespace CodeRunner.Commands
                 {
                     Arity = ArgumentArity.ExactlyOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Command)}", "Command to execute.")
+                var optCommand = new Option($"--{nameof(CArgument.Command)}".ToLower(), "Command to execute.")
                 {
                     Argument = arg
                 };
@@ -27,11 +27,22 @@ namespace CodeRunner.Commands
                 res.AddOption(optCommand);
             }
             {
+                var arg = new Argument<bool>(nameof(CArgument.Verbose), false)
+                {
+                    Arity = ArgumentArity.ZeroOrOne
+                };
+                var optCommand = new Option($"--{nameof(CArgument.Verbose)}".ToLower(), "Enable debug mode for more logs.")
+                {
+                    Argument = arg
+                };
+                res.AddOption(optCommand);
+            }
+            {
                 var arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory), new DirectoryInfo(Directory.GetCurrentDirectory()))
                 {
                     Arity = ArgumentArity.ZeroOrOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Directory)}", "Set working directory.")
+                var optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
                 {
                     Argument = arg
                 };
@@ -52,6 +63,15 @@ namespace CodeRunner.Commands
                 return await repl.InvokeAsync(argument.Command, console);
             }
 
+            if (argument.Verbose)
+            {
+                Program.Logger.Level = Loggings.LogLevel.Debug;
+            }
+            else
+            {
+                Program.Logger.Level = Loggings.LogLevel.Information;
+            }
+
             Program.EnableRepl = true;
 
             return 0;
@@ -62,6 +82,8 @@ namespace CodeRunner.Commands
             public string Command { get; set; } = "";
 
             public DirectoryInfo? Directory { get; set; }
+
+            public bool Verbose { get; set; } = false;
         }
     }
 }
