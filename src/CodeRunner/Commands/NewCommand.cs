@@ -50,7 +50,7 @@ namespace CodeRunner.Commands
                 return 1;
             }
 
-            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
+            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             resolveContext.WithVariable(DirectoryTemplate.Var.Name, workspace.PathRoot.FullName);
             if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
             {

@@ -12,18 +12,37 @@ namespace CodeRunner.Commands
         public override Command Configure()
         {
             Command res = new Command("init", "Initialize code-runner directory.");
+            {
+                var arg = new Argument<bool>(nameof(CArgument.Delete), false)
+                {
+                    Arity = ArgumentArity.ZeroOrOne
+                };
+                var optCommand = new Option($"--{nameof(CArgument.Delete)}".ToLower(), "Remove all code-runner files.")
+                {
+                    Argument = arg
+                };
+                res.AddOption(optCommand);
+            }
             return res;
         }
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
             var workspace = operation.Services.Get<Workspace>();
-            await workspace.Initialize();
+            if (argument.Delete)
+            {
+                await workspace.Clear();
+            }
+            else
+            {
+                await workspace.Initialize();
+            }
             return 0;
         }
 
         public class CArgument
         {
+            public bool Delete { get; set; } = false;
         }
     }
 }

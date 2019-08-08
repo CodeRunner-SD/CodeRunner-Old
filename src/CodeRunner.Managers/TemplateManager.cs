@@ -16,14 +16,26 @@ namespace CodeRunner.Managers
         {
             switch (item.Type)
             {
-                case TemplateType.PackageFile:
-                    FileInfo file = new FileInfo(Path.Join(PathRoot.FullName, item.FileName));
-                    if (file.Exists)
+                case TemplateType.File:
                     {
-                        using FileStream ss = file.OpenRead();
-                        return await BaseTemplate.Load<PackageFileTemplate>(ss);
+                        FileInfo file = new FileInfo(Path.Join(PathRoot.FullName, item.FileName));
+                        if (file.Exists)
+                        {
+                            using FileStream ss = file.OpenRead();
+                            return await BaseTemplate.Load<PackageFileTemplate>(ss);
+                        }
+                        return null;
                     }
-                    return null;
+                case TemplateType.Directory:
+                    {
+                        FileInfo file = new FileInfo(Path.Join(PathRoot.FullName, item.FileName));
+                        if (file.Exists)
+                        {
+                            using FileStream ss = file.OpenRead();
+                            return await BaseTemplate.Load<PackageDirectoryTemplate>(ss);
+                        }
+                        return null;
+                    }
             }
             return null;
         }

@@ -50,9 +50,15 @@ namespace CodeRunner.Commands
                 return 1;
             }
 
-            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnmatchedTokens);
+            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             AppSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
+            {
+                if (operation.Services.TryGet<WorkItem>(out var item))
+                {
+                    resolveContext.WithVariable(OperationVariables.InputPath.Name, item.Target.FullName);
+                }
+            }
             if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
             {
                 return -1;
@@ -75,13 +81,18 @@ namespace CodeRunner.Commands
                     terminal.OutputLine("-----");
                 }
 
-                if (result.State != Executors.ExecutorState.Ended || result.ExitCode != 0)
+                terminal.Output($"({index + 1}/{sender.Items.Count}) {result.State.ToString()} -> ");
+
+                if (result.ExitCode != 0)
                 {
-                    terminal.OutputErrorLine($"({index + 1}/{sender.Items.Count}) Exited with {result.ExitCode}.");
-                    return Task.FromResult(false);
+                    terminal.OutputError(result.ExitCode.ToString());
                 }
-                terminal.OutputLine($"({index + 1}/{sender.Items.Count}) Exited with {result.ExitCode}.");
-                return Task.FromResult(true);
+                else
+                {
+                    terminal.Output(result.ExitCode.ToString());
+                }
+                terminal.OutputLine(string.Format(" ({0:f2}MB {1:f2}s)", (double)result.MaximumMemory / 1024 / 1024, result.RunningTime.TotalSeconds));
+                return Task.FromResult(result.State == Executors.ExecutorState.Ended && result.ExitCode == 0);
             };
             await tpl.DoResolve(resolveContext);
             return 0;

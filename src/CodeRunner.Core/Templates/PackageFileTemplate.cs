@@ -31,7 +31,7 @@ namespace CodeRunner.Templates
             if (Template != null)
             {
                 string name = await Name.Resolve(context);
-                FileInfo file = await Template!.ResolveTo(context, Path.Join(res.FullName, name));
+                FileInfo file = await Template.ResolveTo(context, Path.Join(res.FullName, name));
                 file.Attributes = Attributes;
             }
             return res;
@@ -83,7 +83,7 @@ namespace CodeRunner.Templates
             res.Collect(Name);
             if (Template != null)
             {
-                res.Collect(Template!);
+                res.Collect(Template);
                 res.Remove(FileTemplate.Var);
             }
             return res;

@@ -21,6 +21,8 @@ namespace CodeRunner.Managers
             Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
         }
 
+        private DirectoryInfo CRRoot { get; set; }
+
         public TemplateManager Templates { get; }
 
         public OperationManager Operations { get; }
@@ -34,14 +36,19 @@ namespace CodeRunner.Managers
             }
         }
 
-        private DirectoryInfo CRRoot { get; set; }
-
         public Task<bool> CheckValid()
         {
             PathRoot.Refresh();
             CRRoot.Refresh();
 
             return Task.FromResult(PathRoot.Exists && CRRoot.Exists);
+        }
+
+        public Task Clear()
+        {
+            if (CRRoot.Exists)
+                CRRoot.Delete(true);
+            return Task.CompletedTask;
         }
 
         public override async Task Initialize()

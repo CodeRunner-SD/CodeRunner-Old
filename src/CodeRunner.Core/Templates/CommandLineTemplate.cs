@@ -103,7 +103,7 @@ namespace CodeRunner.Templates
             }
             if (Raw != null)
             {
-                items.Add(await Raw!.Resolve(context));
+                items.Add(await Raw.Resolve(context));
             }
 
             return string.Join(' ', items);
@@ -119,7 +119,7 @@ namespace CodeRunner.Templates
             res.Collect(Options.Values);
             if (Raw != null)
             {
-                res.Collect(Raw!);
+                res.Collect(Raw);
             }
 
             return res;

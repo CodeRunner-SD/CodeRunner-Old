@@ -42,16 +42,16 @@ namespace CodeRunner.Managers.Templates
 
             {
                 var source = new StringTemplate(
-                    StringTemplate.GetVariableTemplate("source"),
+                    StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
                         new Variable[] {
-                            new Variable("source").Required()
+                            OperationVariables.InputPath
                         }
                 );
 
                 var output = new StringTemplate(
-                    StringTemplate.GetVariableTemplate("output"),
+                    StringTemplate.GetVariableTemplate(OperationVariables.OutputPath.Name),
                         new Variable[] {
-                            new Variable("output").Required()
+                            OperationVariables.OutputPath
                         }
                 );
 

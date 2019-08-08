@@ -38,23 +38,34 @@ namespace Test.App
         public void Init()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput("init", input =>
+            UsingInput(string.Join('\n', "init"), input =>
             {
                 Program.Input = input;
                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
                 Assert.IsTrue(TestView.Workspace.CheckValid().Result);
             });
-        }
-
-        [TestMethod]
-        public void New()
-        {
-            using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "new c", "a"), input =>
+            UsingInput(string.Join('\n', "init --delete"), input =>
             {
                 Program.Input = input;
                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
-                Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
+                Assert.IsFalse(TestView.Workspace.CheckValid().Result);
+            });
+        }
+
+        [TestMethod]
+        public void NewNow()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "init", "new c", "a"), input =>
+             {
+                 Program.Input = input;
+                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                 Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
+             });
+            UsingInput(string.Join('\n', "now -f a.c"), input =>
+            {
+                Program.Input = input;
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
             });
         }
 
@@ -62,12 +73,34 @@ namespace Test.App
         public void Run()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "run hello name=sun", '\n'), input =>
+            UsingInput(string.Join('\n', "init", "run hello -- name=sun", '\n'), input =>
              {
                  Program.Input = input;
                  Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
-                 StringAssert.Contains(TestView.Console.Out.ToString(), "hello");
+                 StringAssert.Contains(TestView.Console.Out.ToString(), "hello sun");
              });
+        }
+
+        [TestMethod]
+        public void Debug()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "debug"), input =>
+            {
+                Program.Input = input;
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+            });
+        }
+
+        [TestMethod]
+        public void Clear()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "clear"), input =>
+            {
+                Program.Input = input;
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+            });
         }
     }
 }

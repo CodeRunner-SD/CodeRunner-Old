@@ -2,6 +2,7 @@
 {
     public enum TemplateType
     {
-        PackageFile
+        File,
+        Directory
     }
 }

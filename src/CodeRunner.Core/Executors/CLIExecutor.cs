@@ -130,7 +130,7 @@ namespace CodeRunner.Executors
                 {
                     if (Process != null)
                     {
-                        Process!.Dispose();
+                        Process.Dispose();
                     }
                 }
 

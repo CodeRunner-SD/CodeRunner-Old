@@ -38,19 +38,19 @@ namespace CodeRunner
         private static readonly Action<ServiceScope> config = services =>
         {
             Input = Console.In;
-            services.Add<IConsole>(new SystemConsole());
+            var console = new SystemConsole();
+            services.Add<IConsole>(console);
         };
 
         private static readonly Action<ServiceScope> create_cmd = services =>
         {
             {
-                RootCommand replCommand = new RootCommand("Code-runner")
-                {
-                    TreatUnmatchedTokensAsErrors = false,
-                };
+                RootCommand replCommand = new RootCommand("Code-runner");
                 replCommand.AddCommand(new InitCommand().Build());
                 replCommand.AddCommand(new NewCommand().Build());
+                replCommand.AddCommand(new NowCommand().Build());
                 replCommand.AddCommand(new RunCommand().Build());
+                replCommand.AddCommand(new ClearCommand().Build());
                 replCommand.AddCommand(new DebugCommand().Build());
                 services.Add<Command>(replCommand, ReplCommandId);
             }
@@ -102,7 +102,7 @@ namespace CodeRunner
 
             terminal.OutputLine(workspace.PathRoot.FullName);
 
-            while (Prompt(terminal) && !console.IsEndOfInput())
+            while (Prompt(context, terminal) && !console.IsEndOfInput())
             {
                 string? line = console.InputLine();
                 if (line != null)
@@ -125,8 +125,12 @@ namespace CodeRunner
 
         #endregion
 
-        private static bool Prompt(ITerminal terminal)
+        private static bool Prompt(OperationContext context, ITerminal terminal)
         {
+            if(context.Services.TryGet<WorkItem>(out var workItem))
+            {
+                terminal.Output(workItem.RelativePath);
+            }
             terminal.Output("> ");
             return true;
         }
@@ -162,6 +166,7 @@ namespace CodeRunner
             }
             else
             {
+                Console.Error.WriteLine(result.Exception!.ToString());
                 return -1;
             }
         }

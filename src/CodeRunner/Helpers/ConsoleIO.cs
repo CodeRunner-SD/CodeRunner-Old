@@ -107,25 +107,43 @@ namespace CodeRunner.Helpers
             terminal.Render(StyleSpan.BlinkOff());
         }
 
-        public static void OutputError(this ITerminal terminal, string content)
+        public static void OutputColor(this ITerminal terminal, ForegroundColorSpan color,string content)
         {
-            terminal.Render(ForegroundColorSpan.Red());
+            terminal.Render(color);
             terminal.Output(content);
             terminal.Render(ForegroundColorSpan.Reset());
         }
 
+        public static void OutputColor(this ITerminal terminal, BackgroundColorSpan color, string content)
+        {
+            terminal.Render(color);
+            terminal.Output(content);
+            terminal.Render(BackgroundColorSpan.Reset());
+        }
+
+        public static void OutputError(this ITerminal terminal, string content)
+        {
+            terminal.OutputColor(ForegroundColorSpan.Red(), content);
+        }
+
         public static void OutputWarning(this ITerminal terminal, string content)
         {
-            terminal.Render(ForegroundColorSpan.Yellow());
-            terminal.Out.Write(content);
-            terminal.Render(ForegroundColorSpan.Reset());
+            terminal.OutputColor(ForegroundColorSpan.Yellow(), content);
         }
 
         public static void OutputInformation(this ITerminal terminal, string content)
         {
-            terminal.Render(ForegroundColorSpan.Cyan());
-            terminal.Out.Write(content);
-            terminal.Render(ForegroundColorSpan.Reset());
+            terminal.OutputColor(ForegroundColorSpan.Cyan(), content);
+        }
+
+        public static void OutputDebug(this ITerminal terminal, string content)
+        {
+            terminal.OutputColor(ForegroundColorSpan.Magenta(), content);
+        }
+
+        public static void OutputFatal(this ITerminal terminal, string content)
+        {
+            terminal.OutputColor(BackgroundColorSpan.Red(), content);
         }
 
         public static void OutputLine(this ITerminal terminal, string content)

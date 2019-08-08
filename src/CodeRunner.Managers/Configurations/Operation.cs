@@ -10,6 +10,13 @@ namespace CodeRunner.Managers.Configurations
 
     public delegate Task<bool> OperationCommandExecutedHandler(Operation sender, int index, ExecutorResult result);
 
+    public static class OperationVariables
+    {
+        public static Variable InputPath = new Variable("inputPath").Required();
+
+        public static Variable OutputPath = new Variable("outputPath").Required();
+    }
+
     public class Operation : BaseTemplate<bool>
     {
         public static readonly Variable VarShell = new Variable("shell").Required().ReadOnly();

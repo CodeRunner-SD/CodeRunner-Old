@@ -1,6 +1,6 @@
 jobs:
-  # allow_failures:
-    # - os: osx
+  allow_failures:
+    - os: linux
   include:
     - name: windows
       os: windows
@@ -32,29 +32,30 @@ jobs:
     #     - curl -s https://codecov.io/bash > codecov
     #     - chmod +x codecov
     #     - ./codecov -f "coverage.xml"
-    # - name: linux
-    #   os: linux
-    #   dist: xenial
-    #   language: csharp
-    #   mono: none
-    #   sudo: required
-    #   install:
-    #     # - wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
-    #     # - sudo dpkg -i packages-microsoft-prod.deb
-    #     # - sudo apt-get install apt-transport-https
-    #     # - sudo apt-get update
-    #     # - sudo apt-get install dotnet-sdk-2.2
-    #     - sudo snap install dotnet-sdk --channel=beta --classic
-    #     - sudo snap alias dotnet-sdk.dotnet dotnet
-    #     - sudo apt update
-    #     - sudo apt install python3
-    #     - dotnet --version
-    #   before_script:
-    #     - dotnet restore -s https://api.nuget.org/v3/index.json
-    #     - dotnet build
-    #   script:
-    #     - dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
-    #     - dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
-    #     - curl -s https://codecov.io/bash > codecov
-    #     - chmod +x codecov
-    #     - ./codecov -f "coverage.xml"
+    - name: linux
+      os: linux
+      dist: xenial
+      language: csharp
+      mono: none
+      sudo: required
+      install:
+        # - wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+        # - sudo dpkg -i packages-microsoft-prod.deb
+        # - sudo apt-get install apt-transport-https
+        # - sudo apt-get update
+        # - sudo apt-get install dotnet-sdk-2.2
+        - sudo snap install dotnet-sdk --channel=beta --classic
+        - sudo snap alias dotnet-sdk.dotnet dotnet
+        - sudo apt update
+        - sudo apt install python3
+        - whereis python3
+        - dotnet --version
+      before_script:
+        - dotnet restore -s https://api.nuget.org/v3/index.json
+        - dotnet build
+      script:
+        - dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+        - dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+        - curl -s https://codecov.io/bash > codecov
+        - chmod +x codecov
+        - ./codecov -f "coverage.xml"

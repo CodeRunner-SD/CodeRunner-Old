@@ -13,7 +13,7 @@ namespace CodeRunner.Managers.Templates
             TemplateItem item = new TemplateItem
             {
                 FileName = $"{name}.tpl",
-                Type = TemplateType.PackageFile,
+                Type = TemplateType.File,
             };
 
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
