@@ -47,7 +47,10 @@ namespace CodeRunner.Managers
         public Task Clear()
         {
             if (CRRoot.Exists)
+            {
                 CRRoot.Delete(true);
+            }
+
             return Task.CompletedTask;
         }
 

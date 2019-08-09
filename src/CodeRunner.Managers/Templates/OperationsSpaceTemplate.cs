@@ -41,14 +41,14 @@ namespace CodeRunner.Managers.Templates
             );
 
             {
-                var source = new StringTemplate(
+                StringTemplate source = new StringTemplate(
                     StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
                         new Variable[] {
                             OperationVariables.InputPath
                         }
                 );
 
-                var output = new StringTemplate(
+                StringTemplate output = new StringTemplate(
                     StringTemplate.GetVariableTemplate(OperationVariables.OutputPath.Name),
                         new Variable[] {
                             OperationVariables.OutputPath

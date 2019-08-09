@@ -1,7 +1,8 @@
-﻿using CodeRunner.Helpers;
-using CodeRunner.Loggings;
+﻿using CodeRunner.Loggings;
 using CodeRunner.Pipelines;
+using CodeRunner.Rendering;
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
@@ -20,41 +21,58 @@ namespace CodeRunner.Commands
 
         public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            var terminal = console.GetTerminal();
+            ITerminal terminal = console.GetTerminal();
             {
-                var items = Program.Logger.GetAll();
-                int[] length = new int[4];
-                foreach (var v in items)
+                LogItem[] items = Program.Logger.GetAll();
+
+                List<(Func<LogItem, int>, Action<ITerminal, LogItem, int>)> funcs = new List<(Func<LogItem, int>, Action<ITerminal, LogItem, int>)>();
                 {
-                    length[0] = Math.Max(length[0], v.Level.ToString().Length);
-                    length[1] = Math.Max(length[1], v.Scope.ToString().Length);
-                    length[2] = Math.Max(length[2], v.Time.ToString().Length);
-                    length[3] = Math.Max(length[3], v.Content.ToString().Length);
-                }
-                foreach (var v in items)
-                {
-                    var levelStr = v.Level.ToString().PadRight(length[0]);
-                    switch (v.Level)
+                    static void render(ITerminal ter, LogItem source, int len)
                     {
-                        case LogLevel.Information:
-                            terminal.OutputInformation(levelStr);
-                            break;
-                        case LogLevel.Warning:
-                            terminal.OutputWarning(levelStr);
-                            break;
-                        case LogLevel.Error:
-                            terminal.OutputError(levelStr);
-                            break;
-                        case LogLevel.Fatal:
-                            terminal.OutputFatal(levelStr);
-                            break;
-                        case LogLevel.Debug:
-                            terminal.OutputDebug(levelStr);
-                            break;
+                        string levelStr = source.Level.ToString().PadRight(len);
+                        switch (source.Level)
+                        {
+                            case LogLevel.Information:
+                                ter.OutputInformation(levelStr);
+                                break;
+                            case LogLevel.Warning:
+                                ter.OutputWarning(levelStr);
+                                break;
+                            case LogLevel.Error:
+                                ter.OutputError(levelStr);
+                                break;
+                            case LogLevel.Fatal:
+                                ter.OutputFatal(levelStr);
+                                break;
+                            case LogLevel.Debug:
+                                ter.OutputDebug(levelStr);
+                                break;
+                        }
                     }
-                    terminal.Output($" {v.Scope.PadRight(length[1])} {v.Time.ToString().PadRight(length[2])} {v.Content.PadRight(length[3])}");
-                    terminal.OutputLine();
+                    funcs.Add((source => source.Level.ToString().Length, render));
                 }
+                {
+                    static void render(ITerminal ter, LogItem source, int len)
+                    {
+                        ter.Output(source.Scope.ToString().PadRight(len));
+                    }
+                    funcs.Add((source => source.Scope.ToString().Length, render));
+                }
+                {
+                    static void render(ITerminal ter, LogItem source, int len)
+                    {
+                        ter.Output(source.Time.ToString().PadRight(len));
+                    }
+                    funcs.Add((source => source.Time.ToString().Length, render));
+                }
+                {
+                    static void render(ITerminal ter, LogItem source, int len)
+                    {
+                        ter.Output(source.Content.ToString().PadRight(len));
+                    }
+                    funcs.Add((source => source.Content.ToString().Length, render));
+                }
+                terminal.OutputTable(items, funcs.ToArray());
             }
             return Task.FromResult(0);
         }

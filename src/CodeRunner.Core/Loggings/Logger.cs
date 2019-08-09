@@ -28,7 +28,10 @@ namespace CodeRunner.Loggings
 
         private List<LogItem> Contents { get; } = new List<LogItem>();
 
-        public LogItem[] GetAll() => Contents.ToArray();
+        public LogItem[] GetAll()
+        {
+            return Contents.ToArray();
+        }
 
         public void Log(LogItem item)
         {
@@ -36,7 +39,9 @@ namespace CodeRunner.Loggings
             {
                 Contents.Add(item);
                 if (Parent != null)
+                {
                     Parent.Log(item);
+                }
             }
         }
 

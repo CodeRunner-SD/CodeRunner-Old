@@ -23,7 +23,10 @@ namespace Test.Core.Templates
                 pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName)).Wait();
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
                     Assert.AreEqual(FileAttributes.Archive, f.File.Attributes & FileAttributes.Archive);
+                }
+
                 Assert.AreEqual("hello", File.ReadAllText(f.File.FullName));
             }
             {
@@ -33,7 +36,10 @@ namespace Test.Core.Templates
                 pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName)).Wait();
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
                     Assert.AreNotEqual(FileAttributes.Archive, f.File.Attributes & FileAttributes.Archive);
+                }
+
                 Assert.AreEqual("hello", File.ReadAllText(f.File.FullName));
             }
             {
@@ -60,7 +66,9 @@ namespace Test.Core.Templates
                 pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
                     Assert.AreEqual(FileAttributes.Archive, d.Directory.Attributes & FileAttributes.Archive);
+                }
             }
             {
                 PackageDirectoryTemplate pf = new PackageDirectoryTemplate();
@@ -69,7 +77,10 @@ namespace Test.Core.Templates
                 pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
                     Assert.AreNotEqual(FileAttributes.Archive, d.Directory.Attributes & FileAttributes.Archive);
+                }
+
                 Assert.AreEqual("hello", File.ReadAllText(Path.Join(d.Directory.FullName, "a.txt")));
                 Assert.IsTrue(Directory.Exists(Path.Join(d.Directory.FullName, "subdir")));
             }
@@ -80,7 +91,10 @@ namespace Test.Core.Templates
                 pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
                     Assert.AreNotEqual(FileAttributes.Archive, d.Directory.Attributes & FileAttributes.Archive);
+                }
+
                 Assert.AreEqual("hello", File.ReadAllText(Path.Join(d.Directory.FullName, "a.txt")));
                 Assert.IsTrue(Directory.Exists(Path.Join(d.Directory.FullName, "subdir")));
             }

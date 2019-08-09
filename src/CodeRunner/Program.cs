@@ -3,6 +3,7 @@ using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managers;
 using CodeRunner.Pipelines;
+using CodeRunner.Rendering;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -22,6 +23,8 @@ namespace CodeRunner
 
     public class Program
     {
+        internal static readonly string AppDescription = string.Join(System.Environment.NewLine, "Code Runner, a CLI tool to run code.", "Copyright (c) StardustDL. All rights reserved.", "Open source with Apache License 2.0 on https://github.com/StardustDL/CodeRunner.");
+
         public static EnvironmentType Environment { get; set; } = EnvironmentType.Production;
 
         public static TextReader Input { get; set; }
@@ -38,20 +41,14 @@ namespace CodeRunner
         private static readonly Action<ServiceScope> config = services =>
         {
             Input = Console.In;
-            var console = new SystemConsole();
+            SystemConsole console = new SystemConsole();
             services.Add<IConsole>(console);
         };
 
         private static readonly Action<ServiceScope> create_cmd = services =>
         {
             {
-                RootCommand replCommand = new RootCommand("Code-runner");
-                replCommand.AddCommand(new InitCommand().Build());
-                replCommand.AddCommand(new NewCommand().Build());
-                replCommand.AddCommand(new NowCommand().Build());
-                replCommand.AddCommand(new RunCommand().Build());
-                replCommand.AddCommand(new ClearCommand().Build());
-                replCommand.AddCommand(new DebugCommand().Build());
+                Command replCommand = new ReplCommand().Build();
                 services.Add<Command>(replCommand, ReplCommandId);
             }
             {
@@ -127,7 +124,7 @@ namespace CodeRunner
 
         private static bool Prompt(OperationContext context, ITerminal terminal)
         {
-            if(context.Services.TryGet<WorkItem>(out var workItem))
+            if (context.Services.TryGet<WorkItem>(out WorkItem workItem))
             {
                 terminal.Output(workItem.RelativePath);
             }
@@ -147,14 +144,20 @@ namespace CodeRunner
             builder.Configure(nameof(create_cmd), create_cmd);
 
             if (Environment == EnvironmentType.Test)
+            {
                 builder.Configure(nameof(config_test), config_test);
+            }
             else
+            {
                 builder.Configure(nameof(config), config);
+            }
 
             builder.Use(nameof(cli), cli);
 
             if (Environment == EnvironmentType.Test)
+            {
                 builder.Use(nameof(test_view), test_view);
+            }
 
             builder.Use(nameof(repl), repl);
 

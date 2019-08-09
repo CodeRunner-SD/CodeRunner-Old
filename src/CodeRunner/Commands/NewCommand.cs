@@ -2,8 +2,8 @@
 using CodeRunner.Managers;
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Pipelines;
+using CodeRunner.Rendering;
 using CodeRunner.Templates;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
@@ -34,8 +34,8 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            var workspace = operation.Services.Get<Workspace>();
-            var terminal = console.GetTerminal();
+            Workspace workspace = operation.Services.Get<Workspace>();
+            ITerminal terminal = console.GetTerminal();
             string template = argument.Template;
             TemplateItem? tplItem = await workspace.Templates.GetItem(template);
             if (tplItem == null)

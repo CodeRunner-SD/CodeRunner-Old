@@ -15,9 +15,14 @@ namespace CodeRunner.Templates
         public ResolveContext WithVariable<T>(string name, T value) where T : notnull
         {
             if (Variables.ContainsKey(name))
+            {
                 Variables[name] = value;
+            }
             else
+            {
                 Variables.Add(name, value);
+            }
+
             return this;
         }
 

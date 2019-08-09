@@ -13,11 +13,11 @@ namespace CodeRunner.Commands
         {
             Command res = new Command("init", "Initialize code-runner directory.");
             {
-                var arg = new Argument<bool>(nameof(CArgument.Delete), false)
+                Argument<bool> arg = new Argument<bool>(nameof(CArgument.Delete), false)
                 {
                     Arity = ArgumentArity.ZeroOrOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Delete)}".ToLower(), "Remove all code-runner files.")
+                Option optCommand = new Option($"--{nameof(CArgument.Delete)}".ToLower(), "Remove all code-runner files.")
                 {
                     Argument = arg
                 };
@@ -28,7 +28,7 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            var workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = operation.Services.Get<Workspace>();
             if (argument.Delete)
             {
                 await workspace.Clear();

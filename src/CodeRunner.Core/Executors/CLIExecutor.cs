@@ -78,7 +78,7 @@ namespace CodeRunner.Executors
                 }
             });
 
-            if(!string.IsNullOrEmpty(Input))
+            if (!string.IsNullOrEmpty(Input))
             {
                 await Process.StandardInput.WriteAsync(Input);
                 Process.StandardInput.Close();

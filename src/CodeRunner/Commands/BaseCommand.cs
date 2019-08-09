@@ -18,7 +18,7 @@ namespace CodeRunner.Commands
             command.Handler = CommandHandler.Create(async (T argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken) =>
             {
                 operation.Logs.Debug($"Command {GetType().FullName} invoking.");
-                var res = await Handle(argument, console, context, operation, cancellationToken);
+                int res = await Handle(argument, console, context, operation, cancellationToken);
                 operation.Logs.Debug($"Command {GetType().FullName} invoked with {res}.");
                 return res;
             });

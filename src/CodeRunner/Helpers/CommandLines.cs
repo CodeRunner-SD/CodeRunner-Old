@@ -20,17 +20,17 @@ namespace CodeRunner.Helpers
             return builder.Build();
         }
 
-        public static FileInfo ResolvePath(Workspace workspace,FileInfo file)
+        public static FileInfo ResolvePath(Workspace workspace, FileInfo file)
         {
-            var rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
-            var path = Path.Join(workspace.PathRoot.FullName, rel);
+            string rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
+            string path = Path.Join(workspace.PathRoot.FullName, rel);
             return new FileInfo(path);
         }
 
         public static DirectoryInfo ResolvePath(Workspace workspace, DirectoryInfo file)
         {
-            var rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
-            var path = Path.Join(workspace.PathRoot.FullName, rel);
+            string rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
+            string path = Path.Join(workspace.PathRoot.FullName, rel);
             return new DirectoryInfo(path);
         }
     }

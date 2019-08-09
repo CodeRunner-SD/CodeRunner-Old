@@ -45,18 +45,21 @@ namespace CodeRunner.Pipelines
                 return false;
             }
 
-            var op = Ops[Position];
+            (string, PipelineOperator<TOrigin, TResult>) op = Ops[Position];
 
             Logs.Debug($"Executing {op.Item1} at {Position}.");
 
-            var subLogScope = Logger.CreateScope(op.Item1);
+            LogScope subLogScope = Logger.CreateScope(op.Item1);
 
             try
             {
                 OperationContext<TOrigin, TResult> context = new OperationContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, subLogScope);
-                var result = await op.Item2.Invoke(context);
+                TResult result = await op.Item2.Invoke(context);
                 if (!context.IgnoreResult)
+                {
                     Result = result;
+                }
+
                 if (context.IsEnd)
                 {
                     HasEnd = true;
@@ -78,7 +81,10 @@ namespace CodeRunner.Pipelines
 
         public async Task<PipelineResult<TResult>> Consume()
         {
-            while (await Step()) ;
+            while (await Step())
+            {
+                ;
+            }
 
             return new PipelineResult<TResult>(Result, Exception, Logger.GetAll());
         }

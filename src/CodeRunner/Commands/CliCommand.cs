@@ -13,13 +13,13 @@ namespace CodeRunner.Commands
     {
         public override Command Configure()
         {
-            RootCommand res = new RootCommand("Code-Runner");
+            RootCommand res = new RootCommand(Program.AppDescription);
             {
-                var arg = new Argument<string>(nameof(CArgument.Command))
+                Argument<string> arg = new Argument<string>(nameof(CArgument.Command))
                 {
                     Arity = ArgumentArity.ExactlyOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Command)}".ToLower(), "Command to execute.")
+                Option optCommand = new Option($"--{nameof(CArgument.Command)}".ToLower(), "Command to execute.")
                 {
                     Argument = arg
                 };
@@ -27,22 +27,22 @@ namespace CodeRunner.Commands
                 res.AddOption(optCommand);
             }
             {
-                var arg = new Argument<bool>(nameof(CArgument.Verbose), false)
+                Argument<bool> arg = new Argument<bool>(nameof(CArgument.Verbose), false)
                 {
                     Arity = ArgumentArity.ZeroOrOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Verbose)}".ToLower(), "Enable debug mode for more logs.")
+                Option optCommand = new Option($"--{nameof(CArgument.Verbose)}".ToLower(), "Enable debug mode for more logs.")
                 {
                     Argument = arg
                 };
                 res.AddOption(optCommand);
             }
             {
-                var arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory), new DirectoryInfo(Directory.GetCurrentDirectory()))
+                Argument<DirectoryInfo> arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory), new DirectoryInfo(Directory.GetCurrentDirectory()))
                 {
                     Arity = ArgumentArity.ZeroOrOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
+                Option optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
                 {
                     Argument = arg
                 };
@@ -59,7 +59,7 @@ namespace CodeRunner.Commands
 
             if (argument.Command != "")
             {
-                var repl = CommandLines.CreateParser(operation.Services.Get<Command>(Program.ReplCommandId), operation);
+                Parser repl = CommandLines.CreateParser(operation.Services.Get<Command>(Program.ReplCommandId), operation);
                 return await repl.InvokeAsync(argument.Command, console);
             }
 

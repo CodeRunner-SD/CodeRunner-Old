@@ -1,9 +1,10 @@
 ﻿using CodeRunner.Templates;
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Rendering;
 
-namespace CodeRunner.Helpers
+namespace CodeRunner.Rendering
 {
     public static class ConsoleIO
     {
@@ -107,7 +108,7 @@ namespace CodeRunner.Helpers
             terminal.Render(StyleSpan.BlinkOff());
         }
 
-        public static void OutputColor(this ITerminal terminal, ForegroundColorSpan color,string content)
+        public static void OutputColor(this ITerminal terminal, ForegroundColorSpan color, string content)
         {
             terminal.Render(color);
             terminal.Output(content);
@@ -138,7 +139,7 @@ namespace CodeRunner.Helpers
 
         public static void OutputDebug(this ITerminal terminal, string content)
         {
-            terminal.OutputColor(ForegroundColorSpan.Reset(), content);
+            terminal.OutputColor(ForegroundColorSpan.Green(), content);
         }
 
         public static void OutputFatal(this ITerminal terminal, string content)
@@ -149,7 +150,9 @@ namespace CodeRunner.Helpers
         public static void EnsureAtLeft(this ITerminal terminal)
         {
             if (terminal.CursorLeft != 0)
+            {
                 terminal.OutputLine();
+            }
         }
 
         public static void OutputLine(this ITerminal terminal, string content)
@@ -180,6 +183,27 @@ namespace CodeRunner.Helpers
         {
             OutputInformation(terminal, content);
             terminal.OutputLine();
+        }
+
+        public static void OutputTable<TSource>(this ITerminal terminal, IEnumerable<TSource> sources, params (Func<TSource, int>, Action<ITerminal, TSource, int>)[] columns)
+        {
+            int[] length = new int[columns.Length];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                foreach (TSource v in sources)
+                {
+                    length[i] = Math.Max(length[i], columns[i].Item1(v));
+                }
+            }
+            foreach (TSource v in sources)
+            {
+                for (int i = 0; i < columns.Length; i++)
+                {
+                    columns[i].Item2(terminal, v, length[i]);
+                    terminal.Output(" ");
+                }
+                terminal.OutputLine();
+            }
         }
     }
 }

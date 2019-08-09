@@ -25,7 +25,7 @@ namespace CodeRunner.Pipelines
 
         public PipelineBuilder<TOrigin, TResult> Use(string name, PipelineOperator<TOrigin, TResult> op)
         {
-            Ops.Add((name,op));
+            Ops.Add((name, op));
             return this;
         }
 

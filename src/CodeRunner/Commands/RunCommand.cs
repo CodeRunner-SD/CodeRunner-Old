@@ -2,8 +2,8 @@
 using CodeRunner.Managers;
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Pipelines;
+using CodeRunner.Rendering;
 using CodeRunner.Templates;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
@@ -34,8 +34,8 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            var workspace = operation.Services.Get<Workspace>();
-            var terminal = console.GetTerminal();
+            Workspace workspace = operation.Services.Get<Workspace>();
+            ITerminal terminal = console.GetTerminal();
             string op = argument.Operation;
             OperationItem? tplItem = await workspace.Operations.GetItem(op);
             if (tplItem == null)
@@ -54,7 +54,7 @@ namespace CodeRunner.Commands
             AppSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
             {
-                if (operation.Services.TryGet<WorkItem>(out var item))
+                if (operation.Services.TryGet<WorkItem>(out WorkItem item))
                 {
                     resolveContext.WithVariable(OperationVariables.InputPath.Name, item.RelativePath);
                 }
@@ -78,9 +78,15 @@ namespace CodeRunner.Commands
                     terminal.EnsureAtLeft();
                     terminal.OutputLine("-----");
                     if (!string.IsNullOrEmpty(result.Output))
+                    {
                         terminal.Output(result.Output);
+                    }
+
                     if (!string.IsNullOrEmpty(result.Error))
+                    {
                         terminal.OutputError(result.Error);
+                    }
+
                     terminal.EnsureAtLeft();
                     terminal.OutputLine("-----");
                 }

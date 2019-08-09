@@ -18,11 +18,11 @@ namespace CodeRunner.Commands
                 TreatUnmatchedTokensAsErrors = true
             };
             {
-                var arg = new Argument<FileInfo>(nameof(CArgument.File))
+                Argument<FileInfo> arg = new Argument<FileInfo>(nameof(CArgument.File))
                 {
                     Arity = ArgumentArity.ExactlyOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.File)}".ToLower(), "Set working directory.")
+                Option optCommand = new Option($"--{nameof(CArgument.File)}".ToLower(), "Set working directory.")
                 {
                     Argument = arg
                 };
@@ -30,11 +30,11 @@ namespace CodeRunner.Commands
                 res.AddOption(optCommand);
             }
             {
-                var arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory))
+                Argument<DirectoryInfo> arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory))
                 {
                     Arity = ArgumentArity.ExactlyOne
                 };
-                var optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
+                Option optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
                 {
                     Argument = arg
                 };
@@ -47,7 +47,7 @@ namespace CodeRunner.Commands
 
         public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
         {
-            var workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = operation.Services.Get<Workspace>();
             if (argument.File != null)
             {
                 argument.File = CommandLines.ResolvePath(workspace, argument.File);

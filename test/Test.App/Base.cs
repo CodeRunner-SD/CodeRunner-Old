@@ -102,5 +102,29 @@ namespace Test.App
                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
             });
         }
+
+        [TestMethod]
+        public void Template()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "init", "template list"), input =>
+            {
+                Program.Input = input;
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                StringAssert.Contains(TestView.Console.Out.ToString(), "python");
+            });
+        }
+
+        [TestMethod]
+        public void Operation()
+        {
+            using TempDirectory td = new TempDirectory();
+            UsingInput(string.Join('\n', "init", "operation list"), input =>
+            {
+                Program.Input = input;
+                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                StringAssert.Contains(TestView.Console.Out.ToString(), "hello");
+            });
+        }
     }
 }
