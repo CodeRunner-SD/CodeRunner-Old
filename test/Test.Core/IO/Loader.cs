@@ -1,6 +1,7 @@
 ﻿using CodeRunner.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace Test.Core.IO
@@ -16,6 +17,7 @@ namespace Test.Core.IO
             JsonFileLoader<string> loader = new JsonFileLoader<string>(tf.File);
             Assert.AreEqual("a", loader.Data.Result);
             File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject("b"));
+            File.SetLastWriteTime(tf.File.FullName, DateTime.Now);
             Assert.AreEqual("b", loader.Data.Result);
         }
     }

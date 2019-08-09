@@ -49,11 +49,7 @@ namespace CodeRunner.Managers.Configurations
             {
                 CommandLineTemplate v = Items[index];
                 string cmd = await v.Resolve(context);
-                ProcessStartInfo res = new ProcessStartInfo
-                {
-                    FileName = shell,
-                    Arguments = $"-c {cmd}"
-                };
+                ProcessStartInfo res = new ProcessStartInfo(shell, $"-c '{cmd.Trim()}'");
 
                 if (CommandExecuting != null)
                 {

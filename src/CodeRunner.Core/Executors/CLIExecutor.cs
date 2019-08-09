@@ -62,11 +62,15 @@ namespace CodeRunner.Executors
                 {
                     try
                     {
-                        Result.MaximumMemory = Math.Max(Result.MaximumMemory, Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64));
+                        long mem = Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64);
+                        mem = Math.Max(mem, Process.WorkingSet64);
+                        mem = Math.Max(mem, Process.PeakWorkingSet64);
+                        mem = Math.Max(mem, Process.PrivateMemorySize64);
+                        Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
                         if (MemoryLimit.HasValue && Result.MaximumMemory > MemoryLimit)
                         {
                             Result.State = ExecutorState.OutOfMemory;
-                            Process.Kill();
+                            Process.Kill(true);
                         }
                         Thread.Sleep(5);
                     }
@@ -74,8 +78,9 @@ namespace CodeRunner.Executors
                 }
             });
 
+            if(!string.IsNullOrEmpty(Input))
             {
-                await Process.StandardInput.WriteLineAsync(Input);
+                await Process.StandardInput.WriteAsync(Input);
                 Process.StandardInput.Close();
             }
 
@@ -89,7 +94,7 @@ namespace CodeRunner.Executors
                     else
                     {
                         Result.State = ExecutorState.OutOfTime;
-                        Process.Kill();
+                        Process.Kill(true);
                         Process.WaitForExit();
                     }
                 }

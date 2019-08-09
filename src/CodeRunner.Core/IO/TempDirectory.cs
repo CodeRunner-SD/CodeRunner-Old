@@ -10,6 +10,7 @@ namespace CodeRunner.IO
             rootPath ??= Path.GetTempPath();
             Directory = new DirectoryInfo(Path.Join(rootPath, Path.GetRandomFileName()));
             Directory.Create();
+            Directory.Refresh();
         }
 
         public DirectoryInfo Directory { get; }

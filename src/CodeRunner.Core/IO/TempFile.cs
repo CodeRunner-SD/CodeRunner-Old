@@ -15,6 +15,8 @@ namespace CodeRunner.IO
 
             File = new FileInfo(path);
             File.Create().Close();
+
+            File.Refresh();
         }
 
         public FileInfo File { get; }

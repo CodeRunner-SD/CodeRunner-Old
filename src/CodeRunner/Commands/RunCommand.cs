@@ -56,7 +56,7 @@ namespace CodeRunner.Commands
             {
                 if (operation.Services.TryGet<WorkItem>(out var item))
                 {
-                    resolveContext.WithVariable(OperationVariables.InputPath.Name, item.Target.FullName);
+                    resolveContext.WithVariable(OperationVariables.InputPath.Name, item.RelativePath);
                 }
             }
             if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
@@ -75,9 +75,13 @@ namespace CodeRunner.Commands
             {
                 if (!string.IsNullOrEmpty(result.Output) || !string.IsNullOrEmpty(result.Error))
                 {
+                    terminal.EnsureAtLeft();
                     terminal.OutputLine("-----");
-                    terminal.Output(result.Output);
-                    terminal.OutputError(result.Error);
+                    if (!string.IsNullOrEmpty(result.Output))
+                        terminal.Output(result.Output);
+                    if (!string.IsNullOrEmpty(result.Error))
+                        terminal.OutputError(result.Error);
+                    terminal.EnsureAtLeft();
                     terminal.OutputLine("-----");
                 }
 

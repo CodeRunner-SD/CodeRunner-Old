@@ -138,12 +138,18 @@ namespace CodeRunner.Helpers
 
         public static void OutputDebug(this ITerminal terminal, string content)
         {
-            terminal.OutputColor(ForegroundColorSpan.Magenta(), content);
+            terminal.OutputColor(ForegroundColorSpan.Reset(), content);
         }
 
         public static void OutputFatal(this ITerminal terminal, string content)
         {
             terminal.OutputColor(BackgroundColorSpan.Red(), content);
+        }
+
+        public static void EnsureAtLeft(this ITerminal terminal)
+        {
+            if (terminal.CursorLeft != 0)
+                terminal.OutputLine();
         }
 
         public static void OutputLine(this ITerminal terminal, string content)

@@ -11,7 +11,7 @@ namespace CodeRunner.Managers
         public const string P_CRRoot = ".cr";
         public const string P_Settings = "settings.json";
         public const string P_TemplatesRoot = "templates";
-        public const string P_OperatorsRoot = "operators";
+        public const string P_OperatorsRoot = "operations";
 
         public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new WorkspaceTemplate())
         {

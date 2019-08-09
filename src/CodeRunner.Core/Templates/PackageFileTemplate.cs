@@ -26,12 +26,14 @@ namespace CodeRunner.Templates
             if (!res.Exists)
             {
                 res.Create();
+                res.Refresh();
             }
 
             if (Template != null)
             {
                 string name = await Name.Resolve(context);
                 FileInfo file = await Template.ResolveTo(context, Path.Join(res.FullName, name));
+                file.Refresh();
                 file.Attributes = Attributes;
             }
             return res;

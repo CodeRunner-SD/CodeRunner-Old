@@ -40,9 +40,12 @@ namespace CodeRunner.Templates
             if (!res.Exists)
             {
                 res.Create();
+                res.Refresh();
             }
 
+
             res.Attributes = Attributes;
+
             foreach (PackageFileTemplate f in Files)
             {
                 await f.ResolveTo(context, res.FullName);

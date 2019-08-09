@@ -15,8 +15,9 @@ namespace Test.Core.Executors
 while(True):
     time.sleep(1)";
         private const string C_3MB = @"l = []
-for i in range(0, 10**5):
-    l.append(i)";
+for i in range(0, 10**3):
+    l.append(i)
+print(l)";
         private const string C_Exit1 = @"exit(1)";
 
         private string GetPythonFile()
