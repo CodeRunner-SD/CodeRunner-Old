@@ -37,13 +37,13 @@ namespace CodeRunner.Commands
             Workspace workspace = operation.Services.Get<Workspace>();
             ITerminal terminal = console.GetTerminal();
             string template = argument.Template;
-            TemplateItem? tplItem = await workspace.Templates.GetItem(template);
+            TemplateItem? tplItem = await workspace.Templates.Get(template);
             if (tplItem == null)
             {
                 terminal.OutputErrorLine($"No this template: {template}.");
                 return 1;
             }
-            BaseTemplate? tpl = await workspace.Templates.Get(tplItem);
+            BaseTemplate? tpl = await tplItem.Value;
             if (tpl == null)
             {
                 terminal.OutputErrorLine($"Can not load this template: {template}.");

@@ -25,7 +25,7 @@ namespace CodeRunner.Commands.Operations
         {
             ITerminal terminal = console.GetTerminal();
             Workspace workspace = operation.Services.Get<Workspace>();
-            OperationsSettings res = await workspace.Operations.Settings;
+            OperationsSettings? res = await workspace.Operations.Settings;
             if (res != null)
             {
                 List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)> funcs = new List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)>();

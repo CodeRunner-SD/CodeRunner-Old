@@ -37,13 +37,13 @@ namespace CodeRunner.Commands
             Workspace workspace = operation.Services.Get<Workspace>();
             ITerminal terminal = console.GetTerminal();
             string op = argument.Operation;
-            OperationItem? tplItem = await workspace.Operations.GetItem(op);
+            OperationItem? tplItem = await workspace.Operations.Get(op);
             if (tplItem == null)
             {
                 terminal.OutputErrorLine($"No this operation: {op}.");
                 return 1;
             }
-            Operation? tpl = await workspace.Operations.Get(tplItem);
+            Operation? tpl = await tplItem.Value;
             if (tpl == null)
             {
                 terminal.OutputErrorLine($"Can not load this operation: {op}.");

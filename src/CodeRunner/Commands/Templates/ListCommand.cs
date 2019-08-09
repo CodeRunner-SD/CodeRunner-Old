@@ -25,7 +25,7 @@ namespace CodeRunner.Commands.Templates
         {
             ITerminal terminal = console.GetTerminal();
             Workspace workspace = operation.Services.Get<Workspace>();
-            TemplatesSettings res = await workspace.Templates.Settings;
+            TemplatesSettings? res = await workspace.Templates.Settings;
             if (res != null)
             {
                 List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)> funcs = new List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)>();

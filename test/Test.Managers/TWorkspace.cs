@@ -27,7 +27,7 @@ namespace Test.Managers
             using TempDirectory td = new TempDirectory();
             Workspace workspace = new Workspace(td.Directory);
             workspace.Initialize().Wait();
-            BaseTemplate tmp = workspace.Templates.Get(workspace.Templates.GetItem("c").Result).Result;
+            BaseTemplate? tmp = workspace.Templates.Get("c").Result?.Value.Result;
             Assert.IsNotNull(tmp);
         }
     }

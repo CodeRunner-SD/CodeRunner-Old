@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.IO
@@ -7,6 +8,13 @@ namespace CodeRunner.IO
     {
         public JsonFileLoader(FileInfo file) : base(file)
         {
+        }
+
+        public override async Task Save(T value)
+        {
+            using FileStream st = File.OpenWrite();
+            await JsonFormatter.Serialize(value, st);
+            File.LastWriteTimeUtc = DateTime.UtcNow;
         }
 
         protected override async Task<T?> OnLoading()

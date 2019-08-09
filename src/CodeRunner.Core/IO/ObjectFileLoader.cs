@@ -26,7 +26,7 @@ namespace CodeRunner.IO
                 else
                 {
                     File.Refresh();
-                    if (File.LastWriteTime > LoadedTime)
+                    if (File.LastWriteTimeUtc > LoadedTime)
                     {
                         return Load();
                     }
@@ -43,6 +43,8 @@ namespace CodeRunner.IO
             data = await OnLoading();
             return data;
         }
+
+        public abstract Task Save(T value);
 
         protected abstract Task<T?> OnLoading();
     }
