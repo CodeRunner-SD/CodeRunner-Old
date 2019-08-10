@@ -7,7 +7,7 @@ using System.IO;
 namespace Test.Core.Templates
 {
     [TestClass]
-    public class Package
+    public class TPackage
     {
         [TestMethod]
         public void Files()

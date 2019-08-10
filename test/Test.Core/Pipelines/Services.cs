@@ -1,13 +1,13 @@
 ﻿using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Test.Core
+namespace Test.Core.Pipelines
 {
     [TestClass]
-    public class Services
+    public class TServiceProvider
     {
         [TestMethod]
-        public void Provider()
+        public void Basic()
         {
             ServiceProvider provider = new ServiceProvider();
             {

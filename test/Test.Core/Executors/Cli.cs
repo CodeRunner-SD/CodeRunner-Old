@@ -18,6 +18,8 @@ while(True):
 for i in range(0, 10**3):
     l.append(i)
 print(l)";
+        private const string C_Input = @"s = input()
+print(s)";
         private const string C_Exit1 = @"exit(1)";
 
         private string GetPythonFile()
@@ -42,6 +44,10 @@ print(l)";
                 ExecutorResult res = cli.Run().Result;
                 Assert.AreEqual(0, res.ExitCode);
                 StringAssert.Contains(res.Output, "Hello World!");
+                Assert.ThrowsExceptionAsync<Exception>(async () =>
+                {
+                    await cli.Run();
+                });
             }
             using (TempFile tmp = new TempFile())
             {
@@ -50,6 +56,20 @@ print(l)";
                 ExecutorResult res = cli.Run().Result;
                 Assert.AreEqual(1, res.ExitCode);
             }
+        }
+
+        [TestMethod]
+        public void Input()
+        {
+            using TempFile tmp = new TempFile();
+            File.WriteAllText(tmp.File.FullName, C_Input, Encoding.UTF8);
+            using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(GetPythonFile(), tmp.File.FullName))
+            {
+                Input = "hello"
+            };
+            ExecutorResult res = cli.Run().Result;
+            Assert.AreEqual(ExecutorState.Ended, res.State);
+            StringAssert.Contains(res.Output, "hello");
         }
 
         [TestMethod]
