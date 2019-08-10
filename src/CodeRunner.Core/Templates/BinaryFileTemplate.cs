@@ -6,16 +6,9 @@ namespace CodeRunner.Templates
 {
     public class BinaryFileTemplate : FileTemplate
     {
-        public BinaryFileTemplate(byte[]? content = null)
+        public BinaryFileTemplate(byte[] content)
         {
-            if (content == null)
-            {
-                Content = "";
-            }
-            else
-            {
-                Content = Convert.ToBase64String(content!);
-            }
+            Content = Convert.ToBase64String(content);
         }
 
         public string Content { get; set; }

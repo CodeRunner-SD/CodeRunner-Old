@@ -1,6 +1,7 @@
 ﻿using CodeRunner.Helpers;
-using CodeRunner.Managers;
-using CodeRunner.Managers.Configurations;
+using CodeRunner.Managements;
+using CodeRunner.Managements.Configurations;
+using CodeRunner.Operations;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
 using CodeRunner.Templates;
@@ -64,14 +65,14 @@ namespace CodeRunner.Commands
                 return -1;
             }
 
-            tpl.CommandExecuting += (sender, index, process, command) =>
+            OperationCommandExecutingHandler executing = new OperationCommandExecutingHandler((sender, index, process, command) =>
             {
-                terminal.OutputInformationLine($"({index + 1}/{sender.Items.Count}) {command}");
+                terminal.OutputInformationLine($"({index + 1}/{sender.Items.Count}) {string.Join(' ', command)}");
                 process.WorkingDirectory = workspace.PathRoot.FullName;
                 return Task.FromResult(true);
-            };
+            });
 
-            tpl.CommandExecuted += (sender, index, result) =>
+            OperationCommandExecutedHandler executed = new OperationCommandExecutedHandler((sender, index, result) =>
             {
                 if (!string.IsNullOrEmpty(result.Output) || !string.IsNullOrEmpty(result.Error))
                 {
@@ -103,9 +104,16 @@ namespace CodeRunner.Commands
                 }
                 terminal.OutputLine(string.Format(" ({0:f2}MB {1:f2}s)", (double)result.MaximumMemory / 1024 / 1024, result.RunningTime.TotalSeconds));
                 return Task.FromResult(result.State == Executors.ExecutorState.Ended && result.ExitCode == 0);
-            };
-            await tpl.DoResolve(resolveContext);
-            return 0;
+            });
+
+            tpl.CommandExecuting += executing;
+            tpl.CommandExecuted += executed;
+
+            bool res = await tpl.Resolve(resolveContext);
+
+            tpl.CommandExecuted -= executed;
+            tpl.CommandExecuting -= executing;
+            return res ? 0 : -1;
         }
 
         public class CArgument

@@ -1,6 +1,6 @@
 ﻿using CodeRunner.Helpers;
-using CodeRunner.Managers;
-using CodeRunner.Managers.Configurations;
+using CodeRunner.Managements;
+using CodeRunner.Managements.Configurations;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
 using CodeRunner.Templates;

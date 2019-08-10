@@ -42,13 +42,13 @@ namespace Test.App
             {
                 Program.Input = input;
                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
-                Assert.IsTrue(TestView.Workspace.CheckValid().Result);
+                Assert.IsTrue(TestView.Workspace.HasInitialized);
             });
             UsingInput(string.Join('\n', "init --delete"), input =>
             {
                 Program.Input = input;
                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
-                Assert.IsFalse(TestView.Workspace.CheckValid().Result);
+                Assert.IsFalse(TestView.Workspace.HasInitialized);
             });
         }
 

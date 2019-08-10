@@ -44,9 +44,7 @@ namespace CodeRunner.Templates
                 {
                     throw new Exception($"No required variable with name {variable.Name}.");
                 }
-#pragma warning disable CS8601 // 可能的 null 引用赋值。
-                return (T)variable.Default;
-#pragma warning restore CS8601 // 可能的 null 引用赋值。
+                return (T)variable.GetDefault();
             }
         }
 

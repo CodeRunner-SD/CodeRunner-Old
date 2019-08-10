@@ -1,4 +1,4 @@
-﻿using CodeRunner.Managers;
+﻿using CodeRunner.Managements;
 using System.CommandLine;
 
 namespace CodeRunner.Helpers

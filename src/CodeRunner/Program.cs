@@ -1,7 +1,7 @@
 ﻿using CodeRunner.Commands;
 using CodeRunner.Helpers;
 using CodeRunner.Loggings;
-using CodeRunner.Managers;
+using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
 using System;

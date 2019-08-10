@@ -8,7 +8,6 @@ namespace CodeRunner.Templates
         private string name;
         private bool isRequired = true;
         private bool isReadOnly = false;
-        private object? @default = null;
 
         public Variable() : this("")
         {
@@ -61,18 +60,16 @@ namespace CodeRunner.Templates
             }
         }
 
-        public object? Default
-        {
-            get => @default;
-            set
-            {
-                if (IsReadOnly)
-                {
-                    throw new Exception("Can not modify a readonly variable.");
-                }
+        public object? Default { get; set; }
 
-                @default = value;
+        public object GetDefault()
+        {
+            if (IsRequired || Default == null)
+            {
+                throw new NullReferenceException("No default value");
             }
+
+            return Default;
         }
 
         public Variable ReadOnly()
@@ -92,7 +89,7 @@ namespace CodeRunner.Templates
             return this;
         }
 
-        public Variable NotRequired(object? value)
+        public Variable NotRequired(object value)
         {
             if (IsReadOnly)
             {

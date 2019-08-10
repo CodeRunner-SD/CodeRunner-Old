@@ -1,5 +1,5 @@
-﻿using CodeRunner.Managers;
-using CodeRunner.Managers.Configurations;
+﻿using CodeRunner.Managements;
+using CodeRunner.Managements.Configurations;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
 using CodeRunner.Templates;
@@ -9,7 +9,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
 using System.Threading;
 using System.Threading.Tasks;
-using SettingItem = System.Tuple<string, CodeRunner.Managers.Configurations.TemplateItem, CodeRunner.Templates.BaseTemplate?>;
+using SettingItem = System.Tuple<string, CodeRunner.Managements.Configurations.TemplateItem, CodeRunner.Templates.BaseTemplate?>;
 
 namespace CodeRunner.Commands.Templates
 {

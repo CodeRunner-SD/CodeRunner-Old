@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
 {
-    public class CommandLineTemplate : BaseTemplate<string>
+    public class CommandLineTemplate : BaseTemplate<string[]>
     {
         private Dictionary<StringTemplate, StringTemplate> Options { get; } = new Dictionary<StringTemplate, StringTemplate>();
 
@@ -78,7 +78,7 @@ namespace CodeRunner.Templates
             return this;
         }
 
-        public override async Task<string> Resolve(ResolveContext context)
+        public override async Task<string[]> Resolve(ResolveContext context)
         {
             List<string> items = new List<string>();
             foreach (StringTemplate v in Commands)
@@ -106,7 +106,7 @@ namespace CodeRunner.Templates
                 items.Add(await Raw.Resolve(context));
             }
 
-            return string.Join(' ', items);
+            return items.ToArray();
         }
 
         public override VariableCollection GetVariables()

@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Test.Core.Templates
 {
@@ -12,9 +13,12 @@ namespace Test.Core.Templates
             ResolveContext context = new ResolveContext();
             context.WithVariable("a", "a");
             Assert.IsTrue(context.HasVariable("a"));
-            Assert.AreEqual("a", context.GetVariable<string>(new Variable("a")));
+            context.WithVariable("a", "b");
+            Assert.AreEqual("b", context.GetVariable<string>(new Variable("a")));
             context.WithoutVariable("a");
             Assert.IsFalse(context.HasVariable("a"));
+            Assert.ThrowsException<Exception>(() => context.GetVariable<string>(new Variable("a").Required()));
+            Assert.AreEqual("c", context.GetVariable<string>(new Variable("a").NotRequired("c")));
         }
     }
 }

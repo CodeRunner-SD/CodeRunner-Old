@@ -39,8 +39,8 @@ namespace CodeRunner.IO
 
         public async Task<T?> Load()
         {
-            LoadedTime = DateTimeOffset.Now;
             data = await OnLoading();
+            LoadedTime = DateTimeOffset.Now;
             return data;
         }
 
