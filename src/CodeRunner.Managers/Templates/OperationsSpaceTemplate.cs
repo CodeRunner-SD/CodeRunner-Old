@@ -19,6 +19,9 @@ namespace CodeRunner.Managers.Templates
                 new StringTemplate(
                     JsonFormatter.Serialize(
                         new Operation(items)
+                        {
+                            Metadata = WorkspaceTemplate.BuiltinTemplateMetadata
+                        }
                     )
                 )
             );

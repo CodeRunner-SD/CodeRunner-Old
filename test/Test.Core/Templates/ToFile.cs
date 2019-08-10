@@ -29,4 +29,25 @@ namespace Test.Core.Templates
             }
         }
     }
+
+    [TestClass]
+    public class Base
+    {
+        [TestMethod]
+        public void Type()
+        {
+            StringTemplate st = new StringTemplate("content", new Variable[] { new Variable("var") });
+            byte[] res;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                st.Save(ms).Wait();
+                res = ms.ToArray();
+            }
+            using (MemoryStream ms = new MemoryStream(res))
+            {
+                BaseTemplate item = BaseTemplate.Load<BaseTemplate>(ms).Result;
+                Assert.IsInstanceOfType(item, typeof(StringTemplate));
+            }
+        }
+    }
 }

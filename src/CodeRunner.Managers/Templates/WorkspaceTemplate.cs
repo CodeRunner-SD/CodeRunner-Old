@@ -3,12 +3,20 @@ using CodeRunner.Managers.Configurations;
 using CodeRunner.Templates;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managers.Templates
 {
     public class WorkspaceTemplate : DirectoryTemplate
     {
+        public static readonly TemplateMetadata BuiltinTemplateMetadata = new TemplateMetadata
+        {
+            Author = "CodeRunner",
+            CreationTime = DateTimeOffset.Now,
+            Version = Assembly.GetAssembly(typeof(Workspace))?.GetName().Version ?? new Version()
+        };
+
         public WorkspaceTemplate()
         {
             PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.P_CRRoot).WithAttributes(FileAttributes.Hidden);

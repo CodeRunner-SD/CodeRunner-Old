@@ -1,44 +1,40 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.IO;
+using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managers.Configurations
 {
-    public class TemplateItem : ItemValue<BaseTemplate?, TemplateManager>
+    public class TemplateItem : ItemValue<BaseTemplate?>
     {
         public string FileName { get; set; } = "";
 
-        public TemplateType Type { get; set; }
+        public TemplateManager? Parent { get; set; }
 
-        protected override async Task<BaseTemplate?> GetValue()
+        public TemplateFileLoaderPool<BaseTemplate>? FileLoaderPool { get; set; }
+
+        private TemplateFileLoader<BaseTemplate>? FileLoader { get; set; }
+
+        protected override Task<BaseTemplate?> GetValue()
         {
+            if (FileLoader != null)
+            {
+                return FileLoader.Data;
+            }
             if (Parent != null)
             {
-                switch (Type)
+                FileInfo file = new FileInfo(Path.Join(Parent.PathRoot.FullName, FileName));
+                if (FileLoaderPool != null)
                 {
-                    case TemplateType.File:
-                        {
-                            FileInfo file = new FileInfo(Path.Join(Parent.PathRoot.FullName, FileName));
-                            if (file.Exists)
-                            {
-                                using FileStream ss = file.OpenRead();
-                                return await BaseTemplate.Load<PackageFileTemplate>(ss);
-                            }
-                            break;
-                        }
-                    case TemplateType.Directory:
-                        {
-                            FileInfo file = new FileInfo(Path.Join(Parent.PathRoot.FullName, FileName));
-                            if (file.Exists)
-                            {
-                                using FileStream ss = file.OpenRead();
-                                return await BaseTemplate.Load<PackageDirectoryTemplate>(ss);
-                            }
-                            break;
-                        }
+                    FileLoader = FileLoaderPool.Get(file);
                 }
+                else
+                {
+                    FileLoader = new TemplateFileLoader<BaseTemplate>(file);
+                }
+                return FileLoader.Data;
             }
-            return null;
+            return Task.FromResult<BaseTemplate?>(null);
         }
     }
 }

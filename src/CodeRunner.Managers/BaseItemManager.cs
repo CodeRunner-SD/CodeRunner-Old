@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managers
 {
-    public abstract class BaseItemManager<TSettings, TItem, TValue, TParent> : BaseManager<TSettings> where TSettings : ItemSettings<TItem> where TItem : ItemValue<TValue, TParent> where TParent : class
+    public abstract class BaseItemManager<TSettings, TItem, TValue> : BaseManager<TSettings> where TSettings : ItemSettings<TItem> where TItem : ItemValue<TValue>
     {
         protected BaseItemManager(DirectoryInfo pathRoot, DirectoryTemplate directoryTemplate) : base(pathRoot, directoryTemplate)
         {
@@ -32,7 +32,7 @@ namespace CodeRunner.Managers
 
             if (settings.Items.TryGetValue(id, out TItem? item))
             {
-                item.Parent = ItemParent;
+                await ConfigurateItem(item);
                 return item;
             }
             else
@@ -67,6 +67,9 @@ namespace CodeRunner.Managers
             await SettingsLoader.Save(settings);
         }
 
-        protected abstract TParent ItemParent { get; }
+        protected virtual Task ConfigurateItem(TItem item)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

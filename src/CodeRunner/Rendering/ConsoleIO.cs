@@ -185,21 +185,28 @@ namespace CodeRunner.Rendering
             terminal.OutputLine();
         }
 
-        public static void OutputTable<TSource>(this ITerminal terminal, IEnumerable<TSource> sources, params (Func<TSource, int>, Action<ITerminal, TSource, int>)[] columns)
+        public static void OutputTable<TSource>(this ITerminal terminal, IEnumerable<TSource> sources, params IOutputTableColumnView<TSource>[] columns)
         {
             int[] length = new int[columns.Length];
             for (int i = 0; i < columns.Length; i++)
             {
+                length[i] = Math.Max(length[i], columns[i].MeasureHeader());
                 foreach (TSource v in sources)
                 {
-                    length[i] = Math.Max(length[i], columns[i].Item1(v));
+                    length[i] = Math.Max(length[i], columns[i].Measure(v));
                 }
             }
+            for (int i = 0; i < columns.Length; i++)
+            {
+                columns[i].RenderHeader(terminal, length[i]);
+                terminal.Output(" ");
+            }
+            terminal.OutputLine();
             foreach (TSource v in sources)
             {
                 for (int i = 0; i < columns.Length; i++)
                 {
-                    columns[i].Item2(terminal, v, length[i]);
+                    columns[i].Render(terminal, v, length[i]);
                     terminal.Output(" ");
                 }
                 terminal.OutputLine();

@@ -2,14 +2,14 @@
 using CodeRunner.Managers.Configurations;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
-using System;
+using CodeRunner.Templates;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
 using System.Threading;
 using System.Threading.Tasks;
-using SettingItem = System.Collections.Generic.KeyValuePair<string, CodeRunner.Managers.Configurations.TemplateItem>;
+using SettingItem = System.Tuple<string, CodeRunner.Managers.Configurations.TemplateItem, CodeRunner.Templates.BaseTemplate?>;
 
 namespace CodeRunner.Commands.Templates
 {
@@ -28,29 +28,19 @@ namespace CodeRunner.Commands.Templates
             TemplatesSettings? res = await workspace.Templates.Settings;
             if (res != null)
             {
-                List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)> funcs = new List<(Func<SettingItem, int>, Action<ITerminal, SettingItem, int>)>();
+                List<SettingItem> sources = new List<SettingItem>();
+                foreach (string v in res.Items.Keys)
                 {
-                    static void render(ITerminal ter, SettingItem source, int len)
-                    {
-                        ter.Output(source.Value.Type.ToString().PadRight(len));
-                    }
-                    funcs.Add((source => source.Value.Type.ToString()?.Length ?? 0, render));
+                    TemplateItem value = (await workspace.Templates.Get(v))!;
+                    sources.Add(new SettingItem(v, value, await value.Value));
                 }
-                {
-                    static void render(ITerminal ter, SettingItem source, int len)
-                    {
-                        ter.OutputBold(source.Key.PadRight(len));
-                    }
-                    funcs.Add((source => source.Key.Length, render));
-                }
-                {
-                    static void render(ITerminal ter, SettingItem source, int len)
-                    {
-                        ter.Output(source.Value.FileName.PadRight(len));
-                    }
-                    funcs.Add((source => source.Value.FileName.Length, render));
-                }
-                terminal.OutputTable(res.Items, funcs.ToArray());
+                terminal.OutputTable(sources,
+                    new OutputTableColumnStringView<SettingItem>(x => x.Item1, "Name"),
+                    new OutputTableColumnStringView<SettingItem>(x => x.Item2.FileName, "File"),
+                    new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Author ?? "N/A", nameof(TemplateMetadata.Author)),
+                    new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.CreationTime.ToString() ?? "N/A", nameof(TemplateMetadata.CreationTime)),
+                    new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Version.ToString() ?? "N/A", nameof(TemplateMetadata.Version))
+                );
             }
             return 0;
         }

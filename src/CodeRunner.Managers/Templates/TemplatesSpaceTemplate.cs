@@ -12,8 +12,7 @@ namespace CodeRunner.Managers.Templates
         {
             TemplateItem item = new TemplateItem
             {
-                FileName = $"{name}.tpl",
-                Type = TemplateType.File,
+                FileName = $"{name}.tpl"
             };
 
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
@@ -24,7 +23,10 @@ namespace CodeRunner.Managers.Templates
                                 StringTemplate.GetVariableTemplate("name") + $".{ext}",
                                 new Variable[] { new Variable("name").Required() }
                             )
-                        ).UseTemplate(new TextFileTemplate(new StringTemplate(source)))
+                        )
+                        {
+                            Metadata = WorkspaceTemplate.BuiltinTemplateMetadata
+                        }.UseTemplate(new TextFileTemplate(new StringTemplate(source)))
                     )
                 )
             );

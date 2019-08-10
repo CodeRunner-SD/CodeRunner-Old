@@ -1,26 +1,39 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.IO;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managers.Configurations
 {
-    public class OperationItem : ItemValue<Operation?, OperationManager>
+    public class OperationItem : ItemValue<Operation?>
     {
         public string FileName { get; set; } = "";
 
-        protected override async Task<Operation?> GetValue()
+        public OperationManager? Parent { get; set; }
+
+        public TemplateFileLoaderPool<Operation>? FileLoaderPool { get; set; }
+
+        private TemplateFileLoader<Operation>? FileLoader { get; set; }
+
+        protected override Task<Operation?> GetValue()
         {
+            if (FileLoader != null)
+            {
+                return FileLoader.Data;
+            }
             if (Parent != null)
             {
                 FileInfo file = new FileInfo(Path.Join(Parent.PathRoot.FullName, FileName));
-                if (file.Exists)
+                if (FileLoaderPool != null)
                 {
-                    using FileStream ss = file.OpenRead();
-                    return await BaseTemplate.Load<Operation>(ss);
+                    FileLoader = FileLoaderPool.Get(file);
                 }
-                return null;
+                else
+                {
+                    FileLoader = new TemplateFileLoader<Operation>(file);
+                }
+                return FileLoader.Data;
             }
-            return null;
+            return Task.FromResult<Operation?>(null);
         }
     }
 }

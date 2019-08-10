@@ -10,7 +10,7 @@ namespace CodeRunner.IO
         {
             return JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameHandling = TypeNameHandling.All,
             });
         }
 
@@ -18,7 +18,7 @@ namespace CodeRunner.IO
         {
             return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.All
             });
         }
 
