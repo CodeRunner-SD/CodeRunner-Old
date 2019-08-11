@@ -2,37 +2,24 @@ using CodeRunner.IO;
 using CodeRunner.Managements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Test.Managements
 {
     [TestClass]
-    public class TWorkItem
-    {
-        [TestMethod]
-        public void Basic()
-        {
-            using TempDirectory td = new TempDirectory();
-            Workspace workspace = new Workspace(td.Directory);
-            {
-                WorkItem item = WorkItem.CreateByDirectory(workspace, td.Directory);
-            }
-        }
-    }
-
-    [TestClass]
     public class TWorkspace
     {
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             using TempDirectory td = new TempDirectory();
             Workspace workspace = new Workspace(td.Directory);
             Assert.IsFalse(workspace.HasInitialized);
-            workspace.Initialize().Wait();
+            await workspace.Initialize();
             Assert.IsTrue(workspace.HasInitialized);
             Assert.IsTrue(Directory.Exists(Path.Join(td.Directory.FullName, ".cr")));
-            Assert.IsNotNull(workspace.Settings.Result);
-            workspace.Clear().Wait();
+            Assert.IsNotNull(await workspace.Settings);
+            await workspace.Clear();
             Assert.IsFalse(Directory.Exists(Path.Join(td.Directory.FullName, ".cr")));
         }
     }

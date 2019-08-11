@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Test.Core.Pipelines
 {
@@ -10,24 +11,24 @@ namespace Test.Core.Pipelines
     public class TPipeline
     {
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             PipelineBuilder<int, int> builder = TPipelineBuilder.GetBasicBuilder(2).Use("", TPipelineBuilder.initial).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)).Result;
-                PipelineResult<int> res = pipeline.Consume().Result;
+                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug));
+                PipelineResult<int> res = await pipeline.Consume();
                 Assert.IsTrue(res.IsOk);
                 Assert.AreEqual(8, res.Result);
             }
         }
 
         [TestMethod]
-        public void Exception()
+        public async Task Exception()
         {
             PipelineBuilder<int, int> builder = TPipelineBuilder.GetBasicBuilder(2).Use("", TPipelineBuilder.initial).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.expNotImp).Use("", TPipelineBuilder.multiply);
             {
-                Pipeline<int, int> pipeline = builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)).Result;
-                PipelineResult<int> res = pipeline.Consume().Result;
+                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug));
+                PipelineResult<int> res = await pipeline.Consume();
                 Assert.AreEqual(4, res.Result);
                 Assert.IsTrue(res.IsError);
                 Assert.IsInstanceOfType(res.Exception, typeof(NotImplementedException));

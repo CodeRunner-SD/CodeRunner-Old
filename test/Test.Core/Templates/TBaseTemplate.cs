@@ -2,6 +2,7 @@
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading.Tasks;
 
 namespace Test.Core.Templates
 {
@@ -9,7 +10,7 @@ namespace Test.Core.Templates
     public class TBaseTemplate
     {
         [TestMethod]
-        public void SaveLoad()
+        public async Task SaveLoad()
         {
             using TempFile temp = new TempFile();
             StringTemplate tp = new StringTemplate("content", new Variable[] { new Variable("var") })
@@ -23,12 +24,12 @@ namespace Test.Core.Templates
             };
             using (System.IO.FileStream st = temp.File.OpenWrite())
             {
-                tp.Save(st).Wait();
+                await tp.Save(st);
             }
 
             using (System.IO.FileStream st = temp.File.OpenRead())
             {
-                BaseTemplate rt = BaseTemplate.Load(st).Result;
+                BaseTemplate rt = await BaseTemplate.Load(st);
                 Assert.AreEqual("author", rt.Metadata.Author);
                 Assert.IsTrue(((StringTemplate)rt).Variables.Contains(new Variable("var")));
             }

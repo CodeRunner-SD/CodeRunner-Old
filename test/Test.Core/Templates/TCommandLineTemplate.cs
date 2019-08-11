@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace Test.Core.Templates
 {
@@ -7,7 +8,7 @@ namespace Test.Core.Templates
     public class TCommandLineTemplate
     {
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             CommandLineTemplate builder = new CommandLineTemplate();
             builder.Commands.Add("gcc");
@@ -16,7 +17,7 @@ namespace Test.Core.Templates
             builder.WithFlag("ff", "-").WithFlag("O2", "-");
             builder.WithOption("o", "a.out", "-").WithOption("cc", 1, "--").WithOption("cc", "a", "--").WithoutFlag("-ff").WithoutOption("--cc");
             Assert.AreEqual(0, builder.GetVariables().Count);
-            Assert.AreEqual("gcc a.c -O2 -o a.out --version", string.Join(' ', builder.Resolve(new ResolveContext()).Result));
+            Assert.AreEqual("gcc a.c -O2 -o a.out --version", string.Join(' ', await builder.Resolve(new ResolveContext())));
         }
     }
 }

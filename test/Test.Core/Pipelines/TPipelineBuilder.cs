@@ -45,10 +45,10 @@ namespace Test.Core.Pipelines
         }
 
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             PipelineBuilder<int, int> builder = GetBasicBuilder(2).Use("", initial).Use("", plus).Use("", plus).Use("", multiply);
-            Assert.IsNotNull(builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)));
+            Assert.IsNotNull(await builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug)));
         }
     }
 }

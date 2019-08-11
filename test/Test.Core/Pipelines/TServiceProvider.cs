@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace Test.Core.Pipelines
 {
@@ -7,11 +8,11 @@ namespace Test.Core.Pipelines
     public class TServiceProvider
     {
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             ServiceProvider provider = new ServiceProvider();
             {
-                ServiceScope scope = provider.CreateScope("a").Result;
+                ServiceScope scope = await provider.CreateScope("a");
                 Assert.AreEqual("a", scope.Name);
                 Assert.IsFalse(scope.TryGet<object>(out _));
 
@@ -36,7 +37,7 @@ namespace Test.Core.Pipelines
                 scope.Remove<double>();
             }
             {
-                ServiceScope scope = provider.CreateScope("b").Result;
+                ServiceScope scope = await provider.CreateScope("b");
                 Assert.AreEqual("b", scope.Name);
                 Assert.IsFalse(scope.TryGet<object>(out _));
 

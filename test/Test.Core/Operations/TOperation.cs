@@ -14,32 +14,8 @@ namespace Test.Core.Operations
     {
         private const string C_HelloWorld = @"print(""Hello World!"")";
 
-        private string GetShell()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                return "powershell.exe";
-            }
-            else
-            {
-                return "bash";
-            }
-        }
-
-        private string GetPythonFile()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                return "C:/Python37/python.exe";
-            }
-            else
-            {
-                return "/usr/bin/python3";
-            }
-        }
-
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_HelloWorld, Encoding.UTF8);
@@ -54,18 +30,18 @@ namespace Test.Core.Operations
             Operation op = new Operation(new[]
             {
                 new CommandLineTemplate()
-                    .UseCommand(GetPythonFile())
+                    .UseCommand(Utils.GetPythonFile())
                     .UseArgument(source)
             });
 
             ResolveContext context = new ResolveContext()
                 .WithVariable(OperationVariables.InputPath.Name, tmp.File.FullName)
-                .WithVariable(Operation.VarShell.Name, GetShell());
+                .WithVariable(Operation.VarShell.Name, Utils.GetShell());
 
             op.CommandExecuting += Op_CommandExecuting;
             op.CommandExecuted += Op_CommandExecuted;
 
-            Assert.IsTrue(op.Resolve(context).Result);
+            Assert.IsTrue(await op.Resolve(context));
         }
 
         private Task<bool> Op_CommandExecuting(Operation sender, int index, System.Diagnostics.ProcessStartInfo process, string[] command)

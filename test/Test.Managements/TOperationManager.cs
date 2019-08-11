@@ -2,6 +2,7 @@
 using CodeRunner.Managements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Test.Managements
 {
@@ -9,41 +10,41 @@ namespace Test.Managements
     public class TOperationManager
     {
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             using TempDirectory td = new TempDirectory();
             OperationManager manager = new OperationManager(td.Directory);
-            manager.Initialize().Wait();
-            Assert.IsNotNull(manager.Settings.Result);
-            Assert.IsTrue(manager.Has("hello").Result);
-            CodeRunner.Managements.Configurations.OperationItem c = manager.Get("hello").Result;
+            await manager.Initialize();
+            Assert.IsNotNull(await manager.Settings);
+            Assert.IsTrue(await manager.Has("hello"));
+            CodeRunner.Managements.Configurations.OperationItem c = await manager.Get("hello");
             Assert.IsNotNull(c);
-            CodeRunner.Operations.Operation vc = c.Value.Result;
-            c.Value.Wait();
-            c.Value.Wait();
+            CodeRunner.Operations.Operation vc = await c.Value;
+            await c.Value;
+            await c.Value;
             Assert.IsNotNull(vc);
             {
                 string name = "tc";
                 string newFile = "tc.tpl";
                 File.Copy(Path.Join(td.Directory.FullName, c.FileName), Path.Join(td.Directory.FullName, newFile));
-                manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
+                await manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
                 {
                     FileName = newFile
-                }).Wait();
-                Assert.IsTrue(manager.Has(name).Result);
-                manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
+                });
+                Assert.IsTrue(await manager.Has(name));
+                await manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
                 {
                     FileName = newFile
-                }).Wait();
-                CodeRunner.Managements.Configurations.OperationItem tc = manager.Get(name).Result;
+                });
+                CodeRunner.Managements.Configurations.OperationItem tc = await manager.Get(name);
                 Assert.IsNotNull(tc);
-                CodeRunner.Operations.Operation vtc = tc.Value.Result;
+                CodeRunner.Operations.Operation vtc = await tc.Value;
                 Assert.IsNotNull(vtc);
                 Assert.AreEqual(vc.Metadata.Author, vtc.Metadata.Author);
 
-                manager.Set(name, null).Wait();
-                Assert.IsFalse(manager.Has(name).Result);
-                Assert.IsNull(manager.Get(name).Result);
+                await manager.Set(name, null);
+                Assert.IsFalse(await manager.Has(name));
+                Assert.IsNull(await manager.Get(name));
             }
         }
     }

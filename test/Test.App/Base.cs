@@ -4,17 +4,18 @@ using CodeRunner.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Test.App
 {
     [TestClass]
     public class Base
     {
-        private void UsingInput(string content, Action<TextReader> action)
+        private async Task UsingInput(string content, Func<TextReader, Task> action)
         {
             using MemoryStream ms = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
             using StreamReader sr = new StreamReader(ms);
-            action(sr);
+            await action(sr);
         }
 
         [TestInitialize]
@@ -24,105 +25,105 @@ namespace Test.App
         }
 
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput("--version", input =>
+            await UsingInput("--version", async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
             });
         }
 
         [TestMethod]
-        public void Init()
+        public async Task Init()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init"), input =>
+            await UsingInput(string.Join('\n', "init"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                 Assert.IsTrue(TestView.Workspace.HasInitialized);
             });
-            UsingInput(string.Join('\n', "init --delete"), input =>
+            await UsingInput(string.Join('\n', "init --delete"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                 Assert.IsFalse(TestView.Workspace.HasInitialized);
             });
         }
 
         [TestMethod]
-        public void NewNow()
+        public async Task NewNow()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "new c", "a"), input =>
+            await UsingInput(string.Join('\n', "init", "new c", "a"), async input =>
              {
                  Program.Input = input;
-                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                  Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
              });
-            UsingInput(string.Join('\n', "now -f a.c"), input =>
+            await UsingInput(string.Join('\n', "now -f a.c"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
             });
         }
 
         [TestMethod]
-        public void Run()
+        public async Task Run()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "run hello -- name=sun", '\n'), input =>
+            await UsingInput(string.Join('\n', "init", "run hello -- name=sun", '\n'), async input =>
              {
                  Program.Input = input;
-                 Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                  StringAssert.Contains(TestView.Console.Out.ToString(), "hello sun");
              });
         }
 
         [TestMethod]
-        public void Debug()
+        public async Task Debug()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "debug"), input =>
+            await UsingInput(string.Join('\n', "debug"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
             });
         }
 
         [TestMethod]
-        public void Clear()
+        public async Task Clear()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "clear"), input =>
+            await UsingInput(string.Join('\n', "clear"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
             });
         }
 
         [TestMethod]
-        public void Template()
+        public async Task Template()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "template list"), input =>
+            await UsingInput(string.Join('\n', "init", "template list"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                 StringAssert.Contains(TestView.Console.Out.ToString(), "python");
             });
         }
 
         [TestMethod]
-        public void Operation()
+        public async Task OperationAsync()
         {
             using TempDirectory td = new TempDirectory();
-            UsingInput(string.Join('\n', "init", "operation list"), input =>
+            await UsingInput(string.Join('\n', "init", "operation list"), async input =>
             {
                 Program.Input = input;
-                Assert.AreEqual(0, Program.Main(new string[] { "-d", td.Directory.FullName }).Result);
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
                 StringAssert.Contains(TestView.Console.Out.ToString(), "hello");
             });
         }

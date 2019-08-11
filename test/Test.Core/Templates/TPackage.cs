@@ -3,6 +3,7 @@ using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Test.Core.Templates
 {
@@ -10,7 +11,7 @@ namespace Test.Core.Templates
     public class TPackage
     {
         [TestMethod]
-        public void Files()
+        public async Task Files()
         {
             using TempFile f = new TempFile();
             {
@@ -23,9 +24,9 @@ namespace Test.Core.Templates
                 using (TempDirectory dir = new TempDirectory())
                 {
                     dir.Directory.Delete();
-                    pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, dir.Directory.FullName)).Wait();
+                    await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, dir.Directory.FullName));
                 }
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName)).Wait();
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName));
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -36,9 +37,9 @@ namespace Test.Core.Templates
             }
             {
                 PackageFileTemplate pf = new PackageFileTemplate();
-                pf.FromText(f.File).Wait();
+                await pf.FromText(f.File);
                 pf.WithoutAttributes(FileAttributes.Archive);
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName)).Wait();
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName));
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -49,15 +50,15 @@ namespace Test.Core.Templates
             }
             {
                 PackageFileTemplate pf = new PackageFileTemplate();
-                pf.FromBinary(f.File).Wait();
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName)).Wait();
+                await pf.FromBinary(f.File);
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, f.File.DirectoryName));
                 f.File.Refresh();
                 Assert.AreEqual("hello", File.ReadAllText(f.File.FullName));
             }
         }
 
         [TestMethod]
-        public void Directories()
+        public async Task Directories()
         {
             using TempDirectory d = new TempDirectory();
             {
@@ -68,7 +69,7 @@ namespace Test.Core.Templates
                     .WithoutAttributes(FileAttributes.System);
                 pf.AddFile("a.txt").UseTemplate(new TextFileTemplate("hello"));
                 pf.AddDirectory("subdir");
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -77,9 +78,9 @@ namespace Test.Core.Templates
             }
             {
                 PackageDirectoryTemplate pf = new PackageDirectoryTemplate();
-                pf.From(d.Directory, true).Wait();
+                await pf.From(d.Directory, true);
                 pf.UseName().WithoutAttributes(FileAttributes.Archive);
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -91,9 +92,9 @@ namespace Test.Core.Templates
             }
             {
                 PackageDirectoryTemplate pf = new PackageDirectoryTemplate();
-                pf.From(d.Directory, false).Wait();
+                await pf.From(d.Directory, false);
                 pf.UseName().WithoutAttributes(FileAttributes.Archive);
-                pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName)).Wait();
+                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var.Name, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {

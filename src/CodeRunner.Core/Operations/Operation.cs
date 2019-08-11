@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Executors;
 using CodeRunner.Templates;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -51,10 +52,7 @@ namespace CodeRunner.Operations
                 string[] cmds = await v.Resolve(context);
                 ProcessStartInfo res = new ProcessStartInfo(shell);
                 res.ArgumentList.Add("-c");
-                foreach (string r in cmds)
-                {
-                    res.ArgumentList.Add(r);
-                }
+                res.ArgumentList.Add(string.Join(' ', cmds));
                 if (CommandExecuting != null)
                 {
                     if (!await CommandExecuting.Invoke(this, index, res, cmds))
@@ -63,7 +61,10 @@ namespace CodeRunner.Operations
                     }
                 }
 
-                using CLIExecutor exe = new CLIExecutor(res);
+                using CLIExecutor exe = new CLIExecutor(res)
+                {
+                    TimeLimit = TimeSpan.FromSeconds(10)
+                };
                 ExecutorResult result = await exe.Run();
                 if (CommandExecuted != null)
                 {
