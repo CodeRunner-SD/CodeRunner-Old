@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CodeRunner.Templates
+namespace CodeRunner.Packagings
 {
-    public class TemplateMetadata
+    public class PackageMetadata
     {
         public string Author { get; set; } = "";
 

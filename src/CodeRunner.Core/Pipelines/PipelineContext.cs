@@ -2,9 +2,9 @@
 
 namespace CodeRunner.Pipelines
 {
-    public class OperationContext
+    public class PipelineContext
     {
-        public OperationContext(ServiceScope services, LogScope logs)
+        public PipelineContext(ServiceScope services, LogScope logs)
         {
             Services = services;
             Logs = logs;
@@ -19,9 +19,9 @@ namespace CodeRunner.Pipelines
         public bool IgnoreResult { get; set; } = false;
     }
 
-    public class OperationContext<TOrigin, TResult> : OperationContext
+    public class PipelineContext<TOrigin, TResult> : PipelineContext
     {
-        public OperationContext(ServiceScope services, TOrigin origin, TResult result, LogScope logs) : base(services, logs)
+        public PipelineContext(ServiceScope services, TOrigin origin, TResult result, LogScope logs) : base(services, logs)
         {
             Origin = origin;
             Result = result;

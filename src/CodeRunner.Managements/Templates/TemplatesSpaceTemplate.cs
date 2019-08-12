@@ -1,5 +1,6 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managements.Configurations;
+using CodeRunner.Packagings;
 using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
@@ -18,15 +19,15 @@ namespace CodeRunner.Managements.Templates
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
                 new StringTemplate(
                     JsonFormatter.Serialize(
-                        new PackageFileTemplate(
+                        new Package<BaseTemplate>(new PackageFileTemplate(
                             new StringTemplate(
                                 StringTemplate.GetVariableTemplate("name") + $".{ext}",
                                 new Variable[] { new Variable("name").Required() }
                             )
-                        )
+                        ).UseTemplate(new TextFileTemplate(new StringTemplate(source))))
                         {
                             Metadata = WorkspaceTemplate.BuiltinTemplateMetadata
-                        }.UseTemplate(new TextFileTemplate(new StringTemplate(source)))
+                        }
                     )
                 )
             );

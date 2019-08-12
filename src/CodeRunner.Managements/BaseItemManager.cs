@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managements
 {
-    public abstract class BaseItemManager<TSettings, TItem, TValue> : BaseManager<TSettings> where TSettings : ItemSettings<TItem> where TItem : ItemValue<TValue>
+    public abstract class BaseItemManager<TSettings, TItem, TValue> : BaseManager<TSettings>
+        where TSettings : ItemSettings<TItem>
+        where TItem : ItemValue<TValue>
     {
         protected BaseItemManager(DirectoryInfo pathRoot, DirectoryTemplate directoryTemplate) : base(pathRoot, directoryTemplate)
         {

@@ -117,7 +117,7 @@ namespace Test.App
         }
 
         [TestMethod]
-        public async Task OperationAsync()
+        public async Task Operation()
         {
             using TempDirectory td = new TempDirectory();
             await UsingInput(string.Join('\n', "init", "operation list"), async input =>

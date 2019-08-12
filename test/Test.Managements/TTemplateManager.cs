@@ -19,7 +19,7 @@ namespace Test.Managements
             Assert.IsTrue(await manager.Has("c"));
             CodeRunner.Managements.Configurations.TemplateItem c = await manager.Get("c");
             Assert.IsNotNull(c);
-            CodeRunner.Templates.BaseTemplate vc = await c.Value;
+            CodeRunner.Packagings.Package<CodeRunner.Templates.BaseTemplate> vc = await c.Value;
             await c.Value;
             await c.Value;
             Assert.IsNotNull(vc);
@@ -38,7 +38,7 @@ namespace Test.Managements
                 });
                 CodeRunner.Managements.Configurations.TemplateItem tc = await manager.Get(name);
                 Assert.IsNotNull(tc);
-                CodeRunner.Templates.BaseTemplate vtc = await tc.Value;
+                CodeRunner.Packagings.Package<CodeRunner.Templates.BaseTemplate> vtc = await tc.Value;
                 Assert.IsNotNull(vtc);
                 Assert.AreEqual(vc.Metadata.Author, vtc.Metadata.Author);
 

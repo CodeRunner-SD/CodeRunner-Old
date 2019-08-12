@@ -1,5 +1,5 @@
 ﻿using CodeRunner.IO;
-using CodeRunner.Templates;
+using CodeRunner.Packagings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.IO;
@@ -23,15 +23,15 @@ namespace Test.Core.IO
         }
 
         [TestMethod]
-        public async Task Template()
+        public async Task Package()
         {
             using TempFile tf = new TempFile();
-            TemplateFileLoader<StringTemplate> loader = new TemplateFileLoader<StringTemplate>(tf.File);
+            PackageFileLoader<string> loader = new PackageFileLoader<string>(tf.File);
             Assert.IsNull(await loader.Data);
-            File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new StringTemplate("a")));
-            Assert.AreEqual("a", (await loader.Data)?.Content);
-            await loader.Save(new StringTemplate("b"));
-            Assert.AreEqual("b", (await loader.Data)?.Content);
+            File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new Package<string>("a")));
+            Assert.AreEqual("a", (await loader.Data)?.Data);
+            await loader.Save(new Package<string>("b"));
+            Assert.AreEqual("b", (await loader.Data)?.Data);
         }
     }
 }

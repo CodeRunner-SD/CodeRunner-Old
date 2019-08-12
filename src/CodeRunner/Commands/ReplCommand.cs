@@ -22,7 +22,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             return Task.FromResult(0);
         }

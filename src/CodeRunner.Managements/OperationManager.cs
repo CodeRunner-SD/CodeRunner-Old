@@ -2,18 +2,19 @@
 using CodeRunner.Managements.Configurations;
 using CodeRunner.Managements.Templates;
 using CodeRunner.Operations;
+using CodeRunner.Packagings;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managements
 {
-    public class OperationManager : BaseItemManager<OperationsSettings, OperationItem, Operation?>
+    public class OperationManager : BaseItemManager<OperationsSettings, OperationItem, Package<Operation>?>
     {
         public OperationManager(DirectoryInfo pathRoot) : base(pathRoot, new OperationsSpaceTemplate())
         {
         }
 
-        private TemplateFileLoaderPool<Operation> FileLoaderPool { get; } = new TemplateFileLoaderPool<Operation>();
+        private PackageFileLoaderPool<Operation> FileLoaderPool { get; } = new PackageFileLoaderPool<Operation>();
 
         protected override Task ConfigurateItem(OperationItem item)
         {

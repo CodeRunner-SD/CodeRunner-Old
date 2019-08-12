@@ -26,7 +26,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             Workspace workspace = operation.Services.Get<Workspace>();
             if (argument.Delete)

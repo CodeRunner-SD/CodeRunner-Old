@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Pipelines
 {
-    public delegate Task<TResult> PipelineOperator<TOrigin, TResult>(OperationContext<TOrigin, TResult> context);
+    public delegate Task<TResult> PipelineOperator<TOrigin, TResult>(PipelineContext<TOrigin, TResult> context);
 
     public class Pipeline<TOrigin, TResult>
     {
@@ -53,7 +53,7 @@ namespace CodeRunner.Pipelines
 
             try
             {
-                OperationContext<TOrigin, TResult> context = new OperationContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, subLogScope);
+                PipelineContext<TOrigin, TResult> context = new PipelineContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, subLogScope);
                 TResult result = await op.Item2.Invoke(context);
                 if (!context.IgnoreResult)
                 {

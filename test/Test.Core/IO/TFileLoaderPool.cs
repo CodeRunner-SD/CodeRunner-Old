@@ -1,5 +1,5 @@
 ﻿using CodeRunner.IO;
-using CodeRunner.Templates;
+using CodeRunner.Packagings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.IO;
@@ -11,13 +11,13 @@ namespace Test.Core.IO
     public class TFileLoaderPool
     {
         [TestMethod]
-        public async Task Template()
+        public async Task Package()
         {
             using TempFile tf = new TempFile();
-            File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new StringTemplate("a")));
-            TemplateFileLoaderPool<StringTemplate> pool = new TemplateFileLoaderPool<StringTemplate>();
-            TemplateFileLoader<StringTemplate> loader = pool.Get(tf.File);
-            Assert.AreEqual("a", (await loader.Data)?.Content);
+            File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new Package<string>("a")));
+            PackageFileLoaderPool<string> pool = new PackageFileLoaderPool<string>();
+            PackageFileLoader<string> loader = pool.Get(tf.File);
+            Assert.AreEqual("a", (await loader.Data)?.Data);
             Assert.AreSame(loader, pool.Get(tf.File));
         }
     }

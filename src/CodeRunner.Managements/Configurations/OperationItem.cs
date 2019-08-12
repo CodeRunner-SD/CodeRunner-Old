@@ -1,11 +1,12 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Operations;
+using CodeRunner.Packagings;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managements.Configurations
 {
-    public class OperationItem : ItemValue<Operation?>
+    public class OperationItem : ItemValue<Package<Operation>?>
     {
         public string FileName { get; set; } = "";
 
@@ -15,11 +16,11 @@ namespace CodeRunner.Managements.Configurations
 
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        public TemplateFileLoaderPool<Operation>? FileLoaderPool { get; set; }
+        public PackageFileLoaderPool<Operation>? FileLoaderPool { get; set; }
 
-        private TemplateFileLoader<Operation>? FileLoader { get; set; }
+        private PackageFileLoader<Operation>? FileLoader { get; set; }
 
-        protected override Task<Operation?> GetValue()
+        protected override Task<Package<Operation>?> GetValue()
         {
             if (FileLoader != null)
             {
@@ -34,11 +35,11 @@ namespace CodeRunner.Managements.Configurations
                 }
                 else
                 {
-                    FileLoader = new TemplateFileLoader<Operation>(file);
+                    FileLoader = new PackageFileLoader<Operation>(file);
                 }
                 return FileLoader.Data;
             }
-            return Task.FromResult<Operation?>(null);
+            return Task.FromResult<Package<Operation>?>(null);
         }
     }
 }

@@ -12,10 +12,12 @@ namespace CodeRunner.Commands
         {
             Command res = new Command("template", "Manage templates.");
             res.AddCommand(new Templates.ListCommand().Build());
+            res.AddCommand(new Templates.AddCommand().Build());
+            res.AddCommand(new Templates.RemoveCommand().Build());
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             return Task.FromResult(0);
         }

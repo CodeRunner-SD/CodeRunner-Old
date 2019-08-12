@@ -2,7 +2,6 @@
 using CodeRunner.Operations;
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;

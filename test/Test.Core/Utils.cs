@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Test.Core
 {
-    class Utils
+    internal class Utils
     {
         public static string GetShell()
         {

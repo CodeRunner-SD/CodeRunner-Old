@@ -53,7 +53,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             operation.Services.Add(new Workspace(argument.Directory!));
 

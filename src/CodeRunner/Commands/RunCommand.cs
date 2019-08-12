@@ -33,7 +33,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             Workspace workspace = operation.Services.Get<Workspace>();
             ITerminal terminal = console.GetTerminal();
@@ -44,7 +44,7 @@ namespace CodeRunner.Commands
                 terminal.OutputErrorLine($"No this operation: {op}.");
                 return 1;
             }
-            Operation? tpl = await tplItem.Value;
+            Operation? tpl = (await tplItem.Value)?.Data;
             if (tpl == null)
             {
                 terminal.OutputErrorLine($"Can not load this operation: {op}.");

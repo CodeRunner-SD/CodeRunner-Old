@@ -169,19 +169,31 @@ namespace CodeRunner.Rendering
 
         public static void OutputErrorLine(this ITerminal terminal, string content)
         {
-            OutputError(terminal, content);
+            terminal.OutputError(content);
             terminal.OutputLine();
         }
 
         public static void OutputWarningLine(this ITerminal terminal, string content)
         {
-            OutputWarning(terminal, content);
+            terminal.OutputWarning(content);
             terminal.OutputLine();
         }
 
         public static void OutputInformationLine(this ITerminal terminal, string content)
         {
-            OutputInformation(terminal, content);
+            terminal.OutputInformation(content);
+            terminal.OutputLine();
+        }
+
+        public static void OutputFatalLine(this ITerminal terminal, string content)
+        {
+            terminal.OutputFatal(content);
+            terminal.OutputLine();
+        }
+
+        public static void OutputDebugLine(this ITerminal terminal, string content)
+        {
+            terminal.OutputDebug(content);
             terminal.OutputLine();
         }
 

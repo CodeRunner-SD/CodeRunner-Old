@@ -122,7 +122,7 @@ namespace CodeRunner
 
         #endregion
 
-        private static bool Prompt(OperationContext context, ITerminal terminal)
+        private static bool Prompt(PipelineContext context, ITerminal terminal)
         {
             if (context.Services.TryGet<WorkItem>(out WorkItem workItem))
             {

@@ -21,9 +21,8 @@ namespace CodeRunner.Commands
                 TreatUnmatchedTokensAsErrors = false
             };
             {
-                Argument<string> argTemplate = new Argument<string>()
+                Argument<string> argTemplate = new Argument<string>(nameof(CArgument.Template))
                 {
-                    Name = nameof(CArgument.Template),
                     Arity = ArgumentArity.ExactlyOne,
                 };
                 res.AddArgument(argTemplate);
@@ -32,7 +31,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, OperationContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
             Workspace workspace = operation.Services.Get<Workspace>();
             ITerminal terminal = console.GetTerminal();
@@ -43,7 +42,7 @@ namespace CodeRunner.Commands
                 terminal.OutputErrorLine($"No this template: {template}.");
                 return 1;
             }
-            BaseTemplate? tpl = await tplItem.Value;
+            BaseTemplate? tpl = (await tplItem.Value)?.Data;
             if (tpl == null)
             {
                 terminal.OutputErrorLine($"Can not load this template: {template}.");

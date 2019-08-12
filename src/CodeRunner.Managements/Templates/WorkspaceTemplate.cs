@@ -1,5 +1,6 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managements.Configurations;
+using CodeRunner.Packagings;
 using CodeRunner.Templates;
 using System;
 using System.IO;
@@ -10,7 +11,7 @@ namespace CodeRunner.Managements.Templates
 {
     public class WorkspaceTemplate : DirectoryTemplate
     {
-        public static readonly TemplateMetadata BuiltinTemplateMetadata = new TemplateMetadata
+        public static readonly PackageMetadata BuiltinTemplateMetadata = new PackageMetadata
         {
             Author = "CodeRunner",
             CreationTime = DateTimeOffset.Now,

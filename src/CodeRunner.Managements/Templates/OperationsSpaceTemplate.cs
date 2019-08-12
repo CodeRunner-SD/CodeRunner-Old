@@ -1,6 +1,7 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managements.Configurations;
 using CodeRunner.Operations;
+using CodeRunner.Packagings;
 using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace CodeRunner.Managements.Templates
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
                 new StringTemplate(
                     JsonFormatter.Serialize(
-                        new Operation(items)
+                        new Package<Operation>(new Operation(items))
                         {
                             Metadata = WorkspaceTemplate.BuiltinTemplateMetadata
                         }
