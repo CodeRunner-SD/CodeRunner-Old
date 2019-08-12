@@ -15,7 +15,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
             ITerminal terminal = console.GetTerminal();
             terminal.Clear();

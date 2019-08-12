@@ -15,13 +15,13 @@ namespace CodeRunner.Commands.Templates
     {
         public override Task<TemplateManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.Get<Workspace>();
+            Workspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Templates);
         }
 
         public override async Task RenderItems(ITerminal terminal, IDictionary<string, TemplateItem> items, PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.Get<Workspace>();
+            Workspace workspace = pipeline.Services.GetWorkspace();
             List<SettingItem> sources = new List<SettingItem>();
             foreach (string v in items.Keys)
             {

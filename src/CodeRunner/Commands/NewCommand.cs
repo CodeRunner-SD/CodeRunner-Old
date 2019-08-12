@@ -7,6 +7,7 @@ using CodeRunner.Templates;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +34,8 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = operation.Services.GetWorkspace();
+            TextReader input = operation.Services.GetInput();
             ITerminal terminal = console.GetTerminal();
             string template = argument.Template;
             TemplateItem? tplItem = await workspace.Templates.Get(template);
@@ -51,7 +53,7 @@ namespace CodeRunner.Commands
 
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             resolveContext.WithVariable(DirectoryTemplate.Var.Name, workspace.PathRoot.FullName);
-            if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
+            if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))
             {
                 return -1;
             }

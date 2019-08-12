@@ -8,6 +8,7 @@ using CodeRunner.Templates;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,9 +34,10 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = pipeline.Services.GetWorkspace();
+            TextReader input = pipeline.Services.GetInput();
             ITerminal terminal = console.GetTerminal();
             string op = argument.Operation;
             OperationItem? tplItem = await workspace.Operations.Get(op);
@@ -55,12 +57,13 @@ namespace CodeRunner.Commands
             AppSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
             {
-                if (operation.Services.TryGet<WorkItem>(out WorkItem item))
+                WorkItem workItem = pipeline.Services.GetWorkItem();
+                if (workItem != null)
                 {
-                    resolveContext.WithVariable(OperationVariables.InputPath.Name, item.RelativePath);
+                    resolveContext.WithVariable(OperationVariables.InputPath.Name, workItem.RelativePath);
                 }
             }
-            if (!terminal.FillVariables(tpl!.GetVariables(), resolveContext))
+            if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))
             {
                 return -1;
             }

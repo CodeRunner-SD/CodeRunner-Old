@@ -1,14 +1,14 @@
 ﻿using CodeRunner.Templates;
 using System;
 using System.Collections.Generic;
-using System.CommandLine;
 using System.CommandLine.Rendering;
+using System.IO;
 
 namespace CodeRunner.Rendering
 {
     public static class ConsoleIO
     {
-        public static string? InputVariableValue(this ITerminal terminal, Variable variable)
+        public static string? InputVariableValue(this ITerminal terminal, TextReader input, Variable variable)
         {
             terminal.Output("  ");
             if (variable.IsRequired)
@@ -21,20 +21,20 @@ namespace CodeRunner.Rendering
                 terminal.Output($"({ variable.GetDefault().ToString()})");
             }
             terminal.Output(": ");
-            return terminal.InputLine();
+            return input.InputLine();
         }
 
-        public static string? InputLine(this IConsole _)
+        public static string? InputLine(this TextReader input)
         {
-            return Program.Input.ReadLine();
+            return input.ReadLine();
         }
 
-        public static bool IsEndOfInput(this IConsole _)
+        public static bool IsEndOfInput(this TextReader input)
         {
-            return Program.Environment == EnvironmentType.Test && Program.Input.Peek() == -1;
+            return Program.Environment == EnvironmentType.Test && input.Peek() == -1;
         }
 
-        public static bool FillVariables(this ITerminal terminal, IEnumerable<Variable> variables, ResolveContext context)
+        public static bool FillVariables(this ITerminal terminal, TextReader input, IEnumerable<Variable> variables, ResolveContext context)
         {
             bool isFirst = true;
             foreach (Variable v in variables)
@@ -50,7 +50,7 @@ namespace CodeRunner.Rendering
                     isFirst = false;
                 }
 
-                string? line = terminal.InputVariableValue(v);
+                string? line = terminal.InputVariableValue(input, v);
                 if (string.IsNullOrEmpty(line))
                 {
                     if (v.IsRequired)

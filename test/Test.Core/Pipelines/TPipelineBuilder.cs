@@ -8,24 +8,24 @@ namespace Test.Core.Pipelines
     [TestClass]
     public class TPipelineBuilder
     {
-        public static readonly PipelineOperator<int, int> initial = context =>
+        public static readonly PipelineOperation<int, int> initial = context =>
         {
             context.Logs.Warning($"initial with {context.Origin}");
             return Task.FromResult(context.Origin);
         };
-        public static readonly PipelineOperator<int, int> plus = context =>
+        public static readonly PipelineOperation<int, int> plus = context =>
         {
             int arg = context.Services.Get<int>();
             context.Logs.Information($"plus with {arg}");
             return Task.FromResult(context.Result + arg);
         };
-        public static readonly PipelineOperator<int, int> multiply = context =>
+        public static readonly PipelineOperation<int, int> multiply = context =>
         {
             int arg = context.Services.Get<int>();
             context.Logs.Information($"multiply with {arg}");
             return Task.FromResult(context.Result * arg);
         };
-        public static readonly PipelineOperator<int, int> expNotImp = context =>
+        public static readonly PipelineOperation<int, int> expNotImp = context =>
         {
             context.Logs.Error("exception!");
             throw new NotImplementedException();

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Pipelines
 {
-    public delegate Task<TResult> PipelineOperator<TOrigin, TResult>(PipelineContext<TOrigin, TResult> context);
+    public delegate Task<TResult> PipelineOperation<TOrigin, TResult>(PipelineContext<TOrigin, TResult> context);
 
     public class Pipeline<TOrigin, TResult>
     {
-        public Pipeline(TOrigin origin, Logger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperator<TOrigin, TResult>)> ops)
+        public Pipeline(TOrigin origin, Logger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> ops)
         {
             Origin = origin;
             Logger = logger;
@@ -24,7 +24,7 @@ namespace CodeRunner.Pipelines
 
         private ServiceProvider Services { get; }
 
-        private IReadOnlyList<(string, PipelineOperator<TOrigin, TResult>)> Ops { get; }
+        private IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> Ops { get; }
 
         private Exception? Exception { get; set; }
 
@@ -45,7 +45,7 @@ namespace CodeRunner.Pipelines
                 return false;
             }
 
-            (string, PipelineOperator<TOrigin, TResult>) op = Ops[Position];
+            (string, PipelineOperation<TOrigin, TResult>) op = Ops[Position];
 
             Logs.Debug($"Executing {op.Item1} at {Position}.");
 

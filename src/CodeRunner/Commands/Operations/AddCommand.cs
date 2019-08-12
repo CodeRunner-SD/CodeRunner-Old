@@ -20,7 +20,7 @@ namespace CodeRunner.Commands.Operations
 
         public override Task<OperationManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.Get<Workspace>();
+            Workspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Operations);
         }
     }

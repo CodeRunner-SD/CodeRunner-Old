@@ -49,7 +49,7 @@ namespace CodeRunner.Commands.ItemManagers
 
         public override async Task<int> Handle(AddCommand.CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = operation.Services.GetWorkspace();
             argument.File = CommandLines.ResolvePath(workspace, argument.File!);
             await (await GetManager(operation)).Set(
                 argument.Name,

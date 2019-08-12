@@ -47,7 +47,7 @@ namespace CodeRunner.Commands
 
         public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.Get<Workspace>();
+            Workspace workspace = operation.Services.GetWorkspace();
             if (argument.File != null)
             {
                 argument.File = CommandLines.ResolvePath(workspace, argument.File);

@@ -1,4 +1,5 @@
 ﻿using CodeRunner.Helpers;
+using CodeRunner.Loggings;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using System.CommandLine;
@@ -53,26 +54,26 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            operation.Services.Add(new Workspace(argument.Directory!));
+            pipeline.Services.Add(new Workspace(argument.Directory!));
+            Logger logger = pipeline.Services.GetLogger();
 
             if (argument.Command != "")
             {
-                Parser repl = CommandLines.CreateParser(operation.Services.Get<Command>(Program.ReplCommandId), operation);
+                Parser repl = CommandLines.CreateParser(pipeline.Services.GetReplCommand(), pipeline);
+                pipeline.IsEnd = true;
                 return await repl.InvokeAsync(argument.Command, console);
             }
 
             if (argument.Verbose)
             {
-                Program.Logger.Level = Loggings.LogLevel.Debug;
+                logger.Level = LogLevel.Debug;
             }
             else
             {
-                Program.Logger.Level = Loggings.LogLevel.Information;
+                logger.Level = LogLevel.Information;
             }
-
-            Program.EnableRepl = true;
 
             return 0;
         }

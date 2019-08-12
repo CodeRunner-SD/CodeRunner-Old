@@ -17,11 +17,12 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
+            Logger logger = pipeline.Services.GetLogger();
             ITerminal terminal = console.GetTerminal();
             {
-                terminal.OutputTable(Program.Logger.GetAll(),
+                terminal.OutputTable(logger.GetAll(),
                     new OutputTableColumnLogLevelView(nameof(LogItem.Level)),
                     new OutputTableColumnStringView<LogItem>(x => x.Scope, nameof(LogItem.Scope)),
                     new OutputTableColumnStringView<LogItem>(x => x.Time.ToString(), nameof(LogItem.Time)),

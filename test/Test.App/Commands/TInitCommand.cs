@@ -1,9 +1,6 @@
-﻿using CodeRunner.Commands;
-using CodeRunner.Helpers;
+﻿using CodeRunner;
+using CodeRunner.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.CommandLine.Rendering;
 using System.Threading.Tasks;
 
 namespace Test.App.Commands
@@ -14,12 +11,15 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            TestTerminal terminal = new TestTerminal();
-            CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UsePipeline(async context =>
-            {
-                Parser parser = CommandLines.CreateParser(new InitCommand().Build(), context);
-                return await parser.InvokeAsync("init", context.Services.Get<IConsole>());
-            }, terminal);
+            CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UseSampleCommandInvoker(
+                new InitCommand().Build(),
+                new string[] { "init" },
+                after: context =>
+                {
+                    Assert.IsTrue(context.Services.GetWorkspace().HasInitialized);
+                    return Task.FromResult(0);
+                });
+
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual(0, result.Result);
         }
@@ -27,12 +27,15 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Delete()
         {
-            TestTerminal terminal = new TestTerminal();
-            CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UsePipeline(async context =>
-            {
-                Parser parser = CommandLines.CreateParser(new InitCommand().Build(), context);
-                return await parser.InvokeAsync("init --delete", context.Services.Get<IConsole>());
-            }, terminal);
+            CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UseSampleCommandInvoker(
+                new InitCommand().Build(),
+                new string[] { "init", "--delete" },
+                after: context =>
+                {
+                    Assert.IsFalse(context.Services.GetWorkspace().HasInitialized);
+                    return Task.FromResult(0);
+                });
+
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual(0, result.Result);
         }
