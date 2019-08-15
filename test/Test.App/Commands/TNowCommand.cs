@@ -17,7 +17,7 @@ namespace Test.App.Commands
                 before: Utils.InitializeWorkspace,
                 after: context =>
                 {
-                    CodeRunner.Managements.WorkItem item = context.Services.GetWorkItem();
+                    CodeRunner.Managements.WorkItem? item = context.Services.GetWorkItem();
                     Assert.IsNotNull(item);
                     Assert.AreEqual(CodeRunner.Managements.WorkItemType.File, item!.Type);
                     Assert.AreSame(item!.File, item!.Target);
@@ -38,7 +38,7 @@ namespace Test.App.Commands
                 before: Utils.InitializeWorkspace,
                 after: context =>
                 {
-                    CodeRunner.Managements.WorkItem item = context.Services.GetWorkItem();
+                    CodeRunner.Managements.WorkItem? item = context.Services.GetWorkItem();
                     Assert.IsNotNull(item);
                     Assert.AreEqual(CodeRunner.Managements.WorkItemType.Directory, item!.Type);
                     Assert.AreSame(item!.Directory, item!.Target);

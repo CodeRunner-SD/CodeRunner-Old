@@ -14,6 +14,38 @@ namespace CodeRunner.Managements
         {
         }
 
+        public override async Task Install(string id, Package<Operation>? item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            await Set(id, new OperationItem
+            {
+                FileName = $"{id}.tpl",
+            });
+            OperationItem wrap = await Get(id);
+            if (wrap == null)
+            {
+                return;
+            }
+
+            await wrap.SetValue(item);
+        }
+
+        public override async Task Uninstall(string id)
+        {
+            OperationItem wrap = await Get(id);
+            if (wrap == null)
+            {
+                return;
+            }
+
+            await wrap.SetValue(null);
+            await Set(id, null);
+        }
+
         private PackageFileLoaderPool<Operation> FileLoaderPool { get; } = new PackageFileLoaderPool<Operation>();
 
         protected override Task ConfigurateItem(OperationItem item)

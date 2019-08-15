@@ -88,7 +88,7 @@ namespace CodeRunner
 
         private static bool Prompt(PipelineContext context, ITerminal terminal)
         {
-            WorkItem workItem = context.Services.GetWorkItem();
+            WorkItem? workItem = context.Services.GetWorkItem();
             if (workItem != null)
             {
                 terminal.Output(workItem.RelativePath);

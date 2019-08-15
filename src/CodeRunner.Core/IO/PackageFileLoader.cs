@@ -26,9 +26,9 @@ namespace CodeRunner.IO
 
         public override async Task Save(Package<T> value)
         {
-            using FileStream st = File.OpenWrite();
+            using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
             await value.Save(st);
-            File.LastWriteTimeUtc = DateTime.UtcNow;
+            File.LastWriteTime = DateTime.Now;
         }
     }
 }

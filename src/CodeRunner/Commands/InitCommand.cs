@@ -36,6 +36,23 @@ namespace CodeRunner.Commands
             else
             {
                 await workspace.Initialize();
+
+                await workspace.Templates.Install("c", CodeRunner.Resources.Programming.Templates.C);
+                await workspace.Templates.Install("python", CodeRunner.Resources.Programming.Templates.Python);
+                await workspace.Templates.Install("cpp", CodeRunner.Resources.Programming.Templates.Cpp);
+                await workspace.Templates.Install("csharp", CodeRunner.Resources.Programming.Templates.CSharp);
+                await workspace.Templates.Install("python", CodeRunner.Resources.Programming.Templates.Python);
+                await workspace.Templates.Install("fsharp", CodeRunner.Resources.Programming.Templates.FSharp);
+                await workspace.Templates.Install("go", CodeRunner.Resources.Programming.Templates.Go);
+                await workspace.Templates.Install("java", CodeRunner.Resources.Programming.Templates.Java);
+
+                await workspace.Operations.Install("c", CodeRunner.Resources.Programming.Operations.C);
+                await workspace.Operations.Install("python", CodeRunner.Resources.Programming.Operations.Python);
+                await workspace.Operations.Install("cpp", CodeRunner.Resources.Programming.Operations.Cpp);
+                await workspace.Operations.Install("python", CodeRunner.Resources.Programming.Operations.Python);
+                await workspace.Operations.Install("go", CodeRunner.Resources.Programming.Operations.Go);
+                await workspace.Operations.Install("ruby", CodeRunner.Resources.Programming.Operations.Ruby);
+                await workspace.Operations.Install("javascript", CodeRunner.Resources.Programming.Operations.JavaScript);
             }
             return 0;
         }

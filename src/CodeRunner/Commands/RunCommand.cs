@@ -57,7 +57,7 @@ namespace CodeRunner.Commands
             AppSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
             {
-                WorkItem workItem = pipeline.Services.GetWorkItem();
+                WorkItem? workItem = pipeline.Services.GetWorkItem();
                 if (workItem != null)
                 {
                     resolveContext.WithVariable(OperationVariables.InputPath.Name, workItem.RelativePath);
@@ -68,32 +68,27 @@ namespace CodeRunner.Commands
                 return -1;
             }
 
-            OperationCommandExecutingHandler executing = new OperationCommandExecutingHandler((sender, index, process, command) =>
+            OperationCommandExecutingHandler executing = new OperationCommandExecutingHandler((sender, index, settings, commands) =>
             {
-                terminal.OutputInformationLine($"({index + 1}/{sender.Items.Count}) {string.Join(' ', command)}");
-                process.WorkingDirectory = workspace.PathRoot.FullName;
+                terminal.OutputInformationLine($"({index + 1}/{sender.Items.Count}) {string.Join(' ', commands)}");
+                settings.WorkingDirectory = workspace.PathRoot.FullName;
+                terminal.EnsureAtLeft();
+                terminal.OutputLine("-----");
                 return Task.FromResult(true);
             });
 
             OperationCommandExecutedHandler executed = new OperationCommandExecutedHandler((sender, index, result) =>
             {
-                if (!string.IsNullOrEmpty(result.Output) || !string.IsNullOrEmpty(result.Error))
+                if (!string.IsNullOrEmpty(result.Output))
                 {
-                    terminal.EnsureAtLeft();
-                    terminal.OutputLine("-----");
-                    if (!string.IsNullOrEmpty(result.Output))
-                    {
-                        terminal.Output(result.Output);
-                    }
-
-                    if (!string.IsNullOrEmpty(result.Error))
-                    {
-                        terminal.OutputError(result.Error);
-                    }
-
-                    terminal.EnsureAtLeft();
-                    terminal.OutputLine("-----");
+                    terminal.Output(result.Output);
                 }
+                if (!string.IsNullOrEmpty(result.Error))
+                {
+                    terminal.OutputError(result.Error);
+                }
+                terminal.EnsureAtLeft();
+                terminal.OutputLine("-----");
 
                 terminal.Output($"({index + 1}/{sender.Items.Count}) {result.State.ToString()} -> ");
 
@@ -123,7 +118,5 @@ namespace CodeRunner.Commands
         {
             public string Operation { get; set; } = "";
         }
-
-
     }
 }

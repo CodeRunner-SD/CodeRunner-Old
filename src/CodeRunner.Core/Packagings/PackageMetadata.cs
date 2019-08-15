@@ -9,5 +9,7 @@ namespace CodeRunner.Packagings
         public DateTimeOffset CreationTime { get; set; } = DateTimeOffset.Now;
 
         public Version Version { get; set; } = new Version();
+
+        public string? Name { get; set; }
     }
 }

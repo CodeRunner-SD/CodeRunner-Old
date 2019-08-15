@@ -26,7 +26,7 @@ namespace CodeRunner.IO
                 else
                 {
                     File.Refresh();
-                    if (File.LastWriteTimeUtc > LoadedTime)
+                    if (File.LastWriteTime > LoadedTime)
                     {
                         return Load();
                     }

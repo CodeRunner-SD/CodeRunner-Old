@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Test.App.Commands
 {
-    public class Utils
+    public static class Utils
     {
         public static readonly PipelineOperation<string[], int> InitializeWorkspace = async context =>
         {

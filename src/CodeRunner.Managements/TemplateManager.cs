@@ -16,6 +16,38 @@ namespace CodeRunner.Managements
 
         private PackageFileLoaderPool<BaseTemplate> FileLoaderPool { get; } = new PackageFileLoaderPool<BaseTemplate>();
 
+        public override async Task Install(string id, Package<BaseTemplate>? item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            await Set(id, new TemplateItem
+            {
+                FileName = $"{id}.tpl",
+            });
+            TemplateItem wrap = await Get(id);
+            if (wrap == null)
+            {
+                return;
+            }
+
+            await wrap.SetValue(item);
+        }
+
+        public override async Task Uninstall(string id)
+        {
+            TemplateItem wrap = await Get(id);
+            if (wrap == null)
+            {
+                return;
+            }
+
+            await wrap.SetValue(null);
+            await Set(id, null);
+        }
+
         protected override Task ConfigurateItem(TemplateItem item)
         {
             item.Parent = this;

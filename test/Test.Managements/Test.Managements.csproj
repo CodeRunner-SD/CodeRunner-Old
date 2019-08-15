@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CodeRunner.Core\CodeRunner.Core.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Managements\CodeRunner.Managements.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
   </ItemGroup>
 
 </Project>

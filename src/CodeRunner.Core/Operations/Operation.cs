@@ -2,20 +2,19 @@
 using CodeRunner.Templates;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Operations
 {
-    public delegate Task<bool> OperationCommandExecutingHandler(Operation sender, int index, ProcessStartInfo process, string[] command);
+    public delegate Task<bool> OperationCommandExecutingHandler(Operation sender, int index, CLIExecutorSettings settings, string[] commands);
 
     public delegate Task<bool> OperationCommandExecutedHandler(Operation sender, int index, ExecutorResult result);
 
     public static class OperationVariables
     {
-        public static Variable InputPath = new Variable("inputPath").Required();
+        public static readonly Variable InputPath = new Variable("inputPath").Required();
 
-        public static Variable OutputPath = new Variable("outputPath").Required();
+        public static readonly Variable OutputPath = new Variable("outputPath").Required();
     }
 
     public class Operation : BaseTemplate<bool>
@@ -33,9 +32,9 @@ namespace CodeRunner.Operations
 
         public IList<CommandLineTemplate> Items { get; }
 
-        public event OperationCommandExecutingHandler CommandExecuting;
+        public event OperationCommandExecutingHandler? CommandExecuting;
 
-        public event OperationCommandExecutedHandler CommandExecuted;
+        public event OperationCommandExecutedHandler? CommandExecuted;
 
         public Operation Use(CommandLineTemplate command)
         {
@@ -50,9 +49,14 @@ namespace CodeRunner.Operations
             {
                 CommandLineTemplate v = Items[index];
                 string[] cmds = await v.Resolve(context);
-                ProcessStartInfo res = new ProcessStartInfo(shell);
-                res.ArgumentList.Add("-c");
-                res.ArgumentList.Add(string.Join(' ', cmds));
+                CLIExecutorSettings res = new CLIExecutorSettings(shell, new string[]
+                {
+                    "-c",
+                    string.Join(' ', cmds)
+                })
+                {
+                    TimeLimit = TimeSpan.FromSeconds(10)
+                };
                 if (CommandExecuting != null)
                 {
                     if (!await CommandExecuting.Invoke(this, index, res, cmds))
@@ -61,10 +65,7 @@ namespace CodeRunner.Operations
                     }
                 }
 
-                using CLIExecutor exe = new CLIExecutor(res)
-                {
-                    TimeLimit = TimeSpan.FromSeconds(10)
-                };
+                using CLIExecutor exe = new CLIExecutor(res);
                 ExecutorResult result = await exe.Run();
                 if (CommandExecuted != null)
                 {

@@ -12,9 +12,9 @@ namespace CodeRunner.IO
 
         public override async Task Save(T value)
         {
-            using FileStream st = File.OpenWrite();
+            using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
             await JsonFormatter.Serialize(value, st);
-            File.LastWriteTimeUtc = DateTime.UtcNow;
+            File.LastWriteTime = DateTime.Now;
         }
 
         protected override async Task<T?> OnLoading()

@@ -1,5 +1,6 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managements;
+using CodeRunner.Resources.Programming;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
@@ -45,6 +46,15 @@ namespace Test.Managements
                 await manager.Set(name, null);
                 Assert.IsFalse(await manager.Has(name));
                 Assert.IsNull(await manager.Get(name));
+            }
+            {
+                await manager.Install("c", Operations.C);
+                CodeRunner.Managements.Configurations.OperationItem item = await manager.Get("c");
+                Assert.IsNotNull(item);
+                string path = Path.Join(td.Directory.FullName, item.FileName);
+                Assert.IsTrue(File.Exists(path));
+                await manager.Uninstall("c");
+                Assert.IsFalse(File.Exists(path));
             }
         }
     }

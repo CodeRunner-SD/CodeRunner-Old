@@ -1,4 +1,5 @@
-﻿using CodeRunner.IO;
+﻿using CodeRunner.Executors;
+using CodeRunner.IO;
 using CodeRunner.Operations;
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -43,8 +44,9 @@ namespace Test.Core.Operations
             Assert.IsTrue(await op.Resolve(context));
         }
 
-        private Task<bool> Op_CommandExecuting(Operation sender, int index, System.Diagnostics.ProcessStartInfo process, string[] command)
+        private Task<bool> Op_CommandExecuting(Operation sender, int index, CLIExecutorSettings settings, string[] commands)
         {
+            settings.CollectOutput = true;
             return Task.FromResult(true);
         }
 

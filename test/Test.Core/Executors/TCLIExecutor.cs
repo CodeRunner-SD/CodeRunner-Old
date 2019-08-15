@@ -29,7 +29,10 @@ print(s)";
             using (TempFile tmp = new TempFile())
             {
                 File.WriteAllText(tmp.File.FullName, C_HelloWorld, Encoding.UTF8);
-                using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName));
+                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+                {
+                    CollectOutput = true
+                });
                 ExecutorResult res = await cli.Run();
                 Assert.AreEqual(0, res.ExitCode);
                 StringAssert.Contains(res.Output, "Hello World!");
@@ -41,7 +44,7 @@ print(s)";
             using (TempFile tmp = new TempFile())
             {
                 File.WriteAllText(tmp.File.FullName, C_Exit1, Encoding.UTF8);
-                using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName));
+                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName }));
                 ExecutorResult res = await cli.Run();
                 Assert.AreEqual(1, res.ExitCode);
             }
@@ -52,10 +55,11 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_Input, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName))
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
             {
-                Input = "hello"
-            };
+                Input = "hello",
+                CollectOutput = true
+            });
             ExecutorResult res = await cli.Run();
             Assert.AreEqual(ExecutorState.Ended, res.State);
             StringAssert.Contains(res.Output, "hello");
@@ -66,10 +70,10 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_DeadCycle, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName))
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
             {
                 TimeLimit = TimeSpan.FromSeconds(0.2)
-            };
+            });
             ExecutorResult res = await cli.Run();
             Assert.AreEqual(ExecutorState.OutOfTime, res.State);
             Assert.IsTrue(res.RunningTime.TotalSeconds >= 0.1);
@@ -80,13 +84,13 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_DeadCycle, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName))
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
             {
                 TimeLimit = TimeSpan.FromSeconds(0.5)
-            };
+            }); ;
             Task<ExecutorResult> task = cli.Run();
             Assert.ThrowsException<Exception>(() => cli.Initialize());
-            cli.Process.Kill(true);
+            cli.Kill();
             ExecutorResult res = await task;
             Assert.AreEqual(ExecutorState.Ended, res.State);
             Assert.AreNotEqual(0, res.ExitCode);
@@ -97,10 +101,10 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_3MB, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new System.Diagnostics.ProcessStartInfo(Utils.GetPythonFile(), tmp.File.FullName))
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
             {
                 MemoryLimit = 1024
-            };
+            });
             ExecutorResult res = await cli.Run();
             Assert.AreEqual(ExecutorState.OutOfMemory, res.State);
         }

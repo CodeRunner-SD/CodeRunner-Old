@@ -2,6 +2,7 @@
 using CodeRunner.Packagings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Test.Core.Packagings
@@ -23,7 +24,7 @@ namespace Test.Core.Packagings
                     Version = new Version()
                 }
             };
-            using (System.IO.FileStream st = temp.File.OpenWrite())
+            using (System.IO.FileStream st = temp.File.Open(FileMode.Create, FileAccess.Write))
             {
                 await tp.Save(st);
             }

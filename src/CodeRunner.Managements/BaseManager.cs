@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managements
 {
-    public abstract class BaseManager<TSettings> where TSettings : class
+    public abstract class BaseManager<TSettings> : IHasPathRoot where TSettings : class
     {
         protected BaseManager(DirectoryInfo pathRoot, DirectoryTemplate? directoryTemplate)
         {

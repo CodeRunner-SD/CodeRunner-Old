@@ -7,25 +7,15 @@ namespace CodeRunner.Executors
 {
     public class CLIExecutor : IDisposable
     {
-        private ProcessStartInfo StartInfo { get; set; }
-
-        public string Input { get; set; } = "";
-
-        public long? MemoryLimit { get; set; }
-
-        public TimeSpan? TimeLimit { get; set; }
-
-        public Process? Process { get; private set; }
+        private Process? Process { get; set; }
 
         private ExecutorResult? Result { get; set; }
 
-        public CLIExecutor(ProcessStartInfo startInfo)
+        private CLIExecutorSettings Settings { get; set; }
+
+        public CLIExecutor(CLIExecutorSettings settings)
         {
-            StartInfo = startInfo;
-            StartInfo.UseShellExecute = false;
-            StartInfo.RedirectStandardError = true;
-            StartInfo.RedirectStandardInput = true;
-            StartInfo.RedirectStandardOutput = true;
+            Settings = settings;
         }
 
         public void Initialize()
@@ -36,7 +26,12 @@ namespace CodeRunner.Executors
             }
 
             Result = new ExecutorResult();
-            Process = new Process { StartInfo = StartInfo, EnableRaisingEvents = true };
+            Process = new Process { StartInfo = Settings.CreateStartInfo(), EnableRaisingEvents = true };
+        }
+
+        public void Kill()
+        {
+            Process?.Kill(true);
         }
 
         public async Task<ExecutorResult> Run()
@@ -67,7 +62,7 @@ namespace CodeRunner.Executors
                         mem = Math.Max(mem, Process.PeakWorkingSet64);
                         mem = Math.Max(mem, Process.PrivateMemorySize64);
                         Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
-                        if (MemoryLimit.HasValue && Result.MaximumMemory > MemoryLimit)
+                        if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
                         {
                             Result.State = ExecutorState.OutOfMemory;
                             Process.Kill(true);
@@ -78,17 +73,17 @@ namespace CodeRunner.Executors
                 }
             });
 
-            if (!string.IsNullOrEmpty(Input))
+            if (!string.IsNullOrEmpty(Settings.Input))
             {
-                await Process.StandardInput.WriteAsync(Input);
+                await Process.StandardInput.WriteAsync(Settings.Input);
                 Process.StandardInput.Close();
             }
 
             Task running = Task.Run(() =>
             {
-                if (TimeLimit.HasValue)
+                if (Settings.TimeLimit.HasValue)
                 {
-                    if (Process.WaitForExit((int)Math.Ceiling(TimeLimit.Value.TotalMilliseconds)))
+                    if (Process.WaitForExit((int)Math.Ceiling(Settings.TimeLimit.Value.TotalMilliseconds)))
                     {
                     }
                     else
@@ -110,8 +105,15 @@ namespace CodeRunner.Executors
                 Result!.ExitCode = Process!.ExitCode;
                 Result.EndTime = DateTimeOffset.Now;
 
-                Result.Output = await Process.StandardOutput.ReadToEndAsync();
-                Result.Error = await Process.StandardError.ReadToEndAsync();
+                if (Settings.CollectOutput)
+                {
+                    Result.Output = await Process.StandardOutput.ReadToEndAsync();
+                }
+
+                if (Settings.CollectError)
+                {
+                    Result.Error = await Process.StandardError.ReadToEndAsync();
+                }
 
                 if (Result.State == ExecutorState.Running)
                 {

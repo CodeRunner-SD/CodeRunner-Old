@@ -43,13 +43,13 @@ namespace Test.App
             {
                 TestView.Input = input;
                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                Assert.IsTrue(TestView.Workspace.HasInitialized);
+                Assert.IsTrue(TestView.Workspace!.HasInitialized);
             });
             await UsingInput(string.Join('\n', "init --delete"), async input =>
             {
                 TestView.Input = input;
                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                Assert.IsFalse(TestView.Workspace.HasInitialized);
+                Assert.IsFalse(TestView.Workspace!.HasInitialized);
             });
         }
 
@@ -78,7 +78,7 @@ namespace Test.App
              {
                  TestView.Input = input;
                  Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                 StringAssert.Contains(TestView.Console.Out.ToString(), "hello sun");
+                 StringAssert.Contains(TestView.Console!.Out.ToString(), "hello sun");
              });
         }
 
@@ -112,7 +112,7 @@ namespace Test.App
             {
                 TestView.Input = input;
                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                StringAssert.Contains(TestView.Console.Out.ToString(), "python");
+                StringAssert.Contains(TestView.Console!.Out.ToString(), "python");
             });
         }
 
@@ -124,7 +124,7 @@ namespace Test.App
             {
                 TestView.Input = input;
                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                StringAssert.Contains(TestView.Console.Out.ToString(), "hello");
+                StringAssert.Contains(TestView.Console!.Out.ToString(), "hello");
             });
         }
     }

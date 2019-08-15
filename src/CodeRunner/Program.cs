@@ -16,7 +16,7 @@ namespace CodeRunner
         Test
     }
 
-    public class Program
+    public static class Program
     {
         internal static readonly string AppDescription = string.Join(System.Environment.NewLine, "Code Runner, a CLI tool to run code.", "Copyright (c) StardustDL. All rights reserved.", "Open source with Apache License 2.0 on https://github.com/StardustDL/CodeRunner.");
 

@@ -69,6 +69,10 @@ namespace CodeRunner.Managements
             await SettingsLoader.Save(settings);
         }
 
+        public abstract Task Install(string id, TValue item);
+
+        public abstract Task Uninstall(string id);
+
         protected virtual Task ConfigurateItem(TItem item)
         {
             return Task.CompletedTask;

@@ -9,5 +9,7 @@ namespace CodeRunner.Managements.Configurations
         public Task<T> Value => GetValue();
 
         protected abstract Task<T> GetValue();
+
+        public abstract Task SetValue(T value);
     }
 }

@@ -31,6 +31,7 @@ namespace CodeRunner.Commands.Templates
             terminal.OutputTable(sources,
                 new OutputTableColumnStringView<SettingItem>(x => x.Item1, "Name"),
                 new OutputTableColumnStringView<SettingItem>(x => x.Item2.FileName, "File"),
+                new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Name ?? "N/A", nameof(PackageMetadata.Name)),
                 new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Author ?? "N/A", nameof(PackageMetadata.Author)),
                 new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.CreationTime.ToString() ?? "N/A", nameof(PackageMetadata.CreationTime)),
                 new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Version.ToString() ?? "N/A", nameof(PackageMetadata.Version))
