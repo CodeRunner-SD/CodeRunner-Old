@@ -4,7 +4,7 @@ namespace CodeRunner.Pipelines
 {
     public class PipelineContext
     {
-        public PipelineContext(ServiceScope services, LogScope logs)
+        public PipelineContext(ServiceScope services, LoggerScope logs)
         {
             Services = services;
             Logs = logs;
@@ -12,7 +12,7 @@ namespace CodeRunner.Pipelines
 
         public ServiceScope Services { get; }
 
-        public LogScope Logs { get; }
+        public LoggerScope Logs { get; }
 
         public bool IsEnd { get; set; } = false;
 
@@ -21,7 +21,7 @@ namespace CodeRunner.Pipelines
 
     public class PipelineContext<TOrigin, TResult> : PipelineContext
     {
-        public PipelineContext(ServiceScope services, TOrigin origin, TResult result, LogScope logs) : base(services, logs)
+        public PipelineContext(ServiceScope services, TOrigin origin, TResult result, LoggerScope logs) : base(services, logs)
         {
             Origin = origin;
             Result = result;

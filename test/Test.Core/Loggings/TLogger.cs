@@ -11,18 +11,18 @@ namespace Test.Core.Loggings
         [TestMethod]
         public void Basic()
         {
-            Logger logger = new Logger("logger", LogLevel.Debug);
+            ILogger logger = new Logger();
             logger.Log(new LogItem
             {
                 Level = LogLevel.Debug,
             });
-            Assert.AreEqual(1, logger.GetAll().Length);
+            Assert.AreEqual(1, logger.View().Count());
         }
 
         [TestMethod]
         public void FilterLevel()
         {
-            Logger logger = new Logger("logger", LogLevel.Information);
+            ILogger logger = new Logger().UseLevelFilter(LogLevel.Information);
             logger.Log(new LogItem
             {
                 Level = LogLevel.Debug,
@@ -35,14 +35,14 @@ namespace Test.Core.Loggings
             {
                 Level = LogLevel.Warning,
             });
-            Assert.AreEqual(2, logger.GetAll().Length);
+            Assert.AreEqual(2, logger.View().Count());
         }
 
         [TestMethod]
         public void Parent()
         {
-            Logger logger = new Logger("logger", LogLevel.Information);
-            Logger child = logger.CreateLogger("child", LogLevel.Warning);
+            ILogger logger = new Logger();
+            ILogger child = new Logger(logger).UseLevelFilter(LogLevel.Warning);
             child.Log(new LogItem
             {
                 Level = LogLevel.Warning
@@ -55,15 +55,15 @@ namespace Test.Core.Loggings
             {
                 Level = LogLevel.Information
             });
-            Assert.AreEqual(1, child.GetAll().Length);
-            Assert.AreEqual(2, logger.GetAll().Length);
+            Assert.AreEqual(1, child.View().Count());
+            Assert.AreEqual(2, logger.View().Count());
         }
 
         [TestMethod]
         public void Scope()
         {
-            Logger logger = new Logger("logger", LogLevel.Information);
-            LogScope scope = logger.CreateScope("scope");
+            Logger logger = new Logger();
+            LoggerScope scope = logger.CreateScope("scope", LogLevel.Information);
             scope.Information("info");
             scope.Debug("debug");
             scope.Warning("warning");
@@ -71,17 +71,14 @@ namespace Test.Core.Loggings
             scope.Error(new Exception());
             scope.Fatal("fatal");
             scope.Fatal(new Exception());
-            LogItem item = logger.GetAll().FirstOrDefault();
+            LogItem item = logger.View().FirstOrDefault();
             Assert.IsNotNull(item);
             Assert.AreEqual(LogLevel.Information, item.Level);
-            Assert.AreEqual("logger/scope", item.Scope);
+            Assert.AreEqual("/scope", item.Scope);
             Assert.AreEqual("info", item.Content);
 
-            Logger subLogger = scope.CreateLogger("subLogger", LogLevel.Debug);
-            Assert.AreEqual("logger/scope/subLogger", subLogger.Name);
-
-            LogScope subScope = scope.CreateScope("subScope");
-            Assert.AreEqual("logger/scope/subScope", subScope.Name);
+            LoggerScope subScope = scope.CreateScope("subScope", LogLevel.Debug);
+            Assert.AreEqual("/scope/subScope", subScope.Name);
         }
     }
 }

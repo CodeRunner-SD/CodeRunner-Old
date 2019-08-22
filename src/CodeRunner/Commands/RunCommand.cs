@@ -54,7 +54,7 @@ namespace CodeRunner.Commands
             }
 
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
-            AppSettings settings = (await workspace.Settings)!;
+            WorkspaceSettings settings = (await workspace.Settings)!;
             resolveContext.WithVariable(Operation.VarShell.Name, settings.DefaultShell);
             {
                 WorkItem? workItem = pipeline.Services.GetWorkItem();

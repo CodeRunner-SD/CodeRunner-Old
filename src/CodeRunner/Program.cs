@@ -27,7 +27,7 @@ namespace CodeRunner
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
 
-            Logger logger = new Logger(nameof(Main), LogLevel.Debug);
+            ILogger logger = new Logger();
 
             PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>();
 

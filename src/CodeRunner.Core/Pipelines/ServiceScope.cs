@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeRunner.Pipelines
 {
@@ -79,7 +80,7 @@ namespace CodeRunner.Pipelines
             return FindSubDictionary<T>()![id].Source;
         }
 
-        public bool TryGet<T>(out T value, string id = "")
+        public bool TryGet<T>([MaybeNull] out T value, string id = "")
         {
             Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
             if (list != null && list.TryGetValue(id, out ServiceItem _value))
@@ -89,9 +90,9 @@ namespace CodeRunner.Pipelines
             }
             else
             {
-#pragma warning disable CS8653 // 默认表达式为类型参数引入了 null 值。
+#pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
                 value = default;
-#pragma warning restore CS8653 // 默认表达式为类型参数引入了 null 值。
+#pragma warning restore CS8653 // 默认表达式会为类型参数引入 null 值。
                 return false;
             }
         }

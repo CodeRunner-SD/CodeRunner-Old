@@ -19,10 +19,10 @@ namespace CodeRunner.Commands
 
         public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            Logger logger = pipeline.Services.GetLogger();
+            ILogger logger = pipeline.Services.GetLogger();
             ITerminal terminal = console.GetTerminal();
             {
-                terminal.OutputTable(logger.GetAll(),
+                terminal.OutputTable(logger.View(),
                     new OutputTableColumnLogLevelView(nameof(LogItem.Level)),
                     new OutputTableColumnStringView<LogItem>(x => x.Scope, nameof(LogItem.Scope)),
                     new OutputTableColumnStringView<LogItem>(x => x.Time.ToString(), nameof(LogItem.Time)),

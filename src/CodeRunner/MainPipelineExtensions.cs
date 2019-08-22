@@ -54,11 +54,11 @@ namespace CodeRunner
             return builder;
         }
 
-        public static Builder ConfigureLogger(this Builder builder, Logger logger)
+        public static Builder ConfigureLogger(this Builder builder, ILogger logger)
         {
             builder.Configure(nameof(ConfigureLogger), scope =>
             {
-                scope.Add<Logger>(logger);
+                scope.Add<ILogger>(logger);
             });
             return builder;
         }

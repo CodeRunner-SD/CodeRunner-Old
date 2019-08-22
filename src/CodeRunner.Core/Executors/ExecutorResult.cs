@@ -1,12 +1,49 @@
 ﻿using System;
+using System.Text;
 
 namespace CodeRunner.Executors
 {
     public class ExecutorResult
     {
-        public string Output { get; set; } = "";
+        private readonly StringBuilder OutputBuilder = new StringBuilder();
+        private readonly StringBuilder ErrorBuilder = new StringBuilder();
+        private string? output, error;
 
-        public string Error { get; set; } = "";
+        public void AppendOutput(string content)
+        {
+            OutputBuilder.Append(content);
+        }
+
+        public void AppendError(string content)
+        {
+            ErrorBuilder.Append(content);
+        }
+
+        public string Output
+        {
+            get
+            {
+                if (output == null)
+                {
+                    output = OutputBuilder.ToString();
+                }
+
+                return output;
+            }
+        }
+
+        public string Error
+        {
+            get
+            {
+                if (error == null)
+                {
+                    error = ErrorBuilder.ToString();
+                }
+
+                return error;
+            }
+        }
 
         public long MaximumMemory { get; set; }
 

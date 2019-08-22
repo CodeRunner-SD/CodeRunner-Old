@@ -15,7 +15,7 @@ namespace Test.Core.Pipelines
         {
             PipelineBuilder<int, int> builder = TPipelineBuilder.GetBasicBuilder(2).Use("", TPipelineBuilder.initial).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.multiply);
             {
-                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug));
+                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger());
                 PipelineResult<int> res = await pipeline.Consume();
                 Assert.IsTrue(res.IsOk);
                 Assert.AreEqual(8, res.Result);
@@ -27,7 +27,7 @@ namespace Test.Core.Pipelines
         {
             PipelineBuilder<int, int> builder = TPipelineBuilder.GetBasicBuilder(2).Use("", TPipelineBuilder.initial).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.plus).Use("", TPipelineBuilder.expNotImp).Use("", TPipelineBuilder.multiply);
             {
-                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger("", CodeRunner.Loggings.LogLevel.Debug));
+                Pipeline<int, int> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger());
                 PipelineResult<int> res = await pipeline.Consume();
                 Assert.AreEqual(4, res.Result);
                 Assert.IsTrue(res.IsError);

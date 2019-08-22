@@ -53,7 +53,7 @@ namespace Test.App.Commands
                     return 0;
                 });
             }
-            return await ConsumePipelineBuilder(builder, new Logger("", LogLevel.Debug), origin);
+            return await ConsumePipelineBuilder(builder, new Logger(), origin);
         }
 
         public static PipelineBuilder<string[], int> CreatePipelineBuilder(IConsole console, TextReader input, Workspace? workspace)

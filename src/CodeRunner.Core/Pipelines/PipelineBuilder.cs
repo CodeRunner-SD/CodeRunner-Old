@@ -29,7 +29,7 @@ namespace CodeRunner.Pipelines
             return this;
         }
 
-        public async Task<Pipeline<TOrigin, TResult>> Build(TOrigin origin, Logger logger)
+        public async Task<Pipeline<TOrigin, TResult>> Build(TOrigin origin, ILogger logger)
         {
             ServiceProvider services = new ServiceProvider();
             foreach ((string name, object func) in Configures)

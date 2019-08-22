@@ -22,7 +22,7 @@ namespace CodeRunner.Managements.Templates
         {
             PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.P_CRRoot).WithAttributes(FileAttributes.Hidden);
             crRoot.AddDirectory(Workspace.P_TemplatesRoot);
-            crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new AppSettings
+            crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new WorkspaceSettings
             {
                 Version = new Version(0, 0, 1, 0)
             }))));

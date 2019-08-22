@@ -14,7 +14,7 @@ namespace CodeRunner.Managements
             SettingsLoader = new JsonFileLoader<TSettings>(new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
         }
 
-        protected JsonFileLoader<TSettings> SettingsLoader { get; set; }
+        protected IObjectLoader<TSettings> SettingsLoader { get; set; }
 
         protected DirectoryTemplate? DirectoryTemplate { get; }
 

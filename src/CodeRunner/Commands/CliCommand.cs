@@ -57,7 +57,7 @@ namespace CodeRunner.Commands
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
             pipeline.Services.Add(new Workspace(argument.Directory!));
-            Logger logger = pipeline.Services.GetLogger();
+            ILogger logger = pipeline.Services.GetLogger();
 
             if (argument.Command != "")
             {
@@ -68,11 +68,10 @@ namespace CodeRunner.Commands
 
             if (argument.Verbose)
             {
-                logger.Level = LogLevel.Debug;
             }
             else
             {
-                logger.Level = LogLevel.Information;
+                logger.UseLevelFilter(LogLevel.Information);
             }
 
             return 0;

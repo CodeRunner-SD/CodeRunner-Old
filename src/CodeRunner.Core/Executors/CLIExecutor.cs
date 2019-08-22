@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Executors
@@ -29,9 +28,108 @@ namespace CodeRunner.Executors
             Process = new Process { StartInfo = Settings.CreateStartInfo(), EnableRaisingEvents = true };
         }
 
-        public void Kill()
+        public async Task Kill()
         {
-            Process?.Kill(true);
+            if (Process == null || Process.HasExited)
+            {
+                return;
+            }
+
+            Process.Kill(true);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    Process.WaitForExit();
+                }
+                catch { }
+            });
+        }
+
+        private async Task GetMemory()
+        {
+            if (Result == null)
+            {
+                throw new NullReferenceException("Result is null");
+            }
+
+            Result.MaximumMemory = 0;
+            while (Result.State == ExecutorState.Running && Process?.HasExited == false)
+            {
+                try
+                {
+                    Process.Refresh();
+                    long mem = Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64);
+                    mem = Math.Max(mem, Process.WorkingSet64);
+                    mem = Math.Max(mem, Process.PeakWorkingSet64);
+                    mem = Math.Max(mem, Process.PrivateMemorySize64);
+                    Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
+                    if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
+                    {
+                        Result.State = ExecutorState.OutOfMemory;
+                        await Kill();
+                    }
+                }
+                catch { }
+                await Task.Delay(5);
+            }
+        }
+
+        private async Task Running()
+        {
+            if (Process == null)
+            {
+                throw new NullReferenceException("Process is null");
+            }
+
+            if (Result == null)
+            {
+                throw new NullReferenceException("Result is null");
+            }
+
+            Process.Start();
+
+            if (Settings.CollectOutput)
+            {
+                Process.OutputDataReceived += (sender, e) =>
+                {
+                    Result.AppendOutput(e.Data);
+                };
+                Process.BeginOutputReadLine();
+            }
+            if (Settings.CollectError)
+            {
+                Process.ErrorDataReceived += (sender, e) =>
+                {
+                    Result.AppendError(e.Data);
+                };
+                Process.BeginErrorReadLine();
+            }
+
+            if (!string.IsNullOrEmpty(Settings.Input))
+            {
+                await Process.StandardInput.WriteAsync(Settings.Input);
+                Process.StandardInput.Close();
+            }
+
+            await Task.Run(async () =>
+            {
+                if (Settings.TimeLimit.HasValue)
+                {
+                    if (Process.WaitForExit((int)Math.Ceiling(Settings.TimeLimit.Value.TotalMilliseconds)))
+                    {
+                    }
+                    else
+                    {
+                        Result.State = ExecutorState.OutOfTime;
+                        await Kill();
+                    }
+                }
+                else
+                {
+                    Process.WaitForExit();
+                }
+            });
         }
 
         public async Task<ExecutorResult> Run()
@@ -49,77 +147,22 @@ namespace CodeRunner.Executors
             Result.State = ExecutorState.Running;
             Result.StartTime = DateTimeOffset.Now;
 
-            Process!.Start();
-            Task getMemory = Task.Run(() =>
-            {
-                Result!.MaximumMemory = 0;
-                while (Result.State == ExecutorState.Running && Process?.HasExited == false)
-                {
-                    try
-                    {
-                        long mem = Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64);
-                        mem = Math.Max(mem, Process.WorkingSet64);
-                        mem = Math.Max(mem, Process.PeakWorkingSet64);
-                        mem = Math.Max(mem, Process.PrivateMemorySize64);
-                        Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
-                        if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
-                        {
-                            Result.State = ExecutorState.OutOfMemory;
-                            Process.Kill(true);
-                        }
-                        Thread.Sleep(5);
-                    }
-                    catch { }
-                }
-            });
+            await Task.WhenAll(Running(), GetMemory());
 
-            if (!string.IsNullOrEmpty(Settings.Input))
+            if (Process == null)
             {
-                await Process.StandardInput.WriteAsync(Settings.Input);
-                Process.StandardInput.Close();
+                throw new NullReferenceException("Process is null.");
             }
 
-            Task running = Task.Run(() =>
+            Process.Refresh();
+
+            Result.ExitCode = Process.ExitCode;
+            Result.EndTime = DateTimeOffset.Now;
+
+            if (Result.State == ExecutorState.Running)
             {
-                if (Settings.TimeLimit.HasValue)
-                {
-                    if (Process.WaitForExit((int)Math.Ceiling(Settings.TimeLimit.Value.TotalMilliseconds)))
-                    {
-                    }
-                    else
-                    {
-                        Result.State = ExecutorState.OutOfTime;
-                        Process.Kill(true);
-                        Process.WaitForExit();
-                    }
-                }
-                else
-                {
-                    Process.WaitForExit();
-                }
-            });
-
-            await Task.WhenAll(running, getMemory);
-            await Task.Run(async () =>
-            {
-                Result!.ExitCode = Process!.ExitCode;
-                Result.EndTime = DateTimeOffset.Now;
-
-                if (Settings.CollectOutput)
-                {
-                    Result.Output = await Process.StandardOutput.ReadToEndAsync();
-                }
-
-                if (Settings.CollectError)
-                {
-                    Result.Error = await Process.StandardError.ReadToEndAsync();
-                }
-
-                if (Result.State == ExecutorState.Running)
-                {
-                    Result.State = ExecutorState.Ended;
-                }
-            });
+                Result.State = ExecutorState.Ended;
+            }
 
             Process.Dispose();
 

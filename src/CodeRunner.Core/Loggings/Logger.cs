@@ -1,58 +1,47 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeRunner.Loggings
 {
-    public enum LogLevel
+    public class Logger : ILogger
     {
-        Debug,
-        Information,
-        Warning,
-        Error,
-        Fatal
-    }
-
-    public class Logger
-    {
-        public Logger(string name, LogLevel level, Logger? parent = null)
+        public Logger(ILogger? parent = null)
         {
-            Name = name;
             Parent = parent;
-            Level = level;
         }
 
-        public LogLevel Level { get; set; }
-
-        public string Name { get; }
-
-        public Logger? Parent { get; }
+        public ILogger? Parent { get; }
 
         private List<LogItem> Contents { get; } = new List<LogItem>();
 
-        public LogItem[] GetAll()
-        {
-            return Contents.ToArray();
-        }
+        private List<LogFilter> Filters { get; } = new List<LogFilter>();
 
         public void Log(LogItem item)
         {
-            if (item.Level >= Level)
+            foreach (LogFilter v in Filters)
             {
-                Contents.Add(item);
-                if (Parent != null)
+                if (!v.Filter(item))
                 {
-                    Parent.Log(item);
+                    return;
                 }
+            }
+
+            Contents.Add(item);
+            if (Parent != null)
+            {
+                Parent.Log(item);
             }
         }
 
-        public LogScope CreateScope(string name)
+        public ILogger UseFilter(LogFilter filter)
         {
-            return new LogScope($"{Name}/{name}", this);
+            Filters.Add(filter);
+            return this;
         }
 
-        public Logger CreateLogger(string name, LogLevel level)
+        public IEnumerable<LogItem> View()
         {
-            return new Logger($"{Name}/{name}", level, this);
+            return Contents.AsEnumerable();
         }
     }
 }

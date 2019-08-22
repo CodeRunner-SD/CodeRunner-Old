@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Managements
 {
-    public class Workspace : BaseManager<AppSettings>
+    public class Workspace : BaseManager<WorkspaceSettings>
     {
         public const string P_CRRoot = ".cr";
         public const string P_Settings = "settings.json";
@@ -16,7 +16,7 @@ namespace CodeRunner.Managements
         public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new WorkspaceTemplate())
         {
             CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, P_CRRoot));
-            SettingsLoader = new JsonFileLoader<AppSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
+            SettingsLoader = new JsonFileLoader<WorkspaceSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
             Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_TemplatesRoot)));
             Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
         }

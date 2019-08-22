@@ -1,6 +1,8 @@
 ﻿using CodeRunner.Loggings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Pipelines
@@ -9,18 +11,18 @@ namespace CodeRunner.Pipelines
 
     public class Pipeline<TOrigin, TResult>
     {
-        public Pipeline(TOrigin origin, Logger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> ops)
+        public Pipeline(TOrigin origin, ILogger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> ops)
         {
             Origin = origin;
             Logger = logger;
             Services = services;
             Ops = ops;
-            Logs = Logger.CreateScope("pipeline");
+            Logs = Logger.CreateScope("pipeline", LogLevel.Debug);
         }
 
         private TOrigin Origin { get; }
 
-        private Logger Logger { get; }
+        private ILogger Logger { get; }
 
         private ServiceProvider Services { get; }
 
@@ -28,13 +30,14 @@ namespace CodeRunner.Pipelines
 
         private Exception? Exception { get; set; }
 
+        [MaybeNull]
 #pragma warning disable CS8653 // 默认表达式为类型参数引入了 null 值。
         private TResult Result { get; set; } = default;
 #pragma warning restore CS8653 // 默认表达式为类型参数引入了 null 值。
 
         public int Position { get; private set; } = 0;
 
-        private LogScope Logs { get; set; }
+        private LoggerScope Logs { get; set; }
 
         private bool HasEnd { get; set; } = false;
 
@@ -49,7 +52,7 @@ namespace CodeRunner.Pipelines
 
             Logs.Debug($"Executing {op.Item1} at {Position}.");
 
-            LogScope subLogScope = Logger.CreateScope(op.Item1);
+            LoggerScope subLogScope = Logger.CreateScope(op.Item1, LogLevel.Debug);
 
             try
             {
@@ -86,7 +89,7 @@ namespace CodeRunner.Pipelines
                 ;
             }
 
-            return new PipelineResult<TResult>(Result, Exception, Logger.GetAll());
+            return new PipelineResult<TResult>(Result, Exception, Logger.View().ToArray());
         }
     }
 }

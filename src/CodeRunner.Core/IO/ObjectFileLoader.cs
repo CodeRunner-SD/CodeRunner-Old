@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.IO
 {
-    public abstract class ObjectFileLoader<T> where T : class
+    public abstract class ObjectFileLoader<T> : IObjectLoader<T> where T : class
     {
         private T? data;
 

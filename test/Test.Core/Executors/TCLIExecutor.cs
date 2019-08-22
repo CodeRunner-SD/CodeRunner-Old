@@ -11,7 +11,7 @@ namespace Test.Core.Executors
     [TestClass]
     public class TCLIExecutor
     {
-        private const string C_HelloWorld = @"print(""Hello World!"")";
+        private const string C_HelloWorld = @"print(""Hello World!"",end='')";
         private const string C_DeadCycle = @"import time
 while(True):
     time.sleep(1)";
@@ -87,10 +87,9 @@ print(s)";
             using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
             {
                 TimeLimit = TimeSpan.FromSeconds(0.5)
-            }); ;
+            });
             Task<ExecutorResult> task = cli.Run();
-            Assert.ThrowsException<Exception>(() => cli.Initialize());
-            cli.Kill();
+            await cli.Kill();
             ExecutorResult res = await task;
             Assert.AreEqual(ExecutorState.Ended, res.State);
             Assert.AreNotEqual(0, res.ExitCode);

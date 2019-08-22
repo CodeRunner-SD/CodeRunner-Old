@@ -2,9 +2,9 @@
 
 namespace CodeRunner.Managements.Configurations
 {
-    public class AppSettings
+    public class WorkspaceSettings
     {
-        public AppSettings()
+        public WorkspaceSettings()
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {

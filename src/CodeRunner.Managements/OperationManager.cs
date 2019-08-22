@@ -25,7 +25,7 @@ namespace CodeRunner.Managements
             {
                 FileName = $"{id}.tpl",
             });
-            OperationItem wrap = await Get(id);
+            OperationItem? wrap = await Get(id);
             if (wrap == null)
             {
                 return;
@@ -36,7 +36,7 @@ namespace CodeRunner.Managements
 
         public override async Task Uninstall(string id)
         {
-            OperationItem wrap = await Get(id);
+            OperationItem? wrap = await Get(id);
             if (wrap == null)
             {
                 return;
