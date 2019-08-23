@@ -24,14 +24,14 @@ namespace Test.Core.Packagings
                     Version = new Version()
                 }
             };
-            using (System.IO.FileStream st = temp.File.Open(FileMode.Create, FileAccess.Write))
+            using (FileStream st = temp.File.Open(FileMode.Create, FileAccess.Write))
             {
                 await tp.Save(st);
             }
 
-            using (System.IO.FileStream st = temp.File.OpenRead())
+            using (FileStream st = temp.File.OpenRead())
             {
-                Package<string> rt = await Package<string>.Load(st);
+                Package<string> rt = await Package.Load<string>(st);
                 Assert.AreEqual("content", rt.Data);
                 Assert.AreEqual("author", rt.Metadata.Author);
             }

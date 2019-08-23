@@ -4,6 +4,14 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Packagings
 {
+    public static class Package
+    {
+        public static Task<Package<T>> Load<T>(Stream stream) where T : class
+        {
+            return JsonFormatter.Deserialize<Package<T>>(stream);
+        }
+    }
+
     public class Package<T> where T : class
     {
         public Package() { }
@@ -20,11 +28,6 @@ namespace CodeRunner.Packagings
         public Task Save(Stream stream)
         {
             return JsonFormatter.Serialize(this, stream);
-        }
-
-        public static Task<Package<T>> Load(Stream stream)
-        {
-            return JsonFormatter.Deserialize<Package<T>>(stream);
         }
     }
 }

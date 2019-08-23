@@ -7,7 +7,6 @@ namespace CodeRunner.Templates
     {
         private string name;
         private bool isRequired = true;
-        private bool isReadOnly = false;
 
         public Variable() : this("")
         {
@@ -16,48 +15,19 @@ namespace CodeRunner.Templates
         public Variable(string name = "")
         {
             this.name = name;
+            Required();
         }
 
         public string Name
         {
             get => name;
-            set
-            {
-                if (IsReadOnly)
-                {
-                    throw new Exception("Can not modify a readonly variable.");
-                }
-
-                name = value;
-            }
+            set => name = value;
         }
 
         public bool IsRequired
         {
             get => isRequired;
-            set
-            {
-                if (IsReadOnly)
-                {
-                    throw new Exception("Can not modify a readonly variable.");
-                }
-
-                isRequired = value;
-            }
-        }
-
-        public bool IsReadOnly
-        {
-            get => isReadOnly;
-            set
-            {
-                if (IsReadOnly)
-                {
-                    throw new Exception("Can not modify a readonly variable.");
-                }
-
-                isReadOnly = value;
-            }
+            set => isRequired = value;
         }
 
         public object? Default { get; set; }
@@ -72,30 +42,15 @@ namespace CodeRunner.Templates
             return Default;
         }
 
-        public Variable ReadOnly()
-        {
-            IsReadOnly = true;
-            return this;
-        }
-
         public Variable Required()
         {
-            if (IsReadOnly)
-            {
-                throw new Exception("Can not modify a readonly variable.");
-            }
-
             IsRequired = true;
+            Default = null;
             return this;
         }
 
         public Variable NotRequired(object value)
         {
-            if (IsReadOnly)
-            {
-                throw new Exception("Can not modify a readonly variable.");
-            }
-
             IsRequired = false;
             Default = value;
             return this;

@@ -7,11 +7,11 @@ using CodeRunner.Rendering;
 using System.Collections.Generic;
 using System.CommandLine.Rendering;
 using System.Threading.Tasks;
-using SettingItem = System.Tuple<string, CodeRunner.Managements.Configurations.OperationItem, CodeRunner.Packagings.Package<CodeRunner.Operations.Operation>?>;
+using SettingItem = System.Tuple<string, CodeRunner.Managements.Configurations.OperationItem, CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation>?>;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class ListCommand : ItemManagers.ListCommand<OperationManager, OperationsSettings, OperationItem, Package<Operation>?>
+    public class ListCommand : ItemManagers.ListCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
     {
         public override Task<OperationManager> GetManager(PipelineContext pipeline)
         {

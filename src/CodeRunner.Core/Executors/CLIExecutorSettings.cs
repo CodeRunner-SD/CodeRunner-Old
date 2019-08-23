@@ -25,7 +25,7 @@ namespace CodeRunner.Executors
 
         public bool CollectError { get; set; }
 
-        public string? WorkingDirectory { get; set; }
+        public string WorkingDirectory { get; set; } = string.Empty;
 
         public ProcessStartInfo CreateStartInfo()
         {
@@ -58,7 +58,7 @@ namespace CodeRunner.Executors
                 res.RedirectStandardError = true;
             }
 
-            if (WorkingDirectory != null)
+            if (!string.IsNullOrEmpty(WorkingDirectory))
             {
                 res.WorkingDirectory = WorkingDirectory;
             }

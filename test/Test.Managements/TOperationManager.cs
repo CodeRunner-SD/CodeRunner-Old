@@ -20,7 +20,7 @@ namespace Test.Managements
             Assert.IsTrue(await manager.Has("hello"));
             CodeRunner.Managements.Configurations.OperationItem c = await manager.Get("hello");
             Assert.IsNotNull(c);
-            CodeRunner.Packagings.Package<CodeRunner.Operations.Operation> vc = await c.Value;
+            CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation> vc = await c.Value;
             await c.Value;
             await c.Value;
             Assert.IsNotNull(vc);
@@ -39,7 +39,7 @@ namespace Test.Managements
                 });
                 CodeRunner.Managements.Configurations.OperationItem tc = await manager.Get(name);
                 Assert.IsNotNull(tc);
-                CodeRunner.Packagings.Package<CodeRunner.Operations.Operation> vtc = await tc.Value;
+                CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation> vtc = await tc.Value;
                 Assert.IsNotNull(vtc);
                 Assert.AreEqual(vc.Metadata.Author, vtc.Metadata.Author);
 

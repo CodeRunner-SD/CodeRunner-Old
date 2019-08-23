@@ -16,7 +16,7 @@ namespace CodeRunner.IO
             try
             {
                 using FileStream st = File.OpenRead();
-                return await Package<T>.Load(st);
+                return await Package.Load<T>(st);
             }
             catch
             {

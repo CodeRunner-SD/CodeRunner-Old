@@ -2,7 +2,7 @@
 
 namespace CodeRunner.Managements.Configurations
 {
-    public class OperationItem : PackageFileItem<Operation, OperationManager>
+    public class OperationItem : PackageFileItem<BaseOperation, OperationManager>
     {
     }
 }

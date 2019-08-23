@@ -8,9 +8,9 @@ namespace CodeRunner.Resources.Programming
 {
     public static class Operations
     {
-        private static Package<Operation> Create(string name, params CommandLineTemplate[] items)
+        private static Package<BaseOperation> Create(string name, params CommandLineTemplate[] items)
         {
-            return new Package<Operation>(new Operation(items))
+            return new Package<BaseOperation>(new SimpleCommandLineOperation(items))
             {
                 Metadata = new PackageMetadata
                 {
@@ -23,20 +23,20 @@ namespace CodeRunner.Resources.Programming
         }
 
         private static readonly StringTemplate source = new StringTemplate(
-                    StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
-                        new Variable[] {
-                            OperationVariables.InputPath
-                        }
-                );
+            StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
+                new Variable[] {
+                    OperationVariables.InputPath
+                }
+        );
 
         private static readonly StringTemplate output = new StringTemplate(
             StringTemplate.GetVariableTemplate(OperationVariables.OutputPath.Name),
                 new Variable[] {
-                            OperationVariables.OutputPath
+                    OperationVariables.OutputPath
                 }
         );
 
-        public static Package<Operation> C
+        public static Package<BaseOperation> C
         {
             get => Create(nameof(C).ToLower(),
                     new CommandLineTemplate()
@@ -49,7 +49,7 @@ namespace CodeRunner.Resources.Programming
                         .UseCommand(output));
         }
 
-        public static Package<Operation> Cpp
+        public static Package<BaseOperation> Cpp
         {
             get => Create(nameof(Cpp).ToLower(),
                     new CommandLineTemplate()
@@ -62,7 +62,7 @@ namespace CodeRunner.Resources.Programming
                         .UseCommand(output));
         }
 
-        public static Package<Operation> CSharp
+        public static Package<BaseOperation> CSharp
         {
             get => Create(nameof(CSharp).ToLower(),
                     new CommandLineTemplate()
@@ -74,7 +74,7 @@ namespace CodeRunner.Resources.Programming
                         .UseCommand(output));
         }
 
-        public static Package<Operation> Python
+        public static Package<BaseOperation> Python
         {
             get => Create(nameof(Python).ToLower(),
                     new CommandLineTemplate()
@@ -82,7 +82,7 @@ namespace CodeRunner.Resources.Programming
                         .UseArgument(source));
         }
 
-        public static Package<Operation> Ruby
+        public static Package<BaseOperation> Ruby
         {
             get => Create(nameof(Ruby).ToLower(),
                     new CommandLineTemplate()
@@ -90,7 +90,7 @@ namespace CodeRunner.Resources.Programming
                         .UseArgument(source));
         }
 
-        public static Package<Operation> Go
+        public static Package<BaseOperation> Go
         {
             get => Create(nameof(Go).ToLower(),
                     new CommandLineTemplate()
@@ -99,7 +99,7 @@ namespace CodeRunner.Resources.Programming
                         .UseArgument(source));
         }
 
-        public static Package<Operation> JavaScript
+        public static Package<BaseOperation> JavaScript
         {
             get => Create(nameof(JavaScript).ToLower(),
                     new CommandLineTemplate()

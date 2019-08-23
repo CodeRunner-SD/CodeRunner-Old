@@ -7,7 +7,7 @@ namespace CodeRunner.Templates
     {
         private const string VarFilePath = "filePath";
 
-        public static readonly Variable Var = new Variable(VarFilePath).Required().ReadOnly();
+        public static Variable Var => new Variable(VarFilePath).Required();
 
         public override Task<FileInfo> Resolve(ResolveContext context)
         {

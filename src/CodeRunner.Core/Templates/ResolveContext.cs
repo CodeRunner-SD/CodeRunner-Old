@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeRunner.Templates
 {
@@ -11,6 +12,8 @@ namespace CodeRunner.Templates
         }
 
         private IDictionary<string, object> Variables { get; }
+
+        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull => WithVariable(variable.Name, value);
 
         public ResolveContext WithVariable<T>(string name, T value) where T : notnull
         {
@@ -36,7 +39,7 @@ namespace CodeRunner.Templates
         {
             if (Variables.TryGetValue(variable.Name, out object? val))
             {
-                return (T)val!;
+                return (T)val;
             }
             else
             {
@@ -44,7 +47,25 @@ namespace CodeRunner.Templates
                 {
                     throw new Exception($"No required variable with name {variable.Name}.");
                 }
+#pragma warning disable CS8601 // 可能的 null 引用赋值。
                 return (T)variable.GetDefault();
+#pragma warning restore CS8601 // 可能的 null 引用赋值。
+            }
+        }
+
+        public bool TryGetVariable<T>(Variable variable, [MaybeNull] out T value)
+        {
+            try
+            {
+                value =  GetVariable<T>(variable);
+                return true;
+            }
+            catch
+            {
+#pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
+                value = default;
+#pragma warning restore CS8653 // 默认表达式会为类型参数引入 null 值。
+                return false;
             }
         }
 

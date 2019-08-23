@@ -19,7 +19,7 @@ namespace CodeRunner
 
         public static WorkItem? GetWorkItem(this ServiceScope scope)
         {
-            if (scope.TryGet(out WorkItem? workItem))
+            if (scope.TryGet<WorkItem>(out WorkItem? workItem))
             {
                 return workItem;
             }

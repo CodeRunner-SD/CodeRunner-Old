@@ -80,15 +80,14 @@ namespace CodeRunner.Pipelines
             return FindSubDictionary<T>()![id].Source;
         }
 
-        public bool TryGet<T>([MaybeNull] out T value, string id = "")
+        public bool TryGet<T>([MaybeNull] out T value, string id = "") where T:notnull
         {
-            Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
-            if (list != null && list.TryGetValue(id, out ServiceItem _value))
+            try
             {
-                value = (T)_value.Value;
+                value = Get<T>(id);
                 return true;
             }
-            else
+            catch
             {
 #pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
                 value = default;

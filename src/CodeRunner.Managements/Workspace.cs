@@ -13,12 +13,12 @@ namespace CodeRunner.Managements
         public const string P_TemplatesRoot = "templates";
         public const string P_OperatorsRoot = "operations";
 
-        public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new WorkspaceTemplate())
+        public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new System.Lazy<CodeRunner.Templates.DirectoryTemplate>(() => new WorkspaceTemplate()))
         {
             CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, P_CRRoot));
-            SettingsLoader = new JsonFileLoader<WorkspaceSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
             Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_TemplatesRoot)));
             Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
+            SettingsLoader = new JsonFileLoader<WorkspaceSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
         }
 
         private DirectoryInfo CRRoot { get; set; }
