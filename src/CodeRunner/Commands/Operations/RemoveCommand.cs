@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class RemoveCommand : ItemManagers.RemoveCommand<OperationManager, OperationsSettings, OperationItem, Package<Operation>?>
+    public class RemoveCommand : ItemManagers.RemoveCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
     {
         public override Task<OperationManager> GetManager(PipelineContext pipeline)
         {

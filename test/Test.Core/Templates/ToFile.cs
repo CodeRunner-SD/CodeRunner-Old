@@ -14,7 +14,7 @@ namespace Test.Core.Templates
         public async Task Text()
         {
             using TempFile temp = new TempFile();
-            ResolveContext context = new ResolveContext().WithVariable("name", "lily").WithVariable(FileTemplate.Var.Name, temp.File.FullName);
+            ResolveContext context = new ResolveContext().WithVariable("name", "lily").WithVariable(FileTemplate.Var, temp.File.FullName);
             TextFileTemplate tf = new TextFileTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"), new Variable[] { new Variable("name").NotRequired("") }));
             FileInfo fi = await tf.Resolve(context);
             Assert.AreEqual("lily", File.ReadAllText(fi.FullName));
@@ -24,7 +24,7 @@ namespace Test.Core.Templates
         public async Task Binary()
         {
             using TempFile temp = new TempFile();
-            ResolveContext context = new ResolveContext().WithVariable(FileTemplate.Var.Name, temp.File.FullName);
+            ResolveContext context = new ResolveContext().WithVariable(FileTemplate.Var, temp.File.FullName);
             BinaryFileTemplate tf = new BinaryFileTemplate(Encoding.UTF8.GetBytes("hello"));
             FileInfo fi = await tf.Resolve(context);
             Assert.AreEqual("hello", File.ReadAllText(fi.FullName));

@@ -1,5 +1,7 @@
-﻿using CodeRunner.Managements.Configurations;
+﻿using CodeRunner.IO;
+using CodeRunner.Managements.Configurations;
 using CodeRunner.Templates;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -9,7 +11,7 @@ namespace CodeRunner.Managements
         where TSettings : ItemSettings<TItem>
         where TItem : ItemValue<TValue>
     {
-        protected BaseItemManager(DirectoryInfo pathRoot, DirectoryTemplate directoryTemplate) : base(pathRoot, directoryTemplate)
+        protected BaseItemManager(DirectoryInfo pathRoot, Lazy<DirectoryTemplate>? directoryTemplate = null) : base(pathRoot, directoryTemplate)
         {
         }
 
@@ -48,7 +50,7 @@ namespace CodeRunner.Managements
             TSettings? settings = await Settings;
             if (settings == null)
             {
-                throw new System.Exception("No settings");
+                throw new Exception("No settings");
             }
 
             if (value == null)
@@ -66,7 +68,10 @@ namespace CodeRunner.Managements
                     settings.Items.Add(id, value);
                 }
             }
-            await SettingsLoader.Save(settings);
+            if (SettingsLoader != null)
+            {
+                await SettingsLoader.Save(settings);
+            }
         }
 
         public abstract Task Install(string id, TValue item);

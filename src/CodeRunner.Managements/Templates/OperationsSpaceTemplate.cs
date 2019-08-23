@@ -20,7 +20,7 @@ namespace CodeRunner.Managements.Templates
             Package.AddFile(item.FileName).Template = new TextFileTemplate(
                 new StringTemplate(
                     JsonFormatter.Serialize(
-                        new Package<Operation>(new Operation(items))
+                        new Package<BaseOperation>(new SimpleCommandLineOperation(items))
                         {
                             Metadata = WorkspaceTemplate.BuiltinTemplateMetadata
                         }

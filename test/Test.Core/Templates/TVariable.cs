@@ -44,16 +44,5 @@ namespace Test.Core.Templates
             variables.Collect(new[] { st });
             Assert.IsTrue(variables.Contains(new Variable("A")));
         }
-
-        [TestMethod]
-        public void Readonly()
-        {
-            Variable v = new Variable("v").Required().NotRequired("v").ReadOnly();
-            Assert.ThrowsException<Exception>(() => v.Required());
-            Assert.ThrowsException<Exception>(() => v.NotRequired(null));
-            Assert.ThrowsException<Exception>(() => v.IsReadOnly = false);
-            Assert.ThrowsException<Exception>(() => v.IsRequired = false);
-            Assert.ThrowsException<Exception>(() => v.Name = "n");
-        }
     }
 }

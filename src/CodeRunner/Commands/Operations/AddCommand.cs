@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class AddCommand : ItemManagers.AddCommand<OperationManager, OperationsSettings, OperationItem, Package<Operation>?>
+    public class AddCommand : ItemManagers.AddCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
     {
         public override Task<OperationItem> GetItem(FileInfo file)
         {

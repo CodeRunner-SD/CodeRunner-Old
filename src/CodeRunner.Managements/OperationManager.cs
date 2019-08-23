@@ -3,18 +3,20 @@ using CodeRunner.Managements.Configurations;
 using CodeRunner.Managements.Templates;
 using CodeRunner.Operations;
 using CodeRunner.Packagings;
+using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Managements
 {
-    public class OperationManager : BaseItemManager<OperationsSettings, OperationItem, Package<Operation>?>
+    public class OperationManager : BaseItemManager<OperationsSettings, OperationItem, Package<BaseOperation>?>
     {
-        public OperationManager(DirectoryInfo pathRoot) : base(pathRoot, new OperationsSpaceTemplate())
+        public OperationManager(DirectoryInfo pathRoot) : base(pathRoot, new System.Lazy<DirectoryTemplate>(() => new OperationsSpaceTemplate()))
         {
+            SettingsLoader = new JsonFileLoader<OperationsSettings>(new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
         }
 
-        public override async Task Install(string id, Package<Operation>? item)
+        public override async Task Install(string id, Package<BaseOperation>? item)
         {
             if (item == null)
             {
@@ -46,7 +48,7 @@ namespace CodeRunner.Managements
             await Set(id, null);
         }
 
-        private PackageFileLoaderPool<Operation> FileLoaderPool { get; } = new PackageFileLoaderPool<Operation>();
+        private PackageFileLoaderPool<BaseOperation> FileLoaderPool { get; } = new PackageFileLoaderPool<BaseOperation>();
 
         protected override Task ConfigurateItem(OperationItem item)
         {

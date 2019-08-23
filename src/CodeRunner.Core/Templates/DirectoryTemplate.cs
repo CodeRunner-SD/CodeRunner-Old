@@ -7,7 +7,7 @@ namespace CodeRunner.Templates
     {
         private const string VarDirectoryPath = "directoryPath";
 
-        public static readonly Variable Var = new Variable(VarDirectoryPath).Required().ReadOnly();
+        public static Variable Var => new Variable(VarDirectoryPath).Required();
 
         public override Task<DirectoryInfo> Resolve(ResolveContext context)
         {

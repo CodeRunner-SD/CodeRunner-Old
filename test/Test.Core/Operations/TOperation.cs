@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Executors;
 using CodeRunner.IO;
+using CodeRunner.Loggings;
 using CodeRunner.Operations;
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +16,7 @@ namespace Test.Core.Operations
         private const string C_HelloWorld = @"print(""Hello World!"")";
 
         [TestMethod]
-        public async Task Basic()
+        public async Task CommandLine()
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_HelloWorld, Encoding.UTF8);
@@ -27,7 +28,7 @@ namespace Test.Core.Operations
                         }
                 );
 
-            Operation op = new Operation(new[]
+            SimpleCommandLineOperation op = new SimpleCommandLineOperation(new[]
             {
                 new CommandLineTemplate()
                     .UseCommand(Utils.GetPythonFile())
@@ -35,26 +36,27 @@ namespace Test.Core.Operations
             });
 
             ResolveContext context = new ResolveContext()
-                .WithVariable(OperationVariables.InputPath.Name, tmp.File.FullName)
-                .WithVariable(Operation.VarShell.Name, Utils.GetShell());
+                .WithVariable(OperationVariables.InputPath, tmp.File.FullName)
+                .WithVariable(OperationVariables.Shell, Utils.GetShell());
 
-            op.CommandExecuting += Op_CommandExecuting;
-            op.CommandExecuted += Op_CommandExecuted;
-
-            Assert.IsTrue(await op.Resolve(context));
+            // op.CommandExecuting += Op_CommandExecuting;
+            // op.CommandExecuted += Op_CommandExecuted;
+            var pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
+            var res = await pipeline.Consume();
+            Assert.IsTrue(res.IsOk && res.Result);
         }
 
-        private Task<bool> Op_CommandExecuting(Operation sender, int index, CLIExecutorSettings settings, string[] commands)
+        /*private Task<bool> Op_CommandExecuting(BaseOperation sender, int index, CLIExecutorSettings settings, string[] commands)
         {
             settings.CollectOutput = true;
             return Task.FromResult(true);
         }
 
-        private Task<bool> Op_CommandExecuted(Operation sender, int index, CodeRunner.Executors.ExecutorResult result)
+        private Task<bool> Op_CommandExecuted(BaseOperation sender, int index, CodeRunner.Executors.ExecutorResult result)
         {
             Assert.AreEqual(CodeRunner.Executors.ExecutorState.Ended, result.State);
             StringAssert.Contains(result.Output, "Hello");
             return Task.FromResult(true);
-        }
+        }*/
     }
 }
