@@ -23,6 +23,17 @@ namespace CodeRunner.Templates
 
         public IList<PackageFileTemplate> Files { get; set; } = new List<PackageFileTemplate>();
 
+        public override VariableCollection GetVariables()
+        {
+            var res = base.GetVariables();
+            res.Collect(Name);
+            foreach (var item in Directories)
+                res.Collect(item);
+            foreach (var item in Files)
+                res.Collect(item);
+            return res;
+        }
+
         public override async Task<DirectoryInfo> ResolveTo(ResolveContext context, string path)
         {
             string realPath;

@@ -45,7 +45,7 @@ namespace CodeRunner.Managements.Templates
                 )
             );
 
-            Package.AddFile(Workspace.P_Settings).Template = new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings)));
+            Package.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings))));
         }
 
         private PackageDirectoryTemplate Package { get; set; } = new PackageDirectoryTemplate();

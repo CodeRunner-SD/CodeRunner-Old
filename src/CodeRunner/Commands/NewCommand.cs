@@ -53,7 +53,7 @@ namespace CodeRunner.Commands
 
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             resolveContext.WithVariable(DirectoryTemplate.Var, workspace.PathRoot.FullName);
-            if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))
+            if (!terminal.FillVariables(input, tpl.GetVariables(), resolveContext))
             {
                 return -1;
             }

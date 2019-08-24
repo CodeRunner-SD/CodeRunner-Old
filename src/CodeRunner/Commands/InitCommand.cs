@@ -1,5 +1,8 @@
 ﻿using CodeRunner.Managements;
+using CodeRunner.Operations;
+using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
+using CodeRunner.Templates;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading;
@@ -37,22 +40,24 @@ namespace CodeRunner.Commands
             {
                 await workspace.Initialize();
 
-                await workspace.Templates.Install("c", CodeRunner.Resources.Programming.Templates.C);
-                await workspace.Templates.Install("python", CodeRunner.Resources.Programming.Templates.Python);
-                await workspace.Templates.Install("cpp", CodeRunner.Resources.Programming.Templates.Cpp);
-                await workspace.Templates.Install("csharp", CodeRunner.Resources.Programming.Templates.CSharp);
-                await workspace.Templates.Install("python", CodeRunner.Resources.Programming.Templates.Python);
-                await workspace.Templates.Install("fsharp", CodeRunner.Resources.Programming.Templates.FSharp);
-                await workspace.Templates.Install("go", CodeRunner.Resources.Programming.Templates.Go);
-                await workspace.Templates.Install("java", CodeRunner.Resources.Programming.Templates.Java);
+                await workspace.Templates.Install("c", Resources.Programming.Templates.C);
+                await workspace.Templates.Install("python", Resources.Programming.Templates.Python);
+                await workspace.Templates.Install("cpp", Resources.Programming.Templates.Cpp);
+                await workspace.Templates.Install("csharp", Resources.Programming.Templates.CSharp);
+                await workspace.Templates.Install("python", Resources.Programming.Templates.Python);
+                await workspace.Templates.Install("fsharp", Resources.Programming.Templates.FSharp);
+                await workspace.Templates.Install("go", Resources.Programming.Templates.Go);
+                await workspace.Templates.Install("java", Resources.Programming.Templates.Java);
+                await workspace.Templates.Install("dir", new Package<BaseTemplate>(FileBasedCommandLineOperation.GetDirectoryTemplate()));
 
-                await workspace.Operations.Install("c", CodeRunner.Resources.Programming.Operations.C);
-                await workspace.Operations.Install("python", CodeRunner.Resources.Programming.Operations.Python);
-                await workspace.Operations.Install("cpp", CodeRunner.Resources.Programming.Operations.Cpp);
-                await workspace.Operations.Install("python", CodeRunner.Resources.Programming.Operations.Python);
-                await workspace.Operations.Install("go", CodeRunner.Resources.Programming.Operations.Go);
-                await workspace.Operations.Install("ruby", CodeRunner.Resources.Programming.Operations.Ruby);
-                await workspace.Operations.Install("javascript", CodeRunner.Resources.Programming.Operations.JavaScript);
+                await workspace.Operations.Install("c", Resources.Programming.Operations.C);
+                await workspace.Operations.Install("python", Resources.Programming.Operations.Python);
+                await workspace.Operations.Install("cpp", Resources.Programming.Operations.Cpp);
+                await workspace.Operations.Install("python", Resources.Programming.Operations.Python);
+                await workspace.Operations.Install("go", Resources.Programming.Operations.Go);
+                await workspace.Operations.Install("ruby", Resources.Programming.Operations.Ruby);
+                await workspace.Operations.Install("javascript", Resources.Programming.Operations.JavaScript);
+                await workspace.Operations.Install("dir", new Package<BaseOperation>(new FileBasedCommandLineOperation()));
             }
             return 0;
         }

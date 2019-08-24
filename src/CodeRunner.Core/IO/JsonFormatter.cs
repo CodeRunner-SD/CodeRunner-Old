@@ -6,9 +6,9 @@ namespace CodeRunner.IO
 {
     public static class JsonFormatter
     {
-        public static string Serialize(object obj)
+        public static string Serialize(object obj, JsonSerializerSettings? settings = null)
         {
-            return JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(obj, Formatting.Indented, settings ?? new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
             });
