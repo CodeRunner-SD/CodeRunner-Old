@@ -54,7 +54,7 @@ namespace Test.App
         }
 
         [TestMethod]
-        public async Task NewNow()
+        public async Task NewNowDir()
         {
             using TempDirectory td = new TempDirectory();
             await UsingInput(string.Join('\n', "init", "new c", "a"), async input =>
@@ -64,6 +64,11 @@ namespace Test.App
                  Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
              });
             await UsingInput(string.Join('\n', "now -f a.c"), async input =>
+            {
+                TestView.Input = input;
+                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
+            });
+            await UsingInput(string.Join('\n', "new dir", "a", "now -d a", "run dir"), async input =>
             {
                 TestView.Input = input;
                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
@@ -119,13 +124,15 @@ namespace Test.App
         [TestMethod]
         public async Task Operation()
         {
-            using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "init", "operation list"), async input =>
             {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                StringAssert.Contains(TestView.Console!.Out.ToString(), "hello");
-            });
+                using TempDirectory td = new TempDirectory();
+                await UsingInput(string.Join('\n', "init", "operation list"), async input =>
+                {
+                    TestView.Input = input;
+                    Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
+                    StringAssert.Contains(TestView.Console!.Out.ToString(), "hello");
+                });
+            }
         }
     }
 }
