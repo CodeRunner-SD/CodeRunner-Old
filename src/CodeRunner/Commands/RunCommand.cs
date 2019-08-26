@@ -12,6 +12,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace CodeRunner.Commands
 {
     public class RunCommand : BaseCommand<RunCommand.CArgument>
     {
-        class ConsoleLogger : ILogger
+        private class ConsoleLogger : ILogger
         {
             public ConsoleLogger(ITerminal terminal)
             {
@@ -28,16 +29,25 @@ namespace CodeRunner.Commands
 
             public ILogger? Parent { get; }
 
-            ITerminal Terminal { get; }
+            private ITerminal Terminal { get; }
 
-            public void Log(LogItem item)
+            public void Log(LogItem item, 
+                [CallerMemberName] string memberName = "", 
+                [CallerFilePath] string sourceFilePath = "", 
+                [CallerLineNumber] int sourceLineNumber = 0)
             {
                 Terminal.OutputLine(item.Content);
             }
 
-            public ILogger UseFilter(LogFilter filter) => this;
+            public ILogger UseFilter(LogFilter filter)
+            {
+                return this;
+            }
 
-            public IEnumerable<LogItem> View() => Array.Empty<LogItem>();
+            public IEnumerable<LogItem> View()
+            {
+                return Array.Empty<LogItem>();
+            }
         }
 
         public override Command Configure()
@@ -140,9 +150,9 @@ namespace CodeRunner.Commands
                         break;
                     }
             }*/
-            var builder = await tpl.Resolve(resolveContext);
-            var opp = await builder.Build(new OperationWatcher(), new ConsoleLogger(terminal));
-            var pres = await opp.Consume();
+            PipelineBuilder<OperationWatcher, bool> builder = await tpl.Resolve(resolveContext);
+            Pipeline<OperationWatcher, bool> opp = await builder.Build(new OperationWatcher(), new ConsoleLogger(terminal));
+            PipelineResult<bool> pres = await opp.Consume();
             bool res = pres.IsOk && pres.Result;
             return res ? 0 : -1;
         }

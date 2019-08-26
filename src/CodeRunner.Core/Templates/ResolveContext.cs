@@ -13,7 +13,10 @@ namespace CodeRunner.Templates
 
         private IDictionary<string, object> Variables { get; }
 
-        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull => WithVariable(variable.Name, value);
+        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull
+        {
+            return WithVariable(variable.Name, value);
+        }
 
         public ResolveContext WithVariable<T>(string name, T value) where T : notnull
         {
@@ -47,9 +50,7 @@ namespace CodeRunner.Templates
                 {
                     throw new Exception($"No required variable with name {variable.Name}.");
                 }
-#pragma warning disable CS8601 // 可能的 null 引用赋值。
-                return (T)variable.GetDefault();
-#pragma warning restore CS8601 // 可能的 null 引用赋值。
+                return variable.GetDefault<T>();
             }
         }
 
@@ -57,7 +58,7 @@ namespace CodeRunner.Templates
         {
             try
             {
-                value =  GetVariable<T>(variable);
+                value = GetVariable<T>(variable);
                 return true;
             }
             catch

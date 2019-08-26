@@ -48,9 +48,9 @@ namespace CodeRunner.Managements
 
         public override async Task Initialize()
         {
-            await base.Initialize();
-            await Templates.Initialize();
-            await Operations.Initialize();
+            await base.Initialize().ConfigureAwait(false);
+            await Templates.Initialize().ConfigureAwait(false);
+            await Operations.Initialize().ConfigureAwait(false);
         }
     }
 }

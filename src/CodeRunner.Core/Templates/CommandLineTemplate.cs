@@ -8,11 +8,11 @@ namespace CodeRunner.Templates
     {
         private Dictionary<StringTemplate, StringTemplate> Options { get; } = new Dictionary<StringTemplate, StringTemplate>();
 
-        public List<StringTemplate> Arguments { get; set; } = new List<StringTemplate>();
+        public List<StringTemplate> Arguments { get; } = new List<StringTemplate>();
 
-        private List<StringTemplate> Flags { get; set; } = new List<StringTemplate>();
+        private List<StringTemplate> Flags { get; } = new List<StringTemplate>();
 
-        public List<StringTemplate> Commands { get; set; } = new List<StringTemplate>();
+        public List<StringTemplate> Commands { get; } = new List<StringTemplate>();
 
         public StringTemplate? Raw { get; set; } = null;
 
@@ -83,27 +83,27 @@ namespace CodeRunner.Templates
             List<string> items = new List<string>();
             foreach (StringTemplate v in Commands)
             {
-                items.Add(await v.Resolve(context));
+                items.Add(await v.Resolve(context).ConfigureAwait(false));
             }
 
             foreach (StringTemplate v in Arguments)
             {
-                items.Add(await v.Resolve(context));
+                items.Add(await v.Resolve(context).ConfigureAwait(false));
             }
 
             foreach (StringTemplate v in Flags)
             {
-                items.Add(await v.Resolve(context));
+                items.Add(await v.Resolve(context).ConfigureAwait(false));
             }
 
             foreach ((StringTemplate id, StringTemplate value) in Options)
             {
-                items.Add(await id.Resolve(context));
-                items.Add(await value.Resolve(context));
+                items.Add(await id.Resolve(context).ConfigureAwait(false));
+                items.Add(await value.Resolve(context).ConfigureAwait(false));
             }
             if (Raw != null)
             {
-                items.Add(await Raw.Resolve(context));
+                items.Add(await Raw.Resolve(context).ConfigureAwait(false));
             }
 
             return items.ToArray();

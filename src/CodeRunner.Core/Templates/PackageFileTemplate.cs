@@ -31,8 +31,8 @@ namespace CodeRunner.Templates
 
             if (Template != null)
             {
-                string name = await Name.Resolve(context);
-                FileInfo file = await Template.ResolveTo(context, Path.Join(res.FullName, name));
+                string name = await Name.Resolve(context).ConfigureAwait(false);
+                FileInfo file = await Template.ResolveTo(context, Path.Join(res.FullName, name)).ConfigureAwait(false);
                 file.Refresh();
                 file.Attributes = Attributes;
             }
@@ -71,12 +71,12 @@ namespace CodeRunner.Templates
 
         public async Task FromBinary(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName)));
+            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName).ConfigureAwait(false)));
         }
 
         public async Task FromText(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new TextFileTemplate(await File.ReadAllTextAsync(file.FullName)));
+            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new TextFileTemplate(await File.ReadAllTextAsync(file.FullName).ConfigureAwait(false)));
         }
 
         public override VariableCollection GetVariables()

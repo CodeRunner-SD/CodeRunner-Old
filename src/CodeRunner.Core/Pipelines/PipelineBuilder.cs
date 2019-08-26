@@ -37,10 +37,10 @@ namespace CodeRunner.Pipelines
                 switch (func)
                 {
                     case Func<ServiceScope, Task> f:
-                        await f(await services.CreateScope(name));
+                        await f(await services.CreateScope(name).ConfigureAwait(false)).ConfigureAwait(false);
                         break;
                     case Action<ServiceScope> a:
-                        a(await services.CreateScope(name));
+                        a(await services.CreateScope(name).ConfigureAwait(false));
                         break;
                 }
             }

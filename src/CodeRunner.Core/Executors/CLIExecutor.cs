@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Executors
 {
-    public class CLIExecutor : IDisposable
+    public sealed class CLIExecutor : IDisposable
     {
         private Process? Process { get; set; }
 
@@ -43,7 +43,7 @@ namespace CodeRunner.Executors
                     Process.WaitForExit();
                 }
                 catch { }
-            });
+            }).ConfigureAwait(false);
         }
 
         private async Task GetMemory()
@@ -67,11 +67,11 @@ namespace CodeRunner.Executors
                     if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
                     {
                         Result.State = ExecutorState.OutOfMemory;
-                        await Kill();
+                        await Kill().ConfigureAwait(false);
                     }
                 }
                 catch { }
-                await Task.Delay(5);
+                await Task.Delay(5).ConfigureAwait(false);
             }
         }
 
@@ -108,7 +108,7 @@ namespace CodeRunner.Executors
 
             if (!string.IsNullOrEmpty(Settings.Input))
             {
-                await Process.StandardInput.WriteAsync(Settings.Input);
+                await Process.StandardInput.WriteAsync(Settings.Input).ConfigureAwait(false);
                 Process.StandardInput.Close();
             }
 
@@ -122,14 +122,14 @@ namespace CodeRunner.Executors
                     else
                     {
                         Result.State = ExecutorState.OutOfTime;
-                        await Kill();
+                        await Kill().ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     Process.WaitForExit();
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         public async Task<ExecutorResult> Run()
@@ -147,7 +147,7 @@ namespace CodeRunner.Executors
             Result.State = ExecutorState.Running;
             Result.StartTime = DateTimeOffset.Now;
 
-            await Task.WhenAll(Running(), GetMemory());
+            await Task.WhenAll(Running(), GetMemory()).ConfigureAwait(false);
 
             if (Process == null)
             {
@@ -172,7 +172,7 @@ namespace CodeRunner.Executors
         #region IDisposable Support
         private bool disposedValue = false; // 要检测冗余调用
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

@@ -39,7 +39,7 @@ namespace CodeRunner.IO
 
         public async Task<T?> Load()
         {
-            data = await OnLoading();
+            data = await OnLoading().ConfigureAwait(false);
             LoadedTime = DateTimeOffset.Now;
             return data;
         }

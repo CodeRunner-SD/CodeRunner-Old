@@ -15,7 +15,7 @@ namespace CodeRunner.Templates
         public StringTemplate(string content = "", IList<Variable>? variables = null)
         {
             Content = content;
-            Variables = new List<Variable>(variables ?? Array.Empty<Variable>());
+            UsedVariables = new List<Variable>(variables ?? Array.Empty<Variable>());
         }
 
         public StringTemplate() : this("", null)
@@ -24,12 +24,12 @@ namespace CodeRunner.Templates
 
         public string Content { get; set; }
 
-        public IList<Variable> Variables { get; set; }
+        public IList<Variable> UsedVariables { get; }
 
         public override Task<string> Resolve(ResolveContext context)
         {
             StringBuilder sb = new StringBuilder(Content);
-            foreach (Variable v in Variables)
+            foreach (Variable v in UsedVariables)
             {
                 sb.Replace(GetVariableTemplate(v.Name), context.GetVariable<string>(v));
             }
@@ -38,18 +38,23 @@ namespace CodeRunner.Templates
 
         public static implicit operator StringTemplate(string content)
         {
-            return new StringTemplate(content, null);
+            return FromString(content);
         }
 
         public override VariableCollection GetVariables()
         {
             VariableCollection res = base.GetVariables();
-            foreach (Variable v in Variables)
+            foreach (Variable v in UsedVariables)
             {
                 res.Add(v);
             }
 
             return res;
+        }
+
+        public static StringTemplate FromString(string content)
+        {
+            return new StringTemplate(content, null);
         }
     }
 }

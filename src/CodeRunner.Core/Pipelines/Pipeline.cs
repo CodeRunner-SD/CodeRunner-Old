@@ -56,8 +56,8 @@ namespace CodeRunner.Pipelines
 
             try
             {
-                PipelineContext<TOrigin, TResult> context = new PipelineContext<TOrigin, TResult>(await Services.CreateScope(op.Item1), Origin, Result, subLogScope);
-                TResult result = await op.Item2.Invoke(context);
+                PipelineContext<TOrigin, TResult> context = new PipelineContext<TOrigin, TResult>(await Services.CreateScope(op.Item1).ConfigureAwait(false), Origin, Result, subLogScope);
+                TResult result = await op.Item2.Invoke(context).ConfigureAwait(false);
                 if (!context.IgnoreResult)
                 {
                     Result = result;
@@ -84,7 +84,7 @@ namespace CodeRunner.Pipelines
 
         public async Task<PipelineResult<TResult>> Consume()
         {
-            while (await Step())
+            while (await Step().ConfigureAwait(false))
             {
                 ;
             }

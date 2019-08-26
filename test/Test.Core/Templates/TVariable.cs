@@ -14,7 +14,7 @@ namespace Test.Core.Templates
         {
             Variable v = new Variable("v");
             Assert.IsTrue(v.Equals(new Variable("v") as object));
-            Assert.ThrowsException<NullReferenceException>(() => v.GetDefault());
+            Assert.ThrowsException<NullReferenceException>(() => v.GetDefault<object>());
         }
 
         [TestMethod]

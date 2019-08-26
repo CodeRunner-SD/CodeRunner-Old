@@ -18,12 +18,12 @@ namespace CodeRunner.Templates
 
         public override async Task<FileInfo> ResolveTo(ResolveContext context, string path)
         {
-            string content = await Content.Resolve(context);
+            string content = await Content.Resolve(context).ConfigureAwait(false);
             FileInfo res = new FileInfo(path);
             using (FileStream fs = res.Open(FileMode.Create))
             {
                 using StreamWriter ss = new StreamWriter(fs);
-                await ss.WriteAsync(content);
+                await ss.WriteAsync(content).ConfigureAwait(false);
             }
             return res;
         }

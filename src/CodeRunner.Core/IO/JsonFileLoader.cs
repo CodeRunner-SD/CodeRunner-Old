@@ -13,7 +13,7 @@ namespace CodeRunner.IO
         public override async Task Save(T value)
         {
             using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
-            await JsonFormatter.Serialize(value, st);
+            await JsonFormatter.Serialize(value, st).ConfigureAwait(false);
             File.LastWriteTime = DateTime.Now;
         }
 
@@ -22,7 +22,7 @@ namespace CodeRunner.IO
             try
             {
                 using FileStream st = File.OpenRead();
-                return await JsonFormatter.Deserialize<T>(st);
+                return await JsonFormatter.Deserialize<T>(st).ConfigureAwait(false);
             }
             catch
             {

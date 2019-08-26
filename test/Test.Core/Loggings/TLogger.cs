@@ -75,7 +75,7 @@ namespace Test.Core.Loggings
             Assert.IsNotNull(item);
             Assert.AreEqual(LogLevel.Information, item.Level);
             Assert.AreEqual("/scope", item.Scope);
-            Assert.AreEqual("info", item.Content);
+            StringAssert.Contains(item.Content, "info");
 
             LoggerScope subScope = scope.CreateScope("subScope", LogLevel.Debug);
             Assert.AreEqual("/scope/subScope", subScope.Name);

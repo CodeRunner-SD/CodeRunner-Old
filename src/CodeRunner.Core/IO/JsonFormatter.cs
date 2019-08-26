@@ -6,9 +6,9 @@ namespace CodeRunner.IO
 {
     public static class JsonFormatter
     {
-        public static string Serialize(object obj, JsonSerializerSettings? settings = null)
+        public static string Serialize(object value, JsonSerializerSettings? settings = null)
         {
-            return JsonConvert.SerializeObject(obj, Formatting.Indented, settings ?? new JsonSerializerSettings
+            return JsonConvert.SerializeObject(value, Formatting.Indented, settings ?? new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
             });
@@ -22,16 +22,16 @@ namespace CodeRunner.IO
             });
         }
 
-        public static async Task Serialize(object obj, Stream stream)
+        public static async Task Serialize(object value, Stream stream)
         {
             using StreamWriter sw = new StreamWriter(stream);
-            await sw.WriteAsync(Serialize(obj));
+            await sw.WriteAsync(Serialize(value)).ConfigureAwait(false);
         }
 
         public static async Task<T> Deserialize<T>(Stream stream)
         {
             using StreamReader sr = new StreamReader(stream);
-            return Deserialize<T>(await sr.ReadToEndAsync());
+            return Deserialize<T>(await sr.ReadToEndAsync().ConfigureAwait(false));
         }
     }
 }

@@ -17,7 +17,10 @@ namespace CodeRunner.Loggings
 
         public LogLevel Level { get; set; }
 
-        public void Log(string content, LogLevel level)
+        public void Log(string content, LogLevel level,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
             if (level >= Level)
             {
@@ -27,43 +30,64 @@ namespace CodeRunner.Loggings
                     Content = content,
                     Scope = Name,
                     Time = DateTimeOffset.Now
-                });
+                }, memberName, sourceFilePath, sourceLineNumber);
             }
         }
 
-        public void Error(Exception exception)
+        public void Error(Exception exception,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Error(exception.ToString());
+            Error(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Fatal(Exception exception)
+        public void Fatal(Exception exception,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Fatal(exception.ToString());
+            Fatal(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Error(string content)
+        public void Error(string content,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Log(content, LogLevel.Error);
+            Log(content, LogLevel.Error, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Warning(string content)
+        public void Warning(string content,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Log(content, LogLevel.Warning);
+            Log(content, LogLevel.Warning, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Information(string content)
+        public void Information(string content,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Log(content, LogLevel.Information);
+            Log(content, LogLevel.Information, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Fatal(string content)
+        public void Fatal(string content,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Log(content, LogLevel.Fatal);
+            Log(content, LogLevel.Fatal, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public void Debug(string content)
+        public void Debug(string content,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Log(content, LogLevel.Debug);
+            Log(content, LogLevel.Debug, memberName, sourceFilePath, sourceLineNumber);
         }
 
         public LoggerScope CreateScope(string name, LogLevel level)
