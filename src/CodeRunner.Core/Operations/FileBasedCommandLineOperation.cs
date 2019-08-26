@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Operations
 {
+    public class FileBasedCommandLineOperationSettings
+    {
+        public IList<string> Scripts { get; } = new List<string>();
+
+        public string WorkingDirectory { get; set; } = string.Empty;
+
+        public string Shell { get; set; } = string.Empty;
+    }
+
     public class FileBasedCommandLineOperation : CommandLineOperation
     {
-        public class Settings
-        {
-            public IList<string> Scripts { get; set; } = new List<string>();
-
-            public string WorkingDirectory { get; set; } = string.Empty;
-
-            public string Shell { get; set; } = string.Empty;
-        }
-
         public const string DefaultFileName = "settings.json";
 
         public string FileName { get; set; } = DefaultFileName;
@@ -27,15 +27,15 @@ namespace CodeRunner.Operations
             string workingDir = context.GetVariable<string>(OperationVariables.WorkingDirectory);
             string path = Path.Join(workingDir, inputPath, FileName);
             using FileStream st = File.Open(path, FileMode.Open, FileAccess.Read);
-            var settings = await JsonFormatter.Deserialize<Settings>(st);
-            var res = new CommandLineOperationSettings
+            FileBasedCommandLineOperationSettings settings = await JsonFormatter.Deserialize<FileBasedCommandLineOperationSettings>(st).ConfigureAwait(false);
+            CommandLineOperationSettings res = new CommandLineOperationSettings
             {
                 WorkingDirectory = settings.WorkingDirectory,
                 Shell = settings.Shell
             };
-            foreach (var  v in settings.Scripts)
+            foreach (string v in settings.Scripts)
             {
-                var item = new CommandLineTemplate
+                CommandLineTemplate item = new CommandLineTemplate
                 {
                     Raw = v
                 };
@@ -46,8 +46,8 @@ namespace CodeRunner.Operations
 
         public static DirectoryTemplate GetDirectoryTemplate(string fileName = DefaultFileName)
         {
-            var settings = new Settings();
-            var res = new PackageDirectoryTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"),
+            FileBasedCommandLineOperationSettings settings = new FileBasedCommandLineOperationSettings();
+            PackageDirectoryTemplate res = new PackageDirectoryTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"),
                 new Variable[] { new Variable("name").Required() }));
             res.AddFile(fileName).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings, new Newtonsoft.Json.JsonSerializerSettings()))));
             return res;

@@ -80,7 +80,7 @@ namespace CodeRunner.Pipelines
             return FindSubDictionary<T>()![id].Source;
         }
 
-        public bool TryGet<T>([MaybeNull] out T value, string id = "") where T:notnull
+        public bool TryGet<T>([MaybeNull] out T value, string id = "") where T : notnull
         {
             try
             {

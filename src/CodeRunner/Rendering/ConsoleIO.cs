@@ -18,7 +18,7 @@ namespace CodeRunner.Rendering
             else
             {
                 terminal.OutputBold(variable.Name);
-                terminal.Output($"({ variable.GetDefault().ToString()})");
+                terminal.Output($"({ variable.GetDefault<object>().ToString()})");
             }
             terminal.Output(": ");
             return input.InputLine();

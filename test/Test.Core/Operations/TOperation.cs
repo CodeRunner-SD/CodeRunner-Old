@@ -1,5 +1,4 @@
-﻿using CodeRunner.Executors;
-using CodeRunner.IO;
+﻿using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Operations;
 using CodeRunner.Templates;
@@ -41,8 +40,8 @@ namespace Test.Core.Operations
 
             // op.CommandExecuting += Op_CommandExecuting;
             // op.CommandExecuted += Op_CommandExecuted;
-            var pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
-            var res = await pipeline.Consume();
+            CodeRunner.Pipelines.Pipeline<OperationWatcher, bool> pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
+            CodeRunner.Pipelines.PipelineResult<bool> res = await pipeline.Consume();
             Assert.IsTrue(res.IsOk && res.Result);
         }
 

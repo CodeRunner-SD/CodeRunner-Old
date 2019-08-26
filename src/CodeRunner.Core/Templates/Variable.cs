@@ -30,29 +30,29 @@ namespace CodeRunner.Templates
             set => isRequired = value;
         }
 
-        public object? Default { get; set; }
+        public object? DefaultValue { get; set; }
 
-        public object GetDefault()
+        public T GetDefault<T>()
         {
-            if (IsRequired || Default == null)
+            if (IsRequired || DefaultValue == null)
             {
                 throw new NullReferenceException("No default value");
             }
 
-            return Default;
+            return (T)DefaultValue;
         }
 
         public Variable Required()
         {
             IsRequired = true;
-            Default = null;
+            DefaultValue = null;
             return this;
         }
 
         public Variable NotRequired(object value)
         {
             IsRequired = false;
-            Default = value;
+            DefaultValue = value;
             return this;
         }
 

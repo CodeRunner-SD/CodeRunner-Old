@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Loggings;
 using System;
+using System.Collections.Generic;
 
 namespace CodeRunner.Pipelines
 {
@@ -13,9 +14,9 @@ namespace CodeRunner.Pipelines
 
         public Exception? Exception { get; }
 
-        public LogItem[] Logs { get; }
+        public IReadOnlyList<LogItem> Logs { get; }
 
-        public PipelineResult(T result, Exception? ex, LogItem[] logs)
+        public PipelineResult(T result, Exception? ex, IReadOnlyList<LogItem> logs)
         {
             Exception = ex;
             Result = result;

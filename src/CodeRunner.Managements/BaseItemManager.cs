@@ -1,5 +1,4 @@
-﻿using CodeRunner.IO;
-using CodeRunner.Managements.Configurations;
+﻿using CodeRunner.Managements.Configurations;
 using CodeRunner.Templates;
 using System;
 using System.IO;

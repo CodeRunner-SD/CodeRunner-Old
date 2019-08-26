@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace CodeRunner.Executors
 {
     public class CLIExecutorSettings
     {
-        public CLIExecutorSettings(string filePath, string[] arguments)
+        public CLIExecutorSettings(string filePath, IList<string> arguments)
         {
             FilePath = filePath;
             Arguments = arguments;
@@ -13,7 +14,7 @@ namespace CodeRunner.Executors
 
         public string FilePath { get; set; }
 
-        public string[] Arguments { get; set; }
+        public IList<string> Arguments { get; }
 
         public string? Input { get; set; }
 

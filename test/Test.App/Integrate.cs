@@ -18,6 +18,27 @@ namespace Test.App
             await action(sr);
         }
 
+        /*async Task<int[]> Execute(string workingDirectory, params string[] commands)
+        {
+            List<int> res = new List<int>();
+            foreach (var cmd in commands)
+            {
+                res.Add(await Program.Main(new string[] { "-d", workingDirectory, "-c", cmd, "--verbose" }));
+            }
+            return res.ToArray();
+        }*/
+
+        private async Task<int> ExecuteInRepl(string workingDirectory, params string[] commands)
+        {
+            int res = -1;
+            await UsingInput(string.Join('\n', commands), async input =>
+            {
+                TestView.Input = input;
+                res = await Program.Main(new string[] { "-d", workingDirectory, "--verbose" });
+            });
+            return res;
+        }
+
         [TestInitialize]
         public void Setup()
         {
@@ -28,97 +49,58 @@ namespace Test.App
         public async Task Basic()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput("--version", async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "--version"));
         }
 
         [TestMethod]
         public async Task Init()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "init"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                Assert.IsTrue(TestView.Workspace!.HasInitialized);
-            });
-            await UsingInput(string.Join('\n', "init --delete"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                Assert.IsFalse(TestView.Workspace!.HasInitialized);
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init"));
+            Assert.IsTrue(TestView.Workspace!.HasInitialized);
+
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init --delete"));
+            Assert.IsFalse(TestView.Workspace!.HasInitialized);
         }
 
         [TestMethod]
         public async Task NewNowDir()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "init", "new c", "a"), async input =>
-             {
-                 TestView.Input = input;
-                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                 Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
-             });
-            await UsingInput(string.Join('\n', "now -f a.c"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-            });
-            await UsingInput(string.Join('\n', "new dir", "a", "now -d a", "run dir"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "new c", "a"));
+            Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "now -f a.c"));
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "new dir", "a", "now -d a", "run dir"));
         }
 
         [TestMethod]
         public async Task Run()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "init", "run hello -- name=sun", '\n'), async input =>
-             {
-                 TestView.Input = input;
-                 Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                 StringAssert.Contains(TestView.Console!.Out.ToString(), "hello sun");
-             });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "run hello -- name=sun", "\n"));
+            StringAssert.Contains(TestView.Console!.Out.ToString(), "hello sun");
         }
 
         [TestMethod]
         public async Task Debug()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "debug"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "debug"));
         }
 
         [TestMethod]
         public async Task Clear()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "clear"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "clear"));
         }
 
         [TestMethod]
         public async Task Template()
         {
             using TempDirectory td = new TempDirectory();
-            await UsingInput(string.Join('\n', "init", "template list"), async input =>
-            {
-                TestView.Input = input;
-                Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                StringAssert.Contains(TestView.Console!.Out.ToString(), "python");
-            });
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "template list"));
+            StringAssert.Contains(TestView.Console!.Out.ToString(), "python");
         }
 
         [TestMethod]
@@ -126,12 +108,8 @@ namespace Test.App
         {
             {
                 using TempDirectory td = new TempDirectory();
-                await UsingInput(string.Join('\n', "init", "operation list"), async input =>
-                {
-                    TestView.Input = input;
-                    Assert.AreEqual(0, await Program.Main(new string[] { "-d", td.Directory.FullName }));
-                    StringAssert.Contains(TestView.Console!.Out.ToString(), "hello");
-                });
+                Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "operation list"));
+                StringAssert.Contains(TestView.Console!.Out.ToString(), "hello");
             }
         }
     }

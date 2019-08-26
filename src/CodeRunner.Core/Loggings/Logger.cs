@@ -16,7 +16,10 @@ namespace CodeRunner.Loggings
 
         private List<LogFilter> Filters { get; } = new List<LogFilter>();
 
-        public void Log(LogItem item)
+        public void Log(LogItem item,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
             foreach (LogFilter v in Filters)
             {
@@ -25,6 +28,8 @@ namespace CodeRunner.Loggings
                     return;
                 }
             }
+
+            item.Content += $"(At {sourceFilePath}, line {sourceLineNumber}, {memberName})";
 
             Contents.Add(item);
             if (Parent != null)

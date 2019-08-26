@@ -1,7 +1,5 @@
 ﻿using CodeRunner.Templates;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CodeRunner.Operations
 {

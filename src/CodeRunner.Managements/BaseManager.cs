@@ -25,7 +25,10 @@ namespace CodeRunner.Managements
             get
             {
                 if (SettingsLoader == null)
+                {
                     return Task.FromResult<TSettings?>(null);
+                }
+
                 return SettingsLoader.Data;
             }
         }

@@ -16,7 +16,7 @@ namespace CodeRunner.IO
             try
             {
                 using FileStream st = File.OpenRead();
-                return await Package.Load<T>(st);
+                return await Package.Load<T>(st).ConfigureAwait(false);
             }
             catch
             {
@@ -27,7 +27,7 @@ namespace CodeRunner.IO
         public override async Task Save(Package<T> value)
         {
             using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
-            await value.Save(st);
+            await value.Save(st).ConfigureAwait(false);
             File.LastWriteTime = DateTime.Now;
         }
     }

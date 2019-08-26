@@ -16,7 +16,7 @@ namespace CodeRunner.Templates
     {
         public override async Task DoResolve(ResolveContext context)
         {
-            await Resolve(context);
+            await Resolve(context).ConfigureAwait(false);
         }
 
         public abstract Task<TResult> Resolve(ResolveContext context);

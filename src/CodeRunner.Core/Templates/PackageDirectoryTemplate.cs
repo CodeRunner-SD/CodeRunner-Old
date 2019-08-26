@@ -19,25 +19,31 @@ namespace CodeRunner.Templates
 
         public FileAttributes Attributes { get; set; } = FileAttributes.Directory;
 
-        public IList<PackageDirectoryTemplate> Directories { get; set; } = new List<PackageDirectoryTemplate>();
+        public IList<PackageDirectoryTemplate> Directories { get; } = new List<PackageDirectoryTemplate>();
 
-        public IList<PackageFileTemplate> Files { get; set; } = new List<PackageFileTemplate>();
+        public IList<PackageFileTemplate> Files { get; } = new List<PackageFileTemplate>();
 
         public override VariableCollection GetVariables()
         {
-            var res = base.GetVariables();
+            VariableCollection res = base.GetVariables();
             res.Collect(Name);
-            foreach (var item in Directories)
+            foreach (PackageDirectoryTemplate item in Directories)
+            {
                 res.Collect(item);
-            foreach (var item in Files)
+            }
+
+            foreach (PackageFileTemplate item in Files)
+            {
                 res.Collect(item);
+            }
+
             return res;
         }
 
         public override async Task<DirectoryInfo> ResolveTo(ResolveContext context, string path)
         {
             string realPath;
-            string name = await Name.Resolve(context);
+            string name = await Name.Resolve(context).ConfigureAwait(false);
             if (string.IsNullOrEmpty(name))
             {
                 realPath = path;
@@ -59,12 +65,12 @@ namespace CodeRunner.Templates
 
             foreach (PackageFileTemplate f in Files)
             {
-                await f.ResolveTo(context, res.FullName);
+                await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
             }
 
             foreach (PackageDirectoryTemplate f in Directories)
             {
-                await f.ResolveTo(context, res.FullName);
+                await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
             }
 
             return res;
@@ -116,16 +122,16 @@ namespace CodeRunner.Templates
                 PackageFileTemplate f = AddFile();
                 if (asText)
                 {
-                    await f.FromText(file);
+                    await f.FromText(file).ConfigureAwait(false);
                 }
                 else
                 {
-                    await f.FromBinary(file);
+                    await f.FromBinary(file).ConfigureAwait(false);
                 }
             }
             foreach (DirectoryInfo file in dir.GetDirectories())
             {
-                await AddDirectory().From(file, asText);
+                await AddDirectory().From(file, asText).ConfigureAwait(false);
             }
         }
     }

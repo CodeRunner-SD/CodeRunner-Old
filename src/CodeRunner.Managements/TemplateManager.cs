@@ -10,7 +10,7 @@ namespace CodeRunner.Managements
 {
     public class TemplateManager : BaseItemManager<TemplatesSettings, TemplateItem, Package<BaseTemplate>?>
     {
-        public TemplateManager(DirectoryInfo pathRoot) : base(pathRoot, new System.Lazy<DirectoryTemplate>(()=> new TemplatesSpaceTemplate()))
+        public TemplateManager(DirectoryInfo pathRoot) : base(pathRoot, new System.Lazy<DirectoryTemplate>(() => new TemplatesSpaceTemplate()))
         {
             SettingsLoader = new JsonFileLoader<TemplatesSettings>(new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
         }
