@@ -21,9 +21,9 @@ namespace Test.Core.Operations
             File.WriteAllText(tmp.File.FullName, C_HelloWorld, Encoding.UTF8);
 
             StringTemplate source = new StringTemplate(
-                    StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
+                    StringTemplate.GetVariableTemplate(OperationVariables.VarInputPath.Name),
                         new Variable[] {
-                            OperationVariables.InputPath
+                            OperationVariables.VarInputPath
                         }
                 );
 
@@ -35,8 +35,8 @@ namespace Test.Core.Operations
             });
 
             ResolveContext context = new ResolveContext()
-                .WithVariable(OperationVariables.InputPath, tmp.File.FullName)
-                .WithVariable(OperationVariables.Shell, Utils.GetShell());
+                .SetInputPath(tmp.File.FullName)
+                .SetShell(Utils.GetShell());
 
             // op.CommandExecuting += Op_CommandExecuting;
             // op.CommandExecuted += Op_CommandExecuted;

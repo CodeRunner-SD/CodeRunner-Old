@@ -12,10 +12,7 @@ namespace CodeRunner
 
         internal const string CliCommandId = "cli";
 
-        public static Workspace GetWorkspace(this ServiceScope scope)
-        {
-            return scope.Get<Workspace>();
-        }
+        public static Workspace GetWorkspace(this ServiceScope scope) => scope.Get<Workspace>();
 
         public static WorkItem? GetWorkItem(this ServiceScope scope)
         {
@@ -26,29 +23,14 @@ namespace CodeRunner
             return null;
         }
 
-        public static IConsole GetConsole(this ServiceScope scope)
-        {
-            return scope.Get<IConsole>();
-        }
+        public static IConsole GetConsole(this ServiceScope scope) => scope.Get<IConsole>();
 
-        public static TextReader GetInput(this ServiceScope scope)
-        {
-            return scope.Get<TextReader>();
-        }
+        public static TextReader GetInput(this ServiceScope scope) => scope.Get<TextReader>();
 
-        public static Command GetReplCommand(this ServiceScope scope)
-        {
-            return scope.Get<Command>(ReplCommandId);
-        }
+        public static Command GetReplCommand(this ServiceScope scope) => scope.Get<Command>(ReplCommandId);
 
-        public static Command GetCliCommand(this ServiceScope scope)
-        {
-            return scope.Get<Command>(CliCommandId);
-        }
+        public static Command GetCliCommand(this ServiceScope scope) => scope.Get<Command>(CliCommandId);
 
-        public static ILogger GetLogger(this ServiceScope scope)
-        {
-            return scope.Get<ILogger>();
-        }
+        public static ILogger GetLogger(this ServiceScope scope) => scope.Get<ILogger>();
     }
 }

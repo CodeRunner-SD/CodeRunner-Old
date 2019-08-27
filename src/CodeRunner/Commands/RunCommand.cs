@@ -89,13 +89,13 @@ namespace CodeRunner.Commands
 
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             WorkspaceSettings settings = (await workspace.Settings)!;
-            resolveContext.WithVariable(OperationVariables.Shell, settings.DefaultShell);
-            resolveContext.WithVariable(OperationVariables.WorkingDirectory, workspace.PathRoot.FullName);
+            resolveContext.SetShell(settings.DefaultShell);
+            resolveContext.SetWorkingDirectory(workspace.PathRoot.FullName);
             {
                 WorkItem? workItem = pipeline.Services.GetWorkItem();
                 if (workItem != null)
                 {
-                    resolveContext.WithVariable(OperationVariables.InputPath, workItem.RelativePath);
+                    resolveContext.SetInputPath(workItem.RelativePath);
                 }
             }
             if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))
