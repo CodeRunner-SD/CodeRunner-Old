@@ -4,12 +4,28 @@ namespace CodeRunner.Operations
 {
     public static class OperationVariables
     {
-        public static Variable InputPath => new Variable("inputPath").Required();
+        public static Variable VarInputPath => new Variable("inputPath").Required();
 
-        public static Variable OutputPath => new Variable("outputPath").Required();
+        public static Variable VarOutputPath => new Variable("outputPath").Required();
 
-        public static Variable Shell => new Variable("shell").Required();
+        public static Variable VarShell => new Variable("shell").Required();
 
-        public static Variable WorkingDirectory => new Variable("workingDirectory").NotRequired("");
+        public static Variable VarWorkingDirectory => new Variable("workingDirectory").NotRequired("");
+
+        public static string GetInputPath(this ResolveContext context) => context.GetVariable<string>(VarInputPath);
+
+        public static string GetOutputPath(this ResolveContext context) => context.GetVariable<string>(VarOutputPath);
+
+        public static string GetShell(this ResolveContext context) => context.GetVariable<string>(VarShell);
+
+        public static string GetWorkingDirectory(this ResolveContext context) => context.GetVariable<string>(VarWorkingDirectory);
+
+        public static ResolveContext SetInputPath(this ResolveContext context, string value) => context.WithVariable(VarInputPath.Name, value);
+
+        public static ResolveContext SetOutputPath(this ResolveContext context, string value) => context.WithVariable(VarOutputPath.Name, value);
+
+        public static ResolveContext SetWorkingDirectory(this ResolveContext context, string value) => context.WithVariable(VarWorkingDirectory.Name, value);
+
+        public static ResolveContext SetShell(this ResolveContext context, string value) => context.WithVariable(VarShell.Name, value);
     }
 }

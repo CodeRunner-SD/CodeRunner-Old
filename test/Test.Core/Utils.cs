@@ -15,17 +15,5 @@ namespace Test.Core
                 return "bash";
             }
         }
-
-        public static string GetPythonFile()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                return "C:/Python37/python.exe";
-            }
-            else
-            {
-                return "/usr/bin/python3";
-            }
-        }
     }
 }

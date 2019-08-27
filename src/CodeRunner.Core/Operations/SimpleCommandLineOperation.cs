@@ -26,8 +26,8 @@ namespace CodeRunner.Operations
         public override VariableCollection GetVariables()
         {
             VariableCollection res = base.GetVariables();
-            res.Add(OperationVariables.Shell);
-            res.Add(OperationVariables.WorkingDirectory);
+            res.Add(OperationVariables.VarShell);
+            res.Add(OperationVariables.VarWorkingDirectory);
             foreach (CommandLineTemplate v in Items)
             {
                 res.Collect(v);

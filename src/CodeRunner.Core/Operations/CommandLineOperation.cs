@@ -13,8 +13,8 @@ namespace CodeRunner.Operations
         public override async Task<PipelineBuilder<OperationWatcher, bool>> Resolve(ResolveContext context)
         {
             CommandLineOperationSettings settings = await GetSettings(context).ConfigureAwait(false);
-            string shell = string.IsNullOrEmpty(settings.Shell) ? context.GetVariable<string>(OperationVariables.Shell) : settings.Shell;
-            string workingDirectory = string.IsNullOrEmpty(settings.WorkingDirectory) ? context.GetVariable<string>(OperationVariables.WorkingDirectory) : settings.WorkingDirectory;
+            string shell = string.IsNullOrEmpty(settings.Shell) ? context.GetShell() : settings.Shell;
+            string workingDirectory = string.IsNullOrEmpty(settings.WorkingDirectory) ? context.GetWorkingDirectory() : settings.WorkingDirectory;
             PipelineBuilder<OperationWatcher, bool> builder = new PipelineBuilder<OperationWatcher, bool>();
             builder.Configure("service", scope =>
             {

@@ -1,0 +1,97 @@
+name: CI Test
+
+on: [push, pull_request]
+
+jobs:
+  linux:
+    name: linux
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-preview8-013656'
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+    - name: Restore
+      run: dotnet restore -s https://api.nuget.org/v3/index.json
+    - name: Build
+      run: dotnet build
+    - name: Test
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Generate report
+      run: dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Upload report
+      continue-on-error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        curl -s https://codecov.io/bash > codecov
+        chmod +x codecov
+        ./codecov -f "coverage.xml"
+  windows:
+    name: windows
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-preview8-013656'
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+    - name: Restore
+      run: dotnet restore -s https://api.nuget.org/v3/index.json
+    - name: Build
+      run: dotnet build
+    - name: Test
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Generate report
+      run: dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Upload report
+      continue-on-error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        curl -s https://codecov.io/bash > codecov
+        pwsh -command "./codecov -f coverage.xml"
+  macos:
+    name: macos
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-preview8-013656'
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+    - name: Restore
+      run: dotnet restore -s https://api.nuget.org/v3/index.json
+    - name: Build
+      run: dotnet build
+    - name: Test
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Generate report
+      run: dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+    - name: Upload report
+      continue-on-error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        curl -s https://codecov.io/bash > codecov
+        chmod +x codecov
+        ./codecov -f "coverage.xml"

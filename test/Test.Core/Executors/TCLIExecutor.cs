@@ -29,7 +29,7 @@ print(s)";
             using (TempFile tmp = new TempFile())
             {
                 File.WriteAllText(tmp.File.FullName, C_HelloWorld, Encoding.UTF8);
-                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" })
                 {
                     CollectOutput = true
                 });
@@ -44,7 +44,7 @@ print(s)";
             using (TempFile tmp = new TempFile())
             {
                 File.WriteAllText(tmp.File.FullName, C_Exit1, Encoding.UTF8);
-                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName }));
+                using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" }));
                 ExecutorResult res = await cli.Run();
                 Assert.AreEqual(1, res.ExitCode);
             }
@@ -55,7 +55,7 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_Input, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" })
             {
                 Input = "hello",
                 CollectOutput = true
@@ -70,7 +70,7 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_DeadCycle, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" })
             {
                 TimeLimit = TimeSpan.FromSeconds(0.2)
             });
@@ -84,7 +84,7 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_DeadCycle, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" })
             {
                 TimeLimit = TimeSpan.FromSeconds(0.5)
             });
@@ -100,7 +100,7 @@ print(s)";
         {
             using TempFile tmp = new TempFile();
             File.WriteAllText(tmp.File.FullName, C_3MB, Encoding.UTF8);
-            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetPythonFile(), new string[] { tmp.File.FullName })
+            using CLIExecutor cli = new CLIExecutor(new CLIExecutorSettings(Utils.GetShell(), new string[] { "-c", $"python {tmp.File.FullName}" })
             {
                 MemoryLimit = 1024
             });
