@@ -23,16 +23,16 @@ namespace CodeRunner.Resources.Programming
         }
 
         private static readonly StringTemplate source = new StringTemplate(
-            StringTemplate.GetVariableTemplate(OperationVariables.InputPath.Name),
+            StringTemplate.GetVariableTemplate(OperationVariables.VarInputPath.Name),
                 new Variable[] {
-                    OperationVariables.InputPath
+                    OperationVariables.VarInputPath
                 }
         );
 
         private static readonly StringTemplate output = new StringTemplate(
-            StringTemplate.GetVariableTemplate(OperationVariables.OutputPath.Name),
+            StringTemplate.GetVariableTemplate(OperationVariables.VarOutputPath.Name),
                 new Variable[] {
-                    OperationVariables.OutputPath
+                    OperationVariables.VarOutputPath
                 }
         );
 

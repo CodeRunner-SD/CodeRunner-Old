@@ -15,91 +15,71 @@ namespace CodeRunner
 {
     public static class MainPipelineExtensions
     {
-        public static Builder ConfigureReplCommand(this Builder builder)
-        {
-            builder.Configure(nameof(ConfigureReplCommand), scope =>
+        public static Builder ConfigureReplCommand(this Builder builder) => builder.Configure(nameof(ConfigureReplCommand),
+            scope =>
             {
                 Command command = new ReplCommand().Build();
                 scope.Add<Command>(command, ServicesExtensions.ReplCommandId);
             });
-            return builder;
-        }
 
-        public static Builder ConfigureCliCommand(this Builder builder)
-        {
-            builder.Configure(nameof(ConfigureCliCommand), scope =>
+        public static Builder ConfigureCliCommand(this Builder builder) => builder.Configure(nameof(ConfigureCliCommand),
+            scope =>
             {
                 Command command = new CliCommand().Build();
                 scope.Add<Command>(command, ServicesExtensions.CliCommandId);
             });
-            return builder;
-        }
 
-        public static Builder ConfigureConsole(this Builder builder, IConsole console, TextReader input)
-        {
-            builder.Configure(nameof(ConfigureConsole), scope =>
+        public static Builder ConfigureConsole(this Builder builder, IConsole console, TextReader input) => builder.Configure(nameof(ConfigureConsole),
+            scope =>
             {
                 scope.Add<IConsole>(console);
                 scope.Add<TextReader>(input);
             });
-            return builder;
-        }
 
-        public static Builder ConfigureWorkspace(this Builder builder, Workspace workspace)
-        {
-            builder.Configure(nameof(ConfigureWorkspace), scope =>
+        public static Builder ConfigureWorkspace(this Builder builder, Workspace workspace) => builder.Configure(nameof(ConfigureWorkspace),
+            scope =>
             {
                 scope.Add<Workspace>(workspace);
             });
-            return builder;
-        }
 
-        public static Builder ConfigureLogger(this Builder builder, ILogger logger)
-        {
-            builder.Configure(nameof(ConfigureLogger), scope =>
+        public static Builder ConfigureLogger(this Builder builder, ILogger logger) => builder.Configure(nameof(ConfigureLogger),
+            scope =>
             {
                 scope.Add<ILogger>(logger);
             });
-            return builder;
-        }
 
-        public static Builder UseTestView(this Builder builder)
-        {
-            builder.Use(nameof(UseTestView), context =>
+        public static Builder UseTestView(this Builder builder) => builder.Use(nameof(UseTestView),
+            context =>
             {
                 TestView.Console = context.Services.Get<IConsole>();
                 TestView.Workspace = context.Services.Get<Workspace>();
                 context.IgnoreResult = true;
                 return Task.FromResult(0);
             });
-            return builder;
-        }
 
-        public static Builder UseCliCommand(this Builder builder)
-        {
-            builder.Use(nameof(UseCliCommand), async context =>
+        public static Builder UseCliCommand(this Builder builder) => builder.Use(nameof(UseCliCommand),
+            async context =>
             {
                 Parser cliCommand = CommandLines.CreateParser(context.Services.GetCliCommand(), context);
                 IConsole console = context.Services.GetConsole();
                 return await cliCommand.InvokeAsync(context.Origin, console);
             });
-            return builder;
-        }
 
         private static bool Prompt(PipelineContext context, ITerminal terminal)
         {
             WorkItem? workItem = context.Services.GetWorkItem();
             if (workItem != null)
             {
+                if (workItem.Type == WorkItemType.Directory)
+                    terminal.Output("@");
                 terminal.Output(workItem.RelativePath);
             }
             terminal.Output("> ");
             return true;
         }
 
-        public static Builder UseReplCommand(this Builder builder)
-        {
-            builder.Use(nameof(UseReplCommand), async context =>
+        public static Builder UseReplCommand(this Builder builder) => builder.Use(nameof(UseReplCommand),
+            async context =>
             {
                 ITerminal terminal = context.Services.GetConsole().GetTerminal();
                 Parser replCommand = CommandLines.CreateParser(context.Services.GetReplCommand(), context);
@@ -128,7 +108,5 @@ namespace CodeRunner
 
                 return 0;
             });
-            return builder;
-        }
     }
 }

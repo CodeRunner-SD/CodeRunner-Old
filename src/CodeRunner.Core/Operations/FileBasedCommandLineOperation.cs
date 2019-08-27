@@ -23,8 +23,8 @@ namespace CodeRunner.Operations
 
         protected override async Task<CommandLineOperationSettings> GetSettings(ResolveContext context)
         {
-            string inputPath = context.GetVariable<string>(OperationVariables.InputPath);
-            string workingDir = context.GetVariable<string>(OperationVariables.WorkingDirectory);
+            string inputPath = context.GetInputPath();
+            string workingDir = context.GetWorkingDirectory();
             string path = Path.Join(workingDir, inputPath, FileName);
             using FileStream st = File.Open(path, FileMode.Open, FileAccess.Read);
             FileBasedCommandLineOperationSettings settings = await JsonFormatter.Deserialize<FileBasedCommandLineOperationSettings>(st).ConfigureAwait(false);
