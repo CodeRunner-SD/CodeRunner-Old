@@ -30,7 +30,7 @@ namespace Test.Core.Operations
             SimpleCommandLineOperation op = new SimpleCommandLineOperation(new[]
             {
                 new CommandLineTemplate()
-                    .UseCommand(Utils.GetPythonFile())
+                    .UseCommand("python")
                     .UseArgument(source)
             });
 

@@ -22,9 +22,7 @@ jobs:
     - name: Build
       run: dotnet build
     - name: Test
-      run: |
-        dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
-        dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
   windows:
     name: windows
     runs-on: windows-latest
@@ -44,6 +42,24 @@ jobs:
     - name: Build
       run: dotnet build
     - name: Test
-      run: |
-        dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
-        dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+  macos:
+    name: macos
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-preview8-013656'
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+    - name: Restore
+      run: dotnet restore -s https://api.nuget.org/v3/index.json
+    - name: Build
+      run: dotnet build
+    - name: Test
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
