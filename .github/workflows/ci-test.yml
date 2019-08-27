@@ -62,7 +62,7 @@ jobs:
       run: |
         curl -s https://codecov.io/bash > codecov
         chmod +x codecov
-        ./codecov -f "coverage.xml"
+        codecov -f "coverage.xml"
   macos:
     name: macos
     runs-on: macOS-latest
