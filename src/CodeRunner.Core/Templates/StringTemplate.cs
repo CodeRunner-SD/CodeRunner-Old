@@ -7,10 +7,7 @@ namespace CodeRunner.Templates
 {
     public class StringTemplate : BaseTemplate<string>
     {
-        public static string GetVariableTemplate(string name)
-        {
-            return $"{{{name}}}";
-        }
+        public static string GetVariableTemplate(string name) => $"{{{name}}}";
 
         public StringTemplate(string content = "", IList<Variable>? variables = null)
         {
@@ -31,15 +28,12 @@ namespace CodeRunner.Templates
             StringBuilder sb = new StringBuilder(Content);
             foreach (Variable v in UsedVariables)
             {
-                sb.Replace(GetVariableTemplate(v.Name), context.GetVariable<string>(v));
+                _ = sb.Replace(GetVariableTemplate(v.Name), context.GetVariable<string>(v));
             }
             return Task.FromResult(sb.ToString());
         }
 
-        public static implicit operator StringTemplate(string content)
-        {
-            return FromString(content);
-        }
+        public static implicit operator StringTemplate(string content) => FromString(content);
 
         public override VariableCollection GetVariables()
         {
@@ -52,9 +46,6 @@ namespace CodeRunner.Templates
             return res;
         }
 
-        public static StringTemplate FromString(string content)
-        {
-            return new StringTemplate(content, null);
-        }
+        public static StringTemplate FromString(string content) => new StringTemplate(content, null);
     }
 }

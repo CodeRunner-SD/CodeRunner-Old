@@ -6,10 +6,7 @@ namespace CodeRunner.Templates
 {
     public class PackageDirectoryTemplate : DirectoryTemplate
     {
-        public PackageDirectoryTemplate(StringTemplate? name = null)
-        {
-            Name = name ?? new StringTemplate("");
-        }
+        public PackageDirectoryTemplate(StringTemplate? name = null) => Name = name ?? new StringTemplate("");
 
         public PackageDirectoryTemplate() : this(null)
         {
@@ -44,14 +41,7 @@ namespace CodeRunner.Templates
         {
             string realPath;
             string name = await Name.Resolve(context).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(name))
-            {
-                realPath = path;
-            }
-            else
-            {
-                realPath = Path.Join(path, name);
-            }
+            realPath = string.IsNullOrEmpty(name) ? path : Path.Join(path, name);
 
             DirectoryInfo res = new DirectoryInfo(realPath);
             if (!res.Exists)
@@ -65,12 +55,12 @@ namespace CodeRunner.Templates
 
             foreach (PackageFileTemplate f in Files)
             {
-                await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
+                _ = await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
             }
 
             foreach (PackageDirectoryTemplate f in Directories)
             {
-                await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
+                _ = await f.ResolveTo(context, res.FullName).ConfigureAwait(false);
             }
 
             return res;
@@ -116,7 +106,7 @@ namespace CodeRunner.Templates
 
         public async Task From(DirectoryInfo dir, bool asText = false)
         {
-            UseName(dir.Name).UseAttributes(dir.Attributes);
+            _ = UseName(dir.Name).UseAttributes(dir.Attributes);
             foreach (FileInfo file in dir.GetFiles())
             {
                 PackageFileTemplate f = AddFile();

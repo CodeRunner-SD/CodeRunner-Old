@@ -22,32 +22,20 @@ namespace CodeRunner.Commands
     {
         private class ConsoleLogger : ILogger
         {
-            public ConsoleLogger(ITerminal terminal)
-            {
-                Terminal = terminal;
-            }
+            public ConsoleLogger(ITerminal terminal) => Terminal = terminal;
 
             public ILogger? Parent { get; }
 
             private ITerminal Terminal { get; }
 
-            public void Log(LogItem item, 
-                [CallerMemberName] string memberName = "", 
-                [CallerFilePath] string sourceFilePath = "", 
-                [CallerLineNumber] int sourceLineNumber = 0)
-            {
-                Terminal.OutputLine(item.Content);
-            }
+            public void Log(LogItem item,
+                [CallerMemberName] string memberName = "",
+                [CallerFilePath] string sourceFilePath = "",
+                [CallerLineNumber] int sourceLineNumber = 0) => Terminal.OutputLine(item.Content);
 
-            public ILogger UseFilter(LogFilter filter)
-            {
-                return this;
-            }
+            public ILogger UseFilter(LogFilter filter) => this;
 
-            public IEnumerable<LogItem> View()
-            {
-                return Array.Empty<LogItem>();
-            }
+            public IEnumerable<LogItem> View() => Array.Empty<LogItem>();
         }
 
         public override Command Configure()
@@ -89,13 +77,15 @@ namespace CodeRunner.Commands
 
             ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
             WorkspaceSettings settings = (await workspace.Settings)!;
-            resolveContext.SetShell(settings.DefaultShell);
-            resolveContext.SetWorkingDirectory(workspace.PathRoot.FullName);
+            _ = resolveContext
+                .SetShell(settings.DefaultShell)
+                .SetWorkingDirectory(workspace.PathRoot.FullName);
+
             {
                 WorkItem? workItem = pipeline.Services.GetWorkItem();
                 if (workItem != null)
                 {
-                    resolveContext.SetInputPath(workItem.RelativePath);
+                    _ = resolveContext.SetInputPath(workItem.RelativePath);
                 }
             }
             if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))

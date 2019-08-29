@@ -17,7 +17,7 @@ namespace CodeRunner.Helpers
 
                 string name = s.Substring(0, id);
                 string value = s.Substring(id + 1);
-                context.WithVariable(name, value);
+                _ = context.WithVariable(name, value);
             }
             return context;
         }

@@ -12,15 +12,12 @@ namespace CodeRunner.Managements.Templates
         {
             TemplatesSettings settings = new TemplatesSettings();
 
-            Package.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(
+            _ = Package.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(
                 JsonFormatter.Serialize(settings))));
         }
 
         private PackageDirectoryTemplate Package { get; set; } = new PackageDirectoryTemplate();
 
-        public override Task<DirectoryInfo> ResolveTo(ResolveContext context, string path)
-        {
-            return Package.ResolveTo(context, path);
-        }
+        public override Task<DirectoryInfo> ResolveTo(ResolveContext context, string path) => Package.ResolveTo(context, path);
     }
 }

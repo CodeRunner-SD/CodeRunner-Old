@@ -6,7 +6,7 @@ namespace CodeRunner.Loggings
     {
         ILogger? Parent { get; }
 
-        void Log(LogItem item, 
+        void Log(LogItem item,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0);

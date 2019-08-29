@@ -16,10 +16,7 @@ namespace CodeRunner.Pipelines
 
         public string Source { get; }
 
-        public override bool Equals(object? obj)
-        {
-            return obj is ServiceItem item && Equals(item);
-        }
+        public override bool Equals(object? obj) => obj is ServiceItem item && Equals(item);
 
         public bool Equals([AllowNull] ServiceItem other)
         {
@@ -27,19 +24,10 @@ namespace CodeRunner.Pipelines
                    Source == other.Source;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Value, Source);
-        }
+        public override int GetHashCode() => HashCode.Combine(Value, Source);
 
-        public static bool operator ==(ServiceItem left, ServiceItem right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(ServiceItem left, ServiceItem right) => left.Equals(right);
 
-        public static bool operator !=(ServiceItem left, ServiceItem right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(ServiceItem left, ServiceItem right) => !(left == right);
     }
 }

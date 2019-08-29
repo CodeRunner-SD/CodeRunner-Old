@@ -5,10 +5,7 @@ namespace CodeRunner.Templates
 {
     public class PackageFileTemplate : DirectoryTemplate
     {
-        public PackageFileTemplate(StringTemplate? name = null)
-        {
-            Name = name ?? new StringTemplate("");
-        }
+        public PackageFileTemplate(StringTemplate? name = null) => Name = name ?? new StringTemplate("");
 
         public PackageFileTemplate() : this(null)
         {
@@ -71,12 +68,14 @@ namespace CodeRunner.Templates
 
         public async Task FromBinary(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName).ConfigureAwait(false)));
+            _ = UseName(file.Name).UseAttributes(file.Attributes)
+                .UseTemplate(new BinaryFileTemplate(await File.ReadAllBytesAsync(file.FullName).ConfigureAwait(false)));
         }
 
         public async Task FromText(FileInfo file)
         {
-            UseName(file.Name).UseAttributes(file.Attributes).UseTemplate(new TextFileTemplate(await File.ReadAllTextAsync(file.FullName).ConfigureAwait(false)));
+            _ = UseName(file.Name).UseAttributes(file.Attributes)
+                .UseTemplate(new TextFileTemplate(await File.ReadAllTextAsync(file.FullName).ConfigureAwait(false)));
         }
 
         public override VariableCollection GetVariables()
@@ -86,7 +85,7 @@ namespace CodeRunner.Templates
             if (Template != null)
             {
                 res.Collect(Template);
-                res.Remove(FileTemplate.Var);
+                _ = res.Remove(FileTemplate.Var);
             }
             return res;
         }

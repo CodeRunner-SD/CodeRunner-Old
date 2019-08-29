@@ -9,15 +9,9 @@ namespace CodeRunner.Executors
         private readonly StringBuilder ErrorBuilder = new StringBuilder();
         private string? output, error;
 
-        public void AppendOutput(string content)
-        {
-            OutputBuilder.Append(content);
-        }
+        public void AppendOutput(string content) => _ = OutputBuilder.Append(content);
 
-        public void AppendError(string content)
-        {
-            ErrorBuilder.Append(content);
-        }
+        public void AppendError(string content) => _ = ErrorBuilder.Append(content);
 
         public string Output
         {

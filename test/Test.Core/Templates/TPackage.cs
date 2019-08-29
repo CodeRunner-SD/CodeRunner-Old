@@ -24,9 +24,9 @@ namespace Test.Core.Templates
                 using (TempDirectory dir = new TempDirectory())
                 {
                     dir.Directory.Delete();
-                    await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, dir.Directory.FullName));
+                    _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, dir.Directory.FullName));
                 }
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -38,8 +38,8 @@ namespace Test.Core.Templates
             {
                 PackageFileTemplate pf = new PackageFileTemplate();
                 await pf.FromText(f.File);
-                pf.WithoutAttributes(FileAttributes.Archive);
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
+                _ = pf.WithoutAttributes(FileAttributes.Archive);
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
                 f.File.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -51,7 +51,7 @@ namespace Test.Core.Templates
             {
                 PackageFileTemplate pf = new PackageFileTemplate();
                 await pf.FromBinary(f.File);
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, f.File.DirectoryName));
                 f.File.Refresh();
                 Assert.AreEqual("hello", File.ReadAllText(f.File.FullName));
             }
@@ -67,9 +67,9 @@ namespace Test.Core.Templates
                     .UseAttributes(FileAttributes.Directory)
                     .WithAttributes(FileAttributes.Archive)
                     .WithoutAttributes(FileAttributes.System);
-                pf.AddFile("a.txt").UseTemplate(new TextFileTemplate("hello"));
-                pf.AddDirectory("subdir");
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
+                _ = pf.AddFile("a.txt").UseTemplate(new TextFileTemplate("hello"));
+                _ = pf.AddDirectory("subdir");
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -79,8 +79,8 @@ namespace Test.Core.Templates
             {
                 PackageDirectoryTemplate pf = new PackageDirectoryTemplate();
                 await pf.From(d.Directory, true);
-                pf.UseName().WithoutAttributes(FileAttributes.Archive);
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
+                _ = pf.UseName().WithoutAttributes(FileAttributes.Archive);
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -93,8 +93,9 @@ namespace Test.Core.Templates
             {
                 PackageDirectoryTemplate pf = new PackageDirectoryTemplate();
                 await pf.From(d.Directory, false);
-                pf.UseName().WithoutAttributes(FileAttributes.Archive);
-                await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
+                _ = pf.UseName()
+                    .WithoutAttributes(FileAttributes.Archive);
+                _ = await pf.Resolve(new ResolveContext().WithVariable(DirectoryTemplate.Var, d.Directory.FullName));
                 d.Directory.Refresh();
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {

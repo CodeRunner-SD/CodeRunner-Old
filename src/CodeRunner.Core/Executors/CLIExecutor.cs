@@ -12,10 +12,7 @@ namespace CodeRunner.Executors
 
         private CLIExecutorSettings Settings { get; set; }
 
-        public CLIExecutor(CLIExecutorSettings settings)
-        {
-            Settings = settings;
-        }
+        public CLIExecutor(CLIExecutorSettings settings) => Settings = settings;
 
         public void Initialize()
         {
@@ -87,22 +84,16 @@ namespace CodeRunner.Executors
                 throw new NullReferenceException("Result is null");
             }
 
-            Process.Start();
+            _ = Process.Start();
 
             if (Settings.CollectOutput)
             {
-                Process.OutputDataReceived += (sender, e) =>
-                {
-                    Result.AppendOutput(e.Data);
-                };
+                Process.OutputDataReceived += (sender, e) => Result.AppendOutput(e.Data);
                 Process.BeginOutputReadLine();
             }
             if (Settings.CollectError)
             {
-                Process.ErrorDataReceived += (sender, e) =>
-                {
-                    Result.AppendError(e.Data);
-                };
+                Process.ErrorDataReceived += (sender, e) => Result.AppendError(e.Data);
                 Process.BeginErrorReadLine();
             }
 

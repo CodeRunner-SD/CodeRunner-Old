@@ -20,24 +20,13 @@ namespace CodeRunner.Managements
 
         public DirectoryInfo PathRoot { get; }
 
-        public Task<TSettings?> Settings
-        {
-            get
-            {
-                if (SettingsLoader == null)
-                {
-                    return Task.FromResult<TSettings?>(null);
-                }
-
-                return SettingsLoader.Data;
-            }
-        }
+        public Task<TSettings?> Settings => SettingsLoader == null ? Task.FromResult<TSettings?>(null) : SettingsLoader.Data;
 
         public virtual async Task Initialize()
         {
             if (DirectoryTemplate != null)
             {
-                await DirectoryTemplate.Value.ResolveTo(new ResolveContext(), PathRoot.FullName);
+                _ = await DirectoryTemplate.Value.ResolveTo(new ResolveContext(), PathRoot.FullName);
             }
         }
     }

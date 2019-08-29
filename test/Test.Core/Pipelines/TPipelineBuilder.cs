@@ -37,10 +37,7 @@ namespace Test.Core.Pipelines
             {
                 service.Add(1);
                 return Task.CompletedTask;
-            }).Configure("arg-fix", service =>
-            {
-                service.Replace(arg);
-            });
+            }).Configure("arg-fix", service => service.Replace(arg));
             return builder;
         }
 

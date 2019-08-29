@@ -9,10 +9,7 @@ namespace CodeRunner.Templates
         {
         }
 
-        public TextFileTemplate(StringTemplate content)
-        {
-            Content = content;
-        }
+        public TextFileTemplate(StringTemplate content) => Content = content;
 
         public StringTemplate Content { get; set; }
 

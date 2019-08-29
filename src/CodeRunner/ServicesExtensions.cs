@@ -14,14 +14,7 @@ namespace CodeRunner
 
         public static Workspace GetWorkspace(this ServiceScope scope) => scope.Get<Workspace>();
 
-        public static WorkItem? GetWorkItem(this ServiceScope scope)
-        {
-            if (scope.TryGet<WorkItem>(out WorkItem? workItem))
-            {
-                return workItem;
-            }
-            return null;
-        }
+        public static WorkItem? GetWorkItem(this ServiceScope scope) => scope.TryGet<WorkItem>(out WorkItem? workItem) ? workItem : null;
 
         public static IConsole GetConsole(this ServiceScope scope) => scope.Get<IConsole>();
 

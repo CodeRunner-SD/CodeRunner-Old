@@ -71,7 +71,7 @@ namespace CodeRunner.Commands
             }
             else
             {
-                logger.UseLevelFilter(LogLevel.Information);
+                _ = logger.UseLevelFilter(LogLevel.Information);
             }
 
             return 0;

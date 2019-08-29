@@ -5,30 +5,19 @@ namespace CodeRunner.Templates
 {
     public class Variable : IEquatable<Variable>
     {
-        private string name;
-        private bool isRequired = true;
-
         public Variable() : this("")
         {
         }
 
         public Variable(string name = "")
         {
-            this.name = name;
-            Required();
+            Name = name;
+            _ = Required();
         }
 
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
+        public string Name { get; set; }
 
-        public bool IsRequired
-        {
-            get => isRequired;
-            set => isRequired = value;
-        }
+        public bool IsRequired { get; set; }
 
         public object? DefaultValue { get; set; }
 
@@ -56,10 +45,7 @@ namespace CodeRunner.Templates
             return this;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as Variable);
-        }
+        public override bool Equals(object? obj) => Equals(obj as Variable);
 
         public bool Equals(Variable? other)
         {
@@ -67,19 +53,10 @@ namespace CodeRunner.Templates
                    Name == other.Name;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name);
-        }
+        public override int GetHashCode() => HashCode.Combine(Name);
 
-        public static bool operator ==(Variable? left, Variable? right)
-        {
-            return EqualityComparer<Variable>.Default.Equals(left, right);
-        }
+        public static bool operator ==(Variable? left, Variable? right) => EqualityComparer<Variable>.Default.Equals(left, right);
 
-        public static bool operator !=(Variable? left, Variable? right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Variable? left, Variable? right) => !(left == right);
     }
 }

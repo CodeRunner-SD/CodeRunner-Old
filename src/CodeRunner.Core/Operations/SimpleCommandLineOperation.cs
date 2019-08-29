@@ -6,10 +6,7 @@ namespace CodeRunner.Operations
 {
     public class SimpleCommandLineOperation : CommandLineOperation
     {
-        public SimpleCommandLineOperation(IList<CommandLineTemplate>? items = null)
-        {
-            Items = items ?? new List<CommandLineTemplate>();
-        }
+        public SimpleCommandLineOperation(IList<CommandLineTemplate>? items = null) => Items = items ?? new List<CommandLineTemplate>();
 
         public SimpleCommandLineOperation() : this(null)
         {

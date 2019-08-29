@@ -6,17 +6,11 @@ namespace CodeRunner.Templates
 {
     public class ResolveContext
     {
-        public ResolveContext(IDictionary<string, object>? variables = null)
-        {
-            Variables = variables ?? new Dictionary<string, object>();
-        }
+        public ResolveContext(IDictionary<string, object>? variables = null) => Variables = variables ?? new Dictionary<string, object>();
 
         private IDictionary<string, object> Variables { get; }
 
-        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull
-        {
-            return WithVariable(variable.Name, value);
-        }
+        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull => WithVariable(variable.Name, value);
 
         public ResolveContext WithVariable<T>(string name, T value) where T : notnull
         {
@@ -34,7 +28,7 @@ namespace CodeRunner.Templates
 
         public ResolveContext WithoutVariable(string name)
         {
-            Variables.Remove(name);
+            _ = Variables.Remove(name);
             return this;
         }
 
@@ -70,9 +64,6 @@ namespace CodeRunner.Templates
             }
         }
 
-        public bool HasVariable(string name)
-        {
-            return Variables.ContainsKey(name);
-        }
+        public bool HasVariable(string name) => Variables.ContainsKey(name);
     }
 }

@@ -4,15 +4,9 @@ namespace CodeRunner.Managements
 {
     public class WorkItem
     {
-        public static WorkItem CreateByFile(Workspace onwer, FileInfo file)
-        {
-            return new WorkItem(onwer, file, null, WorkItemType.File);
-        }
+        public static WorkItem CreateByFile(Workspace onwer, FileInfo file) => new WorkItem(onwer, file, null, WorkItemType.File);
 
-        public static WorkItem CreateByDirectory(Workspace onwer, DirectoryInfo dir)
-        {
-            return new WorkItem(onwer, null, dir, WorkItemType.Directory);
-        }
+        public static WorkItem CreateByDirectory(Workspace onwer, DirectoryInfo dir) => new WorkItem(onwer, null, dir, WorkItemType.Directory);
 
         private WorkItem(Workspace onwer, FileInfo? file, DirectoryInfo? directory, WorkItemType type)
         {

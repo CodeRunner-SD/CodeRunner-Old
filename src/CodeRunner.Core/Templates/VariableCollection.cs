@@ -11,40 +11,19 @@ namespace CodeRunner.Templates
 
         private HashSet<Variable> Variables { get; set; } = new HashSet<Variable>(EqualityComparer<Variable>.Default);
 
-        public void Add(Variable item)
-        {
-            ((ICollection<Variable>)Variables).Add(item);
-        }
+        public void Add(Variable item) => ((ICollection<Variable>)Variables).Add(item);
 
-        public void Clear()
-        {
-            ((ICollection<Variable>)Variables).Clear();
-        }
+        public void Clear() => ((ICollection<Variable>)Variables).Clear();
 
-        public bool Contains(Variable item)
-        {
-            return ((ICollection<Variable>)Variables).Contains(item);
-        }
+        public bool Contains(Variable item) => ((ICollection<Variable>)Variables).Contains(item);
 
-        public void CopyTo(Variable[] array, int arrayIndex)
-        {
-            ((ICollection<Variable>)Variables).CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(Variable[] array, int arrayIndex) => ((ICollection<Variable>)Variables).CopyTo(array, arrayIndex);
 
-        public IEnumerator<Variable> GetEnumerator()
-        {
-            return ((ICollection<Variable>)Variables).GetEnumerator();
-        }
+        public IEnumerator<Variable> GetEnumerator() => ((ICollection<Variable>)Variables).GetEnumerator();
 
-        public bool Remove(Variable item)
-        {
-            return ((ICollection<Variable>)Variables).Remove(item);
-        }
+        public bool Remove(Variable item) => ((ICollection<Variable>)Variables).Remove(item);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((ICollection<Variable>)Variables).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ((ICollection<Variable>)Variables).GetEnumerator();
 
         public void Collect(BaseTemplate from)
         {

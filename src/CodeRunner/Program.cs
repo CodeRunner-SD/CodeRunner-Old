@@ -18,9 +18,9 @@ namespace CodeRunner
 
     public static class Program
     {
-        internal static readonly string AppDescription = string.Join(System.Environment.NewLine, 
-            "Code Runner, a CLI tool to run code.", 
-            "Copyright (c) StardustDL. All rights reserved.", 
+        internal static readonly string AppDescription = string.Join(System.Environment.NewLine,
+            "Code Runner, a CLI tool to run code.",
+            "Copyright (c) StardustDL. All rights reserved.",
             "Open source with Apache License 2.0 on https://github.com/StardustDL/CodeRunner.");
 
         public static EnvironmentType Environment { get; set; } = EnvironmentType.Production;
@@ -34,7 +34,7 @@ namespace CodeRunner
 
             PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>();
 
-            builder.ConfigureLogger(logger)
+            _ = builder.ConfigureLogger(logger)
                 .ConfigureCliCommand()
                 .ConfigureReplCommand();
 
@@ -45,21 +45,21 @@ namespace CodeRunner
                     throw new NullReferenceException(nameof(TestView.Input));
                 }
 
-                builder.ConfigureConsole(new TestTerminal(), TestView.Input);
+                _ = builder.ConfigureConsole(new TestTerminal(), TestView.Input);
             }
             else
             {
-                builder.ConfigureConsole(new SystemConsole(), Console.In);
+                _ = builder.ConfigureConsole(new SystemConsole(), Console.In);
             }
 
-            builder.UseCliCommand();
+            _ = builder.UseCliCommand();
 
             if (Environment == EnvironmentType.Test)
             {
-                builder.UseTestView();
+                _ = builder.UseTestView();
             }
 
-            builder.UseReplCommand();
+            _ = builder.UseReplCommand();
 
             Pipeline<string[], int> pipeline = await builder.Build(args, logger);
             PipelineResult<int> result = await pipeline.Consume();

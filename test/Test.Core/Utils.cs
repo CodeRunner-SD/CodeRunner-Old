@@ -4,16 +4,6 @@ namespace Test.Core
 {
     internal class Utils
     {
-        public static string GetShell()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                return "powershell.exe";
-            }
-            else
-            {
-                return "bash";
-            }
-        }
+        public static string GetShell() => Environment.OSVersion.Platform == PlatformID.Win32NT ? "powershell.exe" : "bash";
     }
 }

@@ -5,10 +5,7 @@ namespace CodeRunner.Loggings
 {
     public class Logger : ILogger
     {
-        public Logger(ILogger? parent = null)
-        {
-            Parent = parent;
-        }
+        public Logger(ILogger? parent = null) => Parent = parent;
 
         public ILogger? Parent { get; }
 
@@ -40,13 +37,10 @@ namespace CodeRunner.Loggings
 
         public ILogger UseFilter(LogFilter filter)
         {
-            Filters.Add(filter);
+            Filters.Add(filter);    
             return this;
         }
 
-        public IEnumerable<LogItem> View()
-        {
-            return Contents.AsEnumerable();
-        }
+        public IEnumerable<LogItem> View() => Contents.AsEnumerable();
     }
 }

@@ -37,16 +37,10 @@ namespace CodeRunner
             });
 
         public static Builder ConfigureWorkspace(this Builder builder, Workspace workspace) => builder.Configure(nameof(ConfigureWorkspace),
-            scope =>
-            {
-                scope.Add<Workspace>(workspace);
-            });
+            scope => scope.Add<Workspace>(workspace));
 
         public static Builder ConfigureLogger(this Builder builder, ILogger logger) => builder.Configure(nameof(ConfigureLogger),
-            scope =>
-            {
-                scope.Add<ILogger>(logger);
-            });
+            scope => scope.Add<ILogger>(logger));
 
         public static Builder UseTestView(this Builder builder) => builder.Use(nameof(UseTestView),
             context =>

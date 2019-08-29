@@ -4,17 +4,7 @@ namespace CodeRunner.Managements.Configurations
 {
     public class WorkspaceSettings
     {
-        public WorkspaceSettings()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                DefaultShell = "powershell.exe";
-            }
-            else
-            {
-                DefaultShell = "bash";
-            }
-        }
+        public WorkspaceSettings() => DefaultShell = Environment.OSVersion.Platform == PlatformID.Win32NT ? "powershell.exe" : "bash";
 
         public Version Version { get; set; } = new Version();
 

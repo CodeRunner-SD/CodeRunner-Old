@@ -27,22 +27,9 @@ namespace CodeRunner.Pipelines
             return list;
         }
 
-        private Dictionary<string, ServiceItem>? FindSubDictionary<T>()
-        {
-            if (Pool.TryGetValue(typeof(T), out Dictionary<string, ServiceItem>? list))
-            {
-                return list;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        private Dictionary<string, ServiceItem>? FindSubDictionary<T>() => Pool.TryGetValue(typeof(T), out Dictionary<string, ServiceItem>? list) ? list : null;
 
-        public void Add<T>(T item, string id = "") where T : notnull
-        {
-            OpenOrCreateSubDictionary<T>().Add(id, new ServiceItem(item, Name));
-        }
+        public void Add<T>(T item, string id = "") where T : notnull => OpenOrCreateSubDictionary<T>().Add(id, new ServiceItem(item, Name));
 
         public void Replace<T>(T item, string id = "") where T : notnull
         {
@@ -62,23 +49,19 @@ namespace CodeRunner.Pipelines
             Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
             if (list != null)
             {
-                list.Remove(id);
-                if (list.Count == 0)
+                if (list.Remove(id))
                 {
-                    Pool.Remove(typeof(T));
+                    if (list.Count == 0)
+                    {
+                        _ = Pool.Remove(typeof(T));
+                    }
                 }
             }
         }
 
-        public T Get<T>(string id = "") where T : notnull
-        {
-            return (T)FindSubDictionary<T>()![id].Value;
-        }
+        public T Get<T>(string id = "") where T : notnull => (T)FindSubDictionary<T>()![id].Value;
 
-        public string GetSource<T>(string id = "") where T : notnull
-        {
-            return FindSubDictionary<T>()![id].Source;
-        }
+        public string GetSource<T>(string id = "") where T : notnull => FindSubDictionary<T>()![id].Source;
 
         public bool TryGet<T>([MaybeNull] out T value, string id = "") where T : notnull
         {

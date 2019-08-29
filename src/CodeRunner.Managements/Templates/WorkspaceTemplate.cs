@@ -21,8 +21,8 @@ namespace CodeRunner.Managements.Templates
         public WorkspaceTemplate()
         {
             PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.P_CRRoot).WithAttributes(FileAttributes.Hidden);
-            crRoot.AddDirectory(Workspace.P_TemplatesRoot);
-            crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new WorkspaceSettings
+            _ = crRoot.AddDirectory(Workspace.P_TemplatesRoot);
+            _ = crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new WorkspaceSettings
             {
                 Version = new Version(0, 0, 1, 0)
             }))));
@@ -30,9 +30,6 @@ namespace CodeRunner.Managements.Templates
 
         private PackageDirectoryTemplate Package { get; set; } = new PackageDirectoryTemplate();
 
-        public override Task<DirectoryInfo> ResolveTo(ResolveContext context, string path)
-        {
-            return Package.ResolveTo(context, path);
-        }
+        public override Task<DirectoryInfo> ResolveTo(ResolveContext context, string path) => Package.ResolveTo(context, path);
     }
 }

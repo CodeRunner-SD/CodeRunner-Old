@@ -8,10 +8,7 @@ namespace CodeRunner.IO
     {
         private T? data;
 
-        protected ObjectFileLoader(FileInfo file)
-        {
-            File = file;
-        }
+        protected ObjectFileLoader(FileInfo file) => File = file;
 
         public FileInfo File { get; }
 

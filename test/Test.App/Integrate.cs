@@ -40,10 +40,7 @@ namespace Test.App
         }
 
         [TestInitialize]
-        public void Setup()
-        {
-            Program.Environment = EnvironmentType.Test;
-        }
+        public void Setup() => Program.Environment = EnvironmentType.Test;
 
         [TestMethod]
         public async Task Basic()

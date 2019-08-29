@@ -18,10 +18,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
+        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken) => Task.FromResult(0);
 
         public class CArgument
         {

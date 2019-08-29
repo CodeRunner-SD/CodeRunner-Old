@@ -9,16 +9,10 @@ namespace CodeRunner.Helpers
 {
     public static class CommandLines
     {
-        public static Parser CreateParser(Command command, PipelineContext context)
-        {
-            CommandLineBuilder builder = new CommandLineBuilder(command);
-            builder.UseDefaults();
-            builder.UseMiddleware(inv =>
-            {
-                inv.BindingContext.AddService(typeof(PipelineContext), () => context);
-            });
-            return builder.Build();
-        }
+        public static Parser CreateParser(Command command, PipelineContext context) => new CommandLineBuilder(command)
+            .UseDefaults()
+            .UseMiddleware(inv => inv.BindingContext.AddService(typeof(PipelineContext), () => context))
+            .Build();
 
         public static FileInfo ResolvePath(Workspace workspace, FileInfo file)
         {

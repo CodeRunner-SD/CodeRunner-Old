@@ -8,9 +8,6 @@ namespace CodeRunner.Pipelines
     {
         private readonly Dictionary<Type, Dictionary<string, ServiceItem>> pools = new Dictionary<Type, Dictionary<string, ServiceItem>>();
 
-        public Task<ServiceScope> CreateScope(string name)
-        {
-            return Task.FromResult(new ServiceScope(name, pools));
-        }
+        public Task<ServiceScope> CreateScope(string name) => Task.FromResult(new ServiceScope(name, pools));
     }
 }

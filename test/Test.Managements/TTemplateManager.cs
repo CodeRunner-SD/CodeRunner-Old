@@ -22,8 +22,8 @@ namespace Test.Managements
             CodeRunner.Managements.Configurations.TemplateItem c = await manager.Get("c");
             Assert.IsNotNull(c);
             CodeRunner.Packagings.Package<CodeRunner.Templates.BaseTemplate> vc = await c.Value;
-            await c.Value;
-            await c.Value;
+            _ = await c.Value;
+            _ = await c.Value;
             Assert.IsNotNull(vc);
             {
                 string name = "tc";

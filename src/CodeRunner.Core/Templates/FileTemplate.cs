@@ -9,10 +9,7 @@ namespace CodeRunner.Templates
 
         public static Variable Var => new Variable(VarFilePath).Required();
 
-        public override Task<FileInfo> Resolve(ResolveContext context)
-        {
-            return ResolveTo(context, context.GetVariable<string>(Var));
-        }
+        public override Task<FileInfo> Resolve(ResolveContext context) => ResolveTo(context, context.GetVariable<string>(Var));
 
         public abstract Task<FileInfo> ResolveTo(ResolveContext context, string path);
 

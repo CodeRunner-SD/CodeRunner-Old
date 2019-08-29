@@ -17,12 +17,7 @@ namespace CodeRunner.Managements
         public virtual async Task<bool> Has(string id)
         {
             TSettings? settings = await Settings;
-            if (settings == null)
-            {
-                return false;
-            }
-
-            return settings.Items.ContainsKey(id);
+            return settings == null ? false : settings.Items.ContainsKey(id);
         }
 
         public virtual async Task<TItem?> Get(string id)
@@ -54,7 +49,7 @@ namespace CodeRunner.Managements
 
             if (value == null)
             {
-                settings.Items.Remove(id);
+                _ = settings.Items.Remove(id);
             }
             else
             {
@@ -77,9 +72,6 @@ namespace CodeRunner.Managements
 
         public abstract Task Uninstall(string id);
 
-        protected virtual Task ConfigurateItem(TItem item)
-        {
-            return Task.CompletedTask;
-        }
+        protected virtual Task ConfigurateItem(TItem item) => Task.CompletedTask;
     }
 }

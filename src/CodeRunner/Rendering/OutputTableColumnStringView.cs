@@ -16,30 +16,15 @@ namespace CodeRunner.Rendering
 
         private string Header { get; }
 
-        protected string GetValue(T value)
-        {
-            return ValueFunc(value);
-        }
+        protected string GetValue(T value) => ValueFunc(value);
 
-        public virtual int Measure(T value)
-        {
-            return GetValue(value).Length;
-        }
+        public virtual int Measure(T value) => GetValue(value).Length;
 
-        public virtual int MeasureHeader()
-        {
-            return Header.Length;
-        }
+        public virtual int MeasureHeader() => Header.Length;
 
-        public virtual void Render(ITerminal terminal, T value, int length)
-        {
-            terminal.Output(GetValue(value).PadRight(length));
-        }
+        public virtual void Render(ITerminal terminal, T value, int length) => terminal.Output(GetValue(value).PadRight(length));
 
-        public virtual void RenderHeader(ITerminal terminal, int length)
-        {
-            terminal.OutputEmphasize(Header.PadRight(length));
-        }
+        public virtual void RenderHeader(ITerminal terminal, int length) => terminal.OutputEmphasize(Header.PadRight(length));
     }
 
     internal class OutputTableColumnLogLevelView : OutputTableColumnStringView<LogItem>

@@ -16,11 +16,8 @@ namespace CodeRunner.Operations
             string shell = string.IsNullOrEmpty(settings.Shell) ? context.GetShell() : settings.Shell;
             string workingDirectory = string.IsNullOrEmpty(settings.WorkingDirectory) ? context.GetWorkingDirectory() : settings.WorkingDirectory;
             PipelineBuilder<OperationWatcher, bool> builder = new PipelineBuilder<OperationWatcher, bool>();
-            builder.Configure("service", scope =>
-            {
-                scope.Add<CommandLineOperationSettings>(settings);
-            });
-            builder.Use("init", context => Task.FromResult(true));
+            _ = builder.Configure("service", scope => scope.Add<CommandLineOperationSettings>(settings))
+                .Use("init", context => Task.FromResult(true));
             foreach (CommandLineTemplate item in settings.Scripts)
             {
                 CLIExecutorSettings res = new CLIExecutorSettings(shell, new string[]
@@ -35,7 +32,7 @@ namespace CodeRunner.Operations
                     CollectOutput = true,
                 };
 
-                builder.Use("script", async context =>
+                _ = builder.Use("script", async context =>
                 {
                     context.Logs.Debug($"Execute {res.Arguments[1]}");
                     using CLIExecutor exe = new CLIExecutor(res);

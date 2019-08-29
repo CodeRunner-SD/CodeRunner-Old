@@ -21,8 +21,8 @@ namespace Test.Managements
             CodeRunner.Managements.Configurations.OperationItem c = await manager.Get("hello");
             Assert.IsNotNull(c);
             CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation> vc = await c.Value;
-            await c.Value;
-            await c.Value;
+            _ = await c.Value;
+            _ = await c.Value;
             Assert.IsNotNull(vc);
             {
                 string name = "tc";

@@ -13,7 +13,8 @@ namespace CodeRunner.Managements
     {
         public OperationManager(DirectoryInfo pathRoot) : base(pathRoot, new System.Lazy<DirectoryTemplate>(() => new OperationsSpaceTemplate()))
         {
-            SettingsLoader = new JsonFileLoader<OperationsSettings>(new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
+            SettingsLoader = new JsonFileLoader<OperationsSettings>(
+                new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
         }
 
         public override async Task Install(string id, Package<BaseOperation>? item)

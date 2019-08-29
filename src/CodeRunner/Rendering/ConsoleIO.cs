@@ -24,15 +24,9 @@ namespace CodeRunner.Rendering
             return input.InputLine();
         }
 
-        public static string? InputLine(this TextReader input)
-        {
-            return input.ReadLine();
-        }
+        public static string? InputLine(this TextReader input) => input.ReadLine();
 
-        public static bool IsEndOfInput(this TextReader input)
-        {
-            return Program.Environment == EnvironmentType.Test && input.Peek() == -1;
-        }
+        public static bool IsEndOfInput(this TextReader input) => Program.Environment == EnvironmentType.Test && input.Peek() == -1;
 
         public static bool FillVariables(this ITerminal terminal, TextReader input, IEnumerable<Variable> variables, ResolveContext context)
         {
@@ -60,7 +54,7 @@ namespace CodeRunner.Rendering
                 }
                 else
                 {
-                    context.WithVariable(v.Name, line!);
+                    _ = context.WithVariable(v.Name, line!);
                 }
             }
             return true;
@@ -96,10 +90,7 @@ namespace CodeRunner.Rendering
             terminal.Render(StyleSpan.UnderlinedOff());
         }
 
-        public static void Output(this ITerminal terminal, string content)
-        {
-            terminal.Out.Write(content);
-        }
+        public static void Output(this ITerminal terminal, string content) => terminal.Out.Write(content);
 
         public static void OutputBlink(this ITerminal terminal, string content)
         {
@@ -122,30 +113,15 @@ namespace CodeRunner.Rendering
             terminal.Render(BackgroundColorSpan.Reset());
         }
 
-        public static void OutputError(this ITerminal terminal, string content)
-        {
-            terminal.OutputColor(ForegroundColorSpan.Red(), content);
-        }
+        public static void OutputError(this ITerminal terminal, string content) => terminal.OutputColor(ForegroundColorSpan.Red(), content);
 
-        public static void OutputWarning(this ITerminal terminal, string content)
-        {
-            terminal.OutputColor(ForegroundColorSpan.Yellow(), content);
-        }
+        public static void OutputWarning(this ITerminal terminal, string content) => terminal.OutputColor(ForegroundColorSpan.Yellow(), content);
 
-        public static void OutputInformation(this ITerminal terminal, string content)
-        {
-            terminal.OutputColor(ForegroundColorSpan.Cyan(), content);
-        }
+        public static void OutputInformation(this ITerminal terminal, string content) => terminal.OutputColor(ForegroundColorSpan.Cyan(), content);
 
-        public static void OutputDebug(this ITerminal terminal, string content)
-        {
-            terminal.OutputColor(ForegroundColorSpan.Green(), content);
-        }
+        public static void OutputDebug(this ITerminal terminal, string content) => terminal.OutputColor(ForegroundColorSpan.Green(), content);
 
-        public static void OutputFatal(this ITerminal terminal, string content)
-        {
-            terminal.OutputColor(BackgroundColorSpan.Red(), content);
-        }
+        public static void OutputFatal(this ITerminal terminal, string content) => terminal.OutputColor(BackgroundColorSpan.Red(), content);
 
         public static void EnsureAtLeft(this ITerminal terminal)
         {

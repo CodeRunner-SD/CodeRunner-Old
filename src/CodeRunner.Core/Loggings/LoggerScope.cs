@@ -37,62 +37,38 @@ namespace CodeRunner.Loggings
         public void Error(Exception exception,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Error(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Error(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
 
         public void Fatal(Exception exception,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Fatal(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Fatal(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
 
         public void Error(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Log(content, LogLevel.Error, memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Log(content, LogLevel.Error, memberName, sourceFilePath, sourceLineNumber);
 
         public void Warning(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Log(content, LogLevel.Warning, memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Log(content, LogLevel.Warning, memberName, sourceFilePath, sourceLineNumber);
 
         public void Information(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Log(content, LogLevel.Information, memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Log(content, LogLevel.Information, memberName, sourceFilePath, sourceLineNumber);
 
         public void Fatal(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Log(content, LogLevel.Fatal, memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Log(content, LogLevel.Fatal, memberName, sourceFilePath, sourceLineNumber);
 
         public void Debug(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Log(content, LogLevel.Debug, memberName, sourceFilePath, sourceLineNumber);
-        }
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Log(content, LogLevel.Debug, memberName, sourceFilePath, sourceLineNumber);
 
-        public LoggerScope CreateScope(string name, LogLevel level)
-        {
-            return new LoggerScope(Source, $"{Name}/{name}", level);
-        }
+        public LoggerScope CreateScope(string name, LogLevel level) => new LoggerScope(Source, $"{Name}/{name}", level);
     }
 }

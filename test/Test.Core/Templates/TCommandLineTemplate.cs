@@ -14,8 +14,13 @@ namespace Test.Core.Templates
             builder.Commands.Add("gcc");
             builder.Arguments.Add("a.c");
             builder.Raw = "--version";
-            builder.WithFlag("ff", "-").WithFlag("O2", "-");
-            builder.WithOption("o", "a.out", "-").WithOption("cc", 1, "--").WithOption("cc", "a", "--").WithoutFlag("-ff").WithoutOption("--cc");
+            _ = builder.WithFlag("ff", "-")
+                .WithFlag("O2", "-")
+                .WithOption("o", "a.out", "-")
+                .WithOption("cc", 1, "--")
+                .WithOption("cc", "a", "--")
+                .WithoutFlag("-ff")
+                .WithoutOption("--cc");
             Assert.AreEqual(0, builder.GetVariables().Count);
             Assert.AreEqual("gcc a.c -O2 -o a.out --version", string.Join(' ', await builder.Resolve(new ResolveContext())));
         }

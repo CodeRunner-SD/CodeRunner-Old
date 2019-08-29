@@ -18,7 +18,7 @@ namespace Test.App.Commands
                 new string[] { "new", "c", "--", "name=a" },
                 before: async context =>
                 {
-                    await Utils.InitializeWorkspace(context);
+                    _ = await Utils.InitializeWorkspace(context);
                     await context.Services.GetWorkspace().Templates.Install("c", Templates.C);
                     return 0;
                 },

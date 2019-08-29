@@ -49,8 +49,8 @@ namespace CodeRunner.Operations
             FileBasedCommandLineOperationSettings settings = new FileBasedCommandLineOperationSettings();
             PackageDirectoryTemplate res = new PackageDirectoryTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"),
                 new Variable[] { new Variable("name").Required() }));
-            res.AddFile(fileName).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings, new Newtonsoft.Json.JsonSerializerSettings()))));
-            return res;
+            return res.AddFile(fileName)
+                .UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings, new Newtonsoft.Json.JsonSerializerSettings())))); ;
         }
     }
 }

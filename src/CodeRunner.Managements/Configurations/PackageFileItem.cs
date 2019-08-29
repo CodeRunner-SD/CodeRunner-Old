@@ -30,14 +30,7 @@ namespace CodeRunner.Managements.Configurations
                 if (Parent != null)
                 {
                     FileInfo file = new FileInfo(Path.Join(Parent.PathRoot.FullName, FileName));
-                    if (FileLoaderPool != null)
-                    {
-                        fileLoader = FileLoaderPool.Get(file);
-                    }
-                    else
-                    {
-                        fileLoader = new PackageFileLoader<T>(file);
-                    }
+                    fileLoader = FileLoaderPool != null ? FileLoaderPool.Get(file) : new PackageFileLoader<T>(file);
                     return fileLoader;
                 }
                 return null;
@@ -62,13 +55,6 @@ namespace CodeRunner.Managements.Configurations
             }
         }
 
-        protected override Task<Package<T>?> GetValue()
-        {
-            if (FileLoader != null)
-            {
-                return FileLoader.Data;
-            }
-            return Task.FromResult<Package<T>?>(null);
-        }
+        protected override Task<Package<T>?> GetValue() => FileLoader != null ? FileLoader.Data : Task.FromResult<Package<T>?>(null);
     }
 }

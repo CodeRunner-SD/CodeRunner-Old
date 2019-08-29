@@ -36,10 +36,7 @@ print(s)";
                 ExecutorResult res = await cli.Run();
                 Assert.AreEqual(0, res.ExitCode);
                 StringAssert.Contains(res.Output, "Hello World!");
-                await Assert.ThrowsExceptionAsync<Exception>(async () =>
-                {
-                    await cli.Run();
-                });
+                _ = await Assert.ThrowsExceptionAsync<Exception>(async () => await cli.Run());
             }
             using (TempFile tmp = new TempFile())
             {

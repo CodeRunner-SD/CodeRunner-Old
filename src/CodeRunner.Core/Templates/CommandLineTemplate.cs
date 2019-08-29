@@ -44,17 +44,14 @@ namespace CodeRunner.Templates
             return this;
         }
 
-        public CommandLineTemplate WithOption(StringTemplate id, object value, string prefix = "")
-        {
-            return WithOption(id, value.ToString() ?? string.Empty, prefix);
-        }
+        public CommandLineTemplate WithOption(StringTemplate id, object value, string prefix = "") => WithOption(id, value.ToString() ?? string.Empty, prefix);
 
         public CommandLineTemplate WithoutOption(string fullContent)
         {
             StringTemplate f = Options.Where(x => x.Key.Content == fullContent).Select(x => x.Key).FirstOrDefault();
             if (f != null)
             {
-                Options.Remove(f);
+                _ = Options.Remove(f);
             }
 
             return this;
@@ -72,7 +69,7 @@ namespace CodeRunner.Templates
             StringTemplate f = Flags.Where(x => x.Content == fullContent).FirstOrDefault();
             if (f != null)
             {
-                Flags.Remove(f);
+                _ = Flags.Remove(f);
             }
 
             return this;
