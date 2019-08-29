@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
+        config: [Debug, Release]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
@@ -23,12 +24,22 @@ jobs:
         architecture: 'x64'
     - name: Restore
       run: dotnet restore -s https://api.nuget.org/v3/index.json
+      shell: pwsh
     - name: Build
-      run: dotnet build
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: dotnet build -c $env:CONFIG
+      shell: pwsh
     - name: Test
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: dotnet test -c $env:CONFIG /p:CollectCoverage=true /p:CoverletOutput=../../coverage.json /p:MergeWith=../../coverage.json /maxcpucount:1
+      shell: pwsh
     - name: Generate report
-      run: dotnet test ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: dotnet test -c $env:CONFIG ./test/Test.Base /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../../coverage.xml /p:MergeWith=../../coverage.json /maxcpucount:1
+      shell: pwsh
     - name: Upload report
       continue-on-error: true
       env:
@@ -36,4 +47,17 @@ jobs:
       run: |
         curl -s https://codecov.io/bash > codecov
         chmod +x codecov
-        pwsh -command "./codecov -f coverage.xml"
+        ./codecov -f coverage.xml
+      shell: pwsh
+    - name: Generate artifacts
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: |
+        mkdir artifacts
+        dotnet build -c $env:CONFIG -o ./artifacts
+      shell: pwsh
+    - name: Upload artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: built
+        path: ./artifacts
