@@ -1,5 +1,6 @@
 ﻿using CodeRunner;
 using CodeRunner.Commands;
+using CodeRunner.Managements.FSBased;
 using CodeRunner.Resources.Programming;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -15,16 +16,16 @@ namespace Test.App.Commands
         {
             CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UseSampleCommandInvoker(
                 new NewCommand().Build(),
-                new string[] { "new", "c", "--", "name=a" },
+                new string[] { "new", "c", "a" },
                 before: async context =>
                 {
                     _ = await Utils.InitializeWorkspace(context);
-                    await context.Services.GetWorkspace().Templates.Install("c", Templates.C);
+                    await context.Services.GetWorkspace().Templates.Set("c", Templates.C);
                     return 0;
                 },
                 after: context =>
                 {
-                    CodeRunner.Managements.Workspace workspace = context.Services.GetWorkspace();
+                    Workspace workspace = (Workspace)context.Services.GetWorkspace();
                     Assert.IsTrue(File.Exists(Path.Join(workspace.PathRoot.FullName, "a.c")));
                     return Task.FromResult(0);
                 });

@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Operations;
 using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
@@ -7,34 +6,28 @@ using CodeRunner.Rendering;
 using System.Collections.Generic;
 using System.CommandLine.Rendering;
 using System.Threading.Tasks;
-using SettingItem = System.Tuple<string, CodeRunner.Managements.Configurations.OperationItem, CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation>?>;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class ListCommand : ItemManagers.ListCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
+    public class ListCommand : ItemManagers.ListCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {
-        public override Task<OperationManager> GetManager(PipelineContext pipeline)
+        public override Task<IOperationManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Operations);
         }
 
-        public override async Task RenderItems(ITerminal terminal, IDictionary<string, OperationItem> items, PipelineContext pipeline)
+        public override async Task RenderItems(ITerminal terminal, IAsyncEnumerable<(string, Package<BaseOperation>?)> items, PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
-            List<SettingItem> sources = new List<SettingItem>();
-            foreach (string v in items.Keys)
-            {
-                OperationItem value = (await workspace.Operations.Get(v))!;
-                sources.Add(new SettingItem(v, value, await value.Value));
-            }
+            List<(string, Package<BaseOperation>?)> sources = new List<(string, Package<BaseOperation>?)>();
+            await foreach ((string, Package<BaseOperation>?) v in items)
+                sources.Add(v);
             terminal.OutputTable(sources,
-                new OutputTableColumnStringView<SettingItem>(x => x.Item1, "Name"),
-                new OutputTableColumnStringView<SettingItem>(x => x.Item2.FileName, "File"),
-                new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Name ?? "N/A", nameof(PackageMetadata.Name)),
-                new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Author ?? "N/A", nameof(PackageMetadata.Author)),
-                new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.CreationTime.ToString() ?? "N/A", nameof(PackageMetadata.CreationTime)),
-                new OutputTableColumnStringView<SettingItem>(x => x.Item3?.Metadata?.Version.ToString() ?? "N/A", nameof(PackageMetadata.Version))
+                new OutputTableColumnStringView<(string, Package<BaseOperation>?)>(x => x.Item1, "Name"),
+                new OutputTableColumnStringView<(string, Package<BaseOperation>?)>(x => x.Item2?.Metadata?.Name ?? "N/A", nameof(PackageMetadata.Name)),
+                new OutputTableColumnStringView<(string, Package<BaseOperation>?)>(x => x.Item2?.Metadata?.Author ?? "N/A", nameof(PackageMetadata.Author)),
+                new OutputTableColumnStringView<(string, Package<BaseOperation>?)>(x => x.Item2?.Metadata?.CreationTime.ToString() ?? "N/A", nameof(PackageMetadata.CreationTime)),
+                new OutputTableColumnStringView<(string, Package<BaseOperation>?)>(x => x.Item2?.Metadata?.Version.ToString() ?? "N/A", nameof(PackageMetadata.Version))
             );
         }
     }

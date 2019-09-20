@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Pipelines;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -17,10 +16,10 @@ namespace CodeRunner.Commands.ItemManagers
         }
     }
 
-    public abstract class ListCommand<TItemManager, TSettings, TItem, TValue> : BaseItemCommand<ListCommand.CArgument, TItemManager, TSettings, TItem, TValue>
-        where TSettings : ItemSettings<TItem>
-        where TItem : ItemValue<TValue>
-        where TItemManager : BaseItemManager<TSettings, TItem, TValue>
+    public abstract class ListCommand<TItemManager, TSettings, TItem> : BaseItemCommand<ListCommand.CArgument, TItemManager, TSettings, TItem>
+        where TSettings : class
+        where TItem : class
+        where TItemManager : IItemManager<TSettings, TItem>
     {
         public override Command Configure()
         {
@@ -28,21 +27,22 @@ namespace CodeRunner.Commands.ItemManagers
             return res;
         }
 
-        public abstract Task RenderItems(ITerminal terminal, IDictionary<string, TItem> items, PipelineContext pipeline);
+        public abstract Task RenderItems(ITerminal terminal, IAsyncEnumerable<(string, TItem?)> items, PipelineContext pipeline);
 
         public override async Task<int> Handle(ListCommand.CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
+            static async IAsyncEnumerable<(string, TItem?)> GetAllItems(TItemManager manager)
+            {
+                await foreach (string key in manager.GetKeys())
+                {
+                    yield return (key, await manager.Get(key));
+                }
+            }
+
             ITerminal terminal = console.GetTerminal();
-            TSettings? res = await (await GetManager(pipeline)).Settings;
-            if (res != null)
-            {
-                await RenderItems(terminal, res.Items, pipeline);
-                return 0;
-            }
-            else
-            {
-                return -1;
-            }
+            TItemManager manager = await GetManager(pipeline);
+            await RenderItems(terminal, GetAllItems(manager), pipeline);
+            return 0;
         }
     }
 }

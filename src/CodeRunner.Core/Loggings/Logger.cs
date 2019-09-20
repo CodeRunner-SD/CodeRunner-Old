@@ -37,7 +37,7 @@ namespace CodeRunner.Loggings
 
         public ILogger UseFilter(LogFilter filter)
         {
-            Filters.Add(filter);    
+            Filters.Add(filter);
             return this;
         }
 

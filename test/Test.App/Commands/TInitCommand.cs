@@ -1,5 +1,4 @@
-﻿using CodeRunner;
-using CodeRunner.Commands;
+﻿using CodeRunner.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
@@ -16,7 +15,6 @@ namespace Test.App.Commands
                 new string[] { "init" },
                 after: context =>
                 {
-                    Assert.IsTrue(context.Services.GetWorkspace().HasInitialized);
                     return Task.FromResult(0);
                 });
 
@@ -32,7 +30,6 @@ namespace Test.App.Commands
                 new string[] { "init", "--delete" },
                 after: context =>
                 {
-                    Assert.IsFalse(context.Services.GetWorkspace().HasInitialized);
                     return Task.FromResult(0);
                 });
 

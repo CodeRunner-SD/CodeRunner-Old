@@ -5,7 +5,7 @@ namespace CodeRunner.IO
 {
     public interface IObjectLoader<T> where T : class
     {
-        Task<T?> Data { get; }
+        Task<T?> GetData();
 
         DateTimeOffset? LoadedTime { get; set; }
 

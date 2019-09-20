@@ -2,8 +2,10 @@
 using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
+using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
@@ -36,8 +38,8 @@ namespace CodeRunner
                 scope.Add<TextReader>(input);
             });
 
-        public static Builder ConfigureWorkspace(this Builder builder, Workspace workspace) => builder.Configure(nameof(ConfigureWorkspace),
-            scope => scope.Add<Workspace>(workspace));
+        public static Builder ConfigureWorkspace(this Builder builder, IWorkspace workspace) => builder.Configure(nameof(ConfigureWorkspace),
+            scope => scope.Add<IWorkspace>(workspace));
 
         public static Builder ConfigureLogger(this Builder builder, ILogger logger) => builder.Configure(nameof(ConfigureLogger),
             scope => scope.Add<ILogger>(logger));
@@ -45,8 +47,8 @@ namespace CodeRunner
         public static Builder UseTestView(this Builder builder) => builder.Use(nameof(UseTestView),
             context =>
             {
-                TestView.Console = context.Services.Get<IConsole>();
-                TestView.Workspace = context.Services.Get<Workspace>();
+                TestView.Console = context.Services.GetConsole();
+                TestView.Workspace = context.Services.GetWorkspace();
                 context.IgnoreResult = true;
                 return Task.FromResult(0);
             });
@@ -61,12 +63,19 @@ namespace CodeRunner
 
         private static bool Prompt(PipelineContext context, ITerminal terminal)
         {
-            WorkItem? workItem = context.Services.GetWorkItem();
+            IWorkItem? workItem = context.Services.GetWorkItem();
             if (workItem != null)
             {
-                if (workItem.Type == WorkItemType.Directory)
-                    terminal.Output("@");
-                terminal.Output(workItem.RelativePath);
+                if (workItem is WorkItem item)
+                {
+                    if (item.Type == WorkItemType.Directory)
+                        terminal.Output("@");
+                    terminal.Output(item.RelativePath);
+                }
+                else
+                {
+                    terminal.Output(workItem.Name);
+                }
             }
             terminal.Output("> ");
             return true;
@@ -77,10 +86,9 @@ namespace CodeRunner
             {
                 ITerminal terminal = context.Services.GetConsole().GetTerminal();
                 Parser replCommand = CommandLines.CreateParser(context.Services.GetReplCommand(), context);
-                Workspace workspace = context.Services.GetWorkspace();
                 TextReader input = context.Services.GetInput();
 
-                terminal.OutputLine(workspace.PathRoot.FullName);
+                terminal.OutputLine(Environment.CurrentDirectory);
 
                 while (Prompt(context, terminal) && !input.IsEndOfInput())
                 {

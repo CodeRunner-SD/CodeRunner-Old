@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -16,10 +15,10 @@ namespace CodeRunner.Commands.ItemManagers
         }
     }
 
-    public abstract class RemoveCommand<TItemManager, TSettings, TItem, TValue> : BaseItemCommand<RemoveCommand.CArgument, TItemManager, TSettings, TItem, TValue>
-        where TSettings : ItemSettings<TItem>
-        where TItem : ItemValue<TValue>
-        where TItemManager : BaseItemManager<TSettings, TItem, TValue>
+    public abstract class RemoveCommand<TItemManager, TSettings, TItem> : BaseItemCommand<RemoveCommand.CArgument, TItemManager, TSettings, TItem>
+        where TSettings : class
+        where TItem : class
+        where TItemManager : IItemManager<TSettings, TItem>
     {
         public override Command Configure()
         {

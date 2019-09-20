@@ -54,20 +54,18 @@ namespace Test.App
         {
             using TempDirectory td = new TempDirectory();
             Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init"));
-            Assert.IsTrue(TestView.Workspace!.HasInitialized);
 
             Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init --delete"));
-            Assert.IsFalse(TestView.Workspace!.HasInitialized);
         }
 
         [TestMethod]
         public async Task NewNowDir()
         {
             using TempDirectory td = new TempDirectory();
-            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "new c", "a"));
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "init", "new c a"));
             Assert.IsTrue(File.Exists(Path.Join(td.Directory.FullName, "a.c")));
             Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "now -f a.c"));
-            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "new dir", "a", "now -d a", "run dir"));
+            Assert.AreEqual(0, await ExecuteInRepl(td.Directory.FullName, "new dir a", "now -d a", "run dir"));
         }
 
         [TestMethod]

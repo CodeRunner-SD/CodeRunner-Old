@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Managements.Templates
+namespace CodeRunner.Managements.FSBased.Templates
 {
     public class WorkspaceTemplate : DirectoryTemplate
     {

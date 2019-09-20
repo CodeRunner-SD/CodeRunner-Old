@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace CodeRunner.Managements
+namespace CodeRunner.Managements.FSBased
 {
-    public class WorkItem
+    public class WorkItem : IWorkItem
     {
         public static WorkItem CreateByFile(Workspace onwer, FileInfo file) => new WorkItem(onwer, file, null, WorkItemType.File);
 
@@ -14,6 +15,7 @@ namespace CodeRunner.Managements
             File = file;
             Directory = directory;
             Type = type;
+            Id = Guid.NewGuid();
         }
 
         private Workspace Onwer { get; }
@@ -27,5 +29,9 @@ namespace CodeRunner.Managements
         public FileSystemInfo Target => Type == WorkItemType.File ? (FileSystemInfo)File! : (Directory!);
 
         public string RelativePath => Path.GetRelativePath(Onwer.PathRoot.FullName, Target.FullName);
+
+        public Guid Id { get; }
+
+        public string Name => Target.Name;
     }
 }

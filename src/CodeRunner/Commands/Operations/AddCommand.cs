@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Operations;
 using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
@@ -8,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class AddCommand : ItemManagers.AddCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
+    public class AddCommand : ItemManagers.AddCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {
-        public override Task<OperationItem> GetItem(FileInfo file)
+        public override async Task<Package<BaseOperation>> GetItem(FileInfo file)
         {
-            return Task.FromResult(new OperationItem
-            {
-                FileName = file.FullName
-            });
+            using FileStream st = file.OpenRead();
+            return await Package.Load<BaseOperation>(st);
         }
 
-        public override Task<OperationManager> GetManager(PipelineContext pipeline)
+        public override Task<IOperationManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Operations);
         }
     }

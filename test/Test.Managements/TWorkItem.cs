@@ -1,5 +1,5 @@
 ﻿using CodeRunner.IO;
-using CodeRunner.Managements;
+using CodeRunner.Managements.FSBased;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test.Managements
@@ -8,7 +8,7 @@ namespace Test.Managements
     public class TWorkItem
     {
         [TestMethod]
-        public void Basic()
+        public void FSBased()
         {
             using TempDirectory td = new TempDirectory();
             Workspace workspace = new Workspace(td.Directory);

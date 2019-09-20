@@ -1,5 +1,6 @@
 ﻿using CodeRunner;
 using CodeRunner.Commands;
+using CodeRunner.Managements.FSBased;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
@@ -17,11 +18,11 @@ namespace Test.App.Commands
                 before: Utils.InitializeWorkspace,
                 after: context =>
                 {
-                    CodeRunner.Managements.WorkItem? item = context.Services.GetWorkItem();
+                    WorkItem? item = context.Services.GetWorkItem() as WorkItem;
                     Assert.IsNotNull(item);
                     Assert.AreEqual(CodeRunner.Managements.WorkItemType.File, item!.Type);
                     Assert.AreSame(item!.File, item!.Target);
-                    Assert.AreEqual("a.c", item!.RelativePath);
+                    Assert.AreEqual("a.c", item!.Name);
                     return Task.FromResult(0);
                 });
 
@@ -38,11 +39,11 @@ namespace Test.App.Commands
                 before: Utils.InitializeWorkspace,
                 after: context =>
                 {
-                    CodeRunner.Managements.WorkItem? item = context.Services.GetWorkItem();
+                    WorkItem? item = context.Services.GetWorkItem() as WorkItem;
                     Assert.IsNotNull(item);
                     Assert.AreEqual(CodeRunner.Managements.WorkItemType.Directory, item!.Type);
                     Assert.AreSame(item!.Directory, item!.Target);
-                    Assert.AreEqual("a", item!.RelativePath);
+                    Assert.AreEqual("a", item!.Name);
                     return Task.FromResult(0);
                 });
 

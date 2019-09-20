@@ -1,5 +1,5 @@
-﻿using CodeRunner.Helpers;
-using CodeRunner.Managements;
+﻿using CodeRunner.Managements;
+using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -45,24 +45,38 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.GetWorkspace();
+            IWorkspace workspace = operation.Services.GetWorkspace();
             if (argument.File != null)
             {
-                argument.File = CommandLines.ResolvePath(workspace, argument.File);
-                operation.Services.Replace<WorkItem>(WorkItem.CreateByFile(workspace, argument.File));
+                IWorkItem? res = await workspace.Create("", null, (vars, context) =>
+                 {
+                     _ = context.WithVariable<FileSystemInfo>(RegisterWorkItemTemplate.Target, argument.File);
+                     return Task.CompletedTask;
+                 });
+                if (res != null)
+                {
+                    operation.Services.Replace<IWorkItem>(res);
+                }
             }
             else if (argument.Directory != null)
             {
-                argument.Directory = CommandLines.ResolvePath(workspace, argument.Directory);
-                operation.Services.Replace<WorkItem>(WorkItem.CreateByDirectory(workspace, argument.Directory));
+                IWorkItem? res = await workspace.Create("", null, (vars, context) =>
+                {
+                    _ = context.WithVariable<FileSystemInfo>(RegisterWorkItemTemplate.Target, argument.Directory);
+                    return Task.CompletedTask;
+                });
+                if (res != null)
+                {
+                    operation.Services.Replace<IWorkItem>(res);
+                }
             }
             else
             {
                 operation.Services.Remove<WorkItem>();
             }
-            return Task.FromResult(0);
+            return 0;
         }
 
         public class CArgument

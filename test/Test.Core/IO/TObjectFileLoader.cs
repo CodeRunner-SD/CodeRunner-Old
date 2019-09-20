@@ -15,11 +15,11 @@ namespace Test.Core.IO
         {
             using TempFile tf = new TempFile();
             JsonFileLoader<string> loader = new JsonFileLoader<string>(tf.File);
-            Assert.IsNull(await loader.Data);
+            Assert.IsNull(await loader.GetData());
             File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject("a"));
-            Assert.AreEqual("a", await loader.Data);
+            Assert.AreEqual("a", await loader.GetData());
             await loader.Save("b");
-            Assert.AreEqual("b", await loader.Data);
+            Assert.AreEqual("b", await loader.GetData());
         }
 
         [TestMethod]
@@ -27,11 +27,11 @@ namespace Test.Core.IO
         {
             using TempFile tf = new TempFile();
             PackageFileLoader<string> loader = new PackageFileLoader<string>(tf.File);
-            Assert.IsNull(await loader.Data);
+            Assert.IsNull(await loader.GetData());
             File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new Package<string>("a")));
-            Assert.AreEqual("a", (await loader.Data)?.Data);
+            Assert.AreEqual("a", (await loader.GetData())?.Data);
             await loader.Save(new Package<string>("b"));
-            Assert.AreEqual("b", (await loader.Data)?.Data);
+            Assert.AreEqual("b", (await loader.GetData())?.Data);
         }
     }
 }

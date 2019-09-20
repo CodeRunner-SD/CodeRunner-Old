@@ -1,16 +1,15 @@
 ﻿using CodeRunner.IO;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Managements.Templates
+namespace CodeRunner.Managements.FSBased.Templates
 {
     public class TemplatesSpaceTemplate : DirectoryTemplate
     {
         public TemplatesSpaceTemplate()
         {
-            TemplatesSettings settings = new TemplatesSettings();
+            TemplateSettings settings = new TemplateSettings();
 
             _ = Package.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(
                 JsonFormatter.Serialize(settings))));

@@ -17,7 +17,7 @@ namespace Test.Core.IO
             File.WriteAllText(tf.File.FullName, JsonConvert.SerializeObject(new Package<string>("a")));
             PackageFileLoaderPool<string> pool = new PackageFileLoaderPool<string>();
             PackageFileLoader<string> loader = pool.Get(tf.File);
-            Assert.AreEqual("a", (await loader.Data)?.Data);
+            Assert.AreEqual("a", (await loader.GetData())?.Data);
             Assert.AreSame(loader, pool.Get(tf.File));
         }
     }

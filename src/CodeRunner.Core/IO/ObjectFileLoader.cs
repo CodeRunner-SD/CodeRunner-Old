@@ -12,24 +12,21 @@ namespace CodeRunner.IO
 
         public FileInfo File { get; }
 
-        public Task<T?> Data
+        public Task<T?> GetData()
         {
-            get
+            if (data == null || LoadedTime == null)
             {
-                if (data == null || LoadedTime == null)
+                return Load();
+            }
+            else
+            {
+                File.Refresh();
+                if (File.LastWriteTime > LoadedTime)
                 {
                     return Load();
                 }
-                else
-                {
-                    File.Refresh();
-                    if (File.LastWriteTime > LoadedTime)
-                    {
-                        return Load();
-                    }
-                }
-                return Task.FromResult<T?>(data);
             }
+            return Task.FromResult<T?>(data);
         }
 
         public DateTimeOffset? LoadedTime { get; set; }

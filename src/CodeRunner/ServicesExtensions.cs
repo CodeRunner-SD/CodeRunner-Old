@@ -12,9 +12,9 @@ namespace CodeRunner
 
         internal const string CliCommandId = "cli";
 
-        public static Workspace GetWorkspace(this ServiceScope scope) => scope.Get<Workspace>();
+        public static IWorkspace GetWorkspace(this ServiceScope scope) => scope.Get<IWorkspace>();
 
-        public static WorkItem? GetWorkItem(this ServiceScope scope) => scope.TryGet<WorkItem>(out WorkItem? workItem) ? workItem : null;
+        public static IWorkItem? GetWorkItem(this ServiceScope scope) => scope.TryGet<IWorkItem>(out IWorkItem? workItem) ? workItem : null;
 
         public static IConsole GetConsole(this ServiceScope scope) => scope.Get<IConsole>();
 

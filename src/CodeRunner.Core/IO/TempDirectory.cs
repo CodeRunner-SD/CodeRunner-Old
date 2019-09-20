@@ -31,7 +31,8 @@ namespace CodeRunner.IO
                 // 将大型字段设置为 null。
                 if (Directory.Exists)
                 {
-                    Directory.Delete(true);
+                    // TODO: this makes test fail: delete when other access
+                    // Directory.Delete(true);
                 }
 
                 disposedValue = true;

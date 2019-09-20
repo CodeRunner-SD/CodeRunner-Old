@@ -1,9 +1,7 @@
-﻿using CodeRunner.Managements;
-using CodeRunner.Pipelines;
+﻿using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
-using System.IO;
 
 namespace CodeRunner.Helpers
 {
@@ -14,18 +12,20 @@ namespace CodeRunner.Helpers
             .UseMiddleware(inv => inv.BindingContext.AddService(typeof(PipelineContext), () => context))
             .Build();
 
-        public static FileInfo ResolvePath(Workspace workspace, FileInfo file)
+        /*
+        private static FileInfo ResolvePath(Workspace workspace, FileInfo file)
         {
             string rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
             string path = Path.Join(workspace.PathRoot.FullName, rel);
             return new FileInfo(path);
         }
 
-        public static DirectoryInfo ResolvePath(Workspace workspace, DirectoryInfo file)
+        private static DirectoryInfo ResolvePath(Workspace workspace, DirectoryInfo file)
         {
             string rel = Path.GetRelativePath(Directory.GetCurrentDirectory(), file.FullName);
             string path = Path.Join(workspace.PathRoot.FullName, rel);
             return new DirectoryInfo(path);
         }
+        */
     }
 }

@@ -1,8 +1,10 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Managements;
-using CodeRunner.Resources.Programming;
+using CodeRunner.Managements.FSBased;
+using CodeRunner.Operations;
+using CodeRunner.Packagings;
+using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Test.Managements
@@ -10,52 +12,38 @@ namespace Test.Managements
     [TestClass]
     public class TOperationManager
     {
-        [TestMethod]
-        public async Task Basic()
+        private async Task TestManager(IOperationManager manager)
         {
-            using TempDirectory td = new TempDirectory();
-            OperationManager manager = new OperationManager(td.Directory);
             await manager.Initialize();
             Assert.IsNotNull(await manager.Settings);
-            Assert.IsTrue(await manager.Has("hello"));
-            CodeRunner.Managements.Configurations.OperationItem c = await manager.Get("hello");
-            Assert.IsNotNull(c);
-            CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation> vc = await c.Value;
-            _ = await c.Value;
-            _ = await c.Value;
-            Assert.IsNotNull(vc);
             {
-                string name = "tc";
-                string newFile = "tc.tpl";
-                File.Copy(Path.Join(td.Directory.FullName, c.FileName), Path.Join(td.Directory.FullName, newFile));
-                await manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
+                Package<BaseOperation> sample = new Package<BaseOperation>(
+                    new SimpleCommandLineOperation()
+                    .Use(new CommandLineTemplate()))
                 {
-                    FileName = newFile
-                });
-                Assert.IsTrue(await manager.Has(name));
-                await manager.Set(name, new CodeRunner.Managements.Configurations.OperationItem
-                {
-                    FileName = newFile
-                });
-                CodeRunner.Managements.Configurations.OperationItem tc = await manager.Get(name);
-                Assert.IsNotNull(tc);
-                CodeRunner.Packagings.Package<CodeRunner.Operations.BaseOperation> vtc = await tc.Value;
-                Assert.IsNotNull(vtc);
-                Assert.AreEqual(vc.Metadata.Author, vtc.Metadata.Author);
+                    Metadata = new PackageMetadata
+                    {
+                        Name = nameof(sample)
+                    }
+                };
+                await manager.Set(nameof(sample), sample);
+                Assert.IsTrue(await manager.Has(nameof(sample)));
+                Package<BaseOperation>? reget = await manager.Get(nameof(sample));
+                Assert.IsNotNull(reget);
+                Assert.AreEqual(nameof(sample), reget?.Metadata?.Name);
+                Assert.IsInstanceOfType(reget!.Data, typeof(SimpleCommandLineOperation));
 
-                await manager.Set(name, null);
-                Assert.IsFalse(await manager.Has(name));
-                Assert.IsNull(await manager.Get(name));
+                await manager.Set(nameof(sample), null);
+                Assert.IsFalse(await manager.Has(nameof(sample)));
             }
-            {
-                await manager.Install("c", Operations.C);
-                CodeRunner.Managements.Configurations.OperationItem item = await manager.Get("c");
-                Assert.IsNotNull(item);
-                string path = Path.Join(td.Directory.FullName, item.FileName);
-                Assert.IsTrue(File.Exists(path));
-                await manager.Uninstall("c");
-                Assert.IsFalse(File.Exists(path));
-            }
+        }
+
+        [TestMethod]
+        public async Task FSBased()
+        {
+            using TempDirectory td = new TempDirectory();
+            IOperationManager manager = new OperationManager(td.Directory);
+            await TestManager(manager);
         }
     }
 }

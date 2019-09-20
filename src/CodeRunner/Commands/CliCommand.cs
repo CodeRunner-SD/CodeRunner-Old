@@ -2,6 +2,7 @@
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -56,7 +57,8 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            pipeline.Services.Add(new Workspace(argument.Directory!));
+            Environment.CurrentDirectory = argument.Directory!.FullName;
+            pipeline.Services.Add<IWorkspace>(new Managements.FSBased.Workspace(argument.Directory));
             ILogger logger = pipeline.Services.GetLogger();
 
             if (argument.Command != "")

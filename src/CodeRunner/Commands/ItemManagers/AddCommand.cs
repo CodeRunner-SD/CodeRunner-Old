@@ -1,6 +1,4 @@
-﻿using CodeRunner.Helpers;
-using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
+﻿using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -20,10 +18,10 @@ namespace CodeRunner.Commands.ItemManagers
         }
     }
 
-    public abstract class AddCommand<TItemManager, TSettings, TItem, TValue> : BaseItemCommand<AddCommand.CArgument, TItemManager, TSettings, TItem, TValue>
-        where TSettings : ItemSettings<TItem>
-        where TItem : ItemValue<TValue>
-        where TItemManager : BaseItemManager<TSettings, TItem, TValue>
+    public abstract class AddCommand<TItemManager, TSettings, TItem> : BaseItemCommand<AddCommand.CArgument, TItemManager, TSettings, TItem>
+        where TSettings : class
+        where TItem : class
+        where TItemManager : IItemManager<TSettings, TItem>
     {
         public override Command Configure()
         {
@@ -49,14 +47,21 @@ namespace CodeRunner.Commands.ItemManagers
 
         public override async Task<int> Handle(AddCommand.CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            Workspace workspace = operation.Services.GetWorkspace();
-            argument.File = CommandLines.ResolvePath(workspace, argument.File!);
-            await (await GetManager(operation)).Set(
-                argument.Name,
-                await GetItem(
-                    new FileInfo(
-                        Path.GetRelativePath(workspace.Templates.PathRoot.FullName, argument.File!.FullName))));
-            return 0;
+            if (argument.File == null)
+                return -1;
+
+            TItem item = await GetItem(argument.File);
+
+            try
+            {
+                await (await GetManager(operation)).Set(
+                    argument.Name, item);
+                return 0;
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

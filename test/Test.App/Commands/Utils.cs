@@ -3,8 +3,8 @@ using CodeRunner.Helpers;
 using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
+using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
@@ -17,16 +17,15 @@ namespace Test.App.Commands
     {
         public static readonly PipelineOperation<string[], int> InitializeWorkspace = async context =>
         {
-            Workspace workspace = context.Services.GetWorkspace();
+            IWorkspace workspace = context.Services.GetWorkspace();
             await workspace.Initialize();
-            Assert.IsTrue(workspace.HasInitialized);
             return 0;
         };
 
         public static async Task<PipelineResult<int>> UseSampleCommandInvoker(Command command, string[] origin, string input = "", PipelineOperation<string[], int>? before = null, PipelineOperation<string[], int>? after = null)
         {
             using TempDirectory dir = new TempDirectory();
-            Workspace workspace = new Workspace(dir.Directory);
+            IWorkspace workspace = new Workspace(dir.Directory);
             using MemoryStream ms = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input));
             using StreamReader sr = new StreamReader(ms);
             PipelineBuilder<string[], int> builder = CreatePipelineBuilder(new TestTerminal(), sr, workspace);
@@ -56,7 +55,7 @@ namespace Test.App.Commands
             return await ConsumePipelineBuilder(builder, new Logger(), origin);
         }
 
-        public static PipelineBuilder<string[], int> CreatePipelineBuilder(IConsole console, TextReader input, Workspace? workspace)
+        public static PipelineBuilder<string[], int> CreatePipelineBuilder(IConsole console, TextReader input, IWorkspace? workspace)
         {
             PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>()
                 .ConfigureConsole(console, input);

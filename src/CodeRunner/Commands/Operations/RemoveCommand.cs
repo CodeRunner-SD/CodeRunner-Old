@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Operations;
 using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
@@ -7,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Commands.Operations
 {
-    public class RemoveCommand : ItemManagers.RemoveCommand<OperationManager, OperationsSettings, OperationItem, Package<BaseOperation>?>
+    public class RemoveCommand : ItemManagers.RemoveCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {
-        public override Task<OperationManager> GetManager(PipelineContext pipeline)
+        public override Task<IOperationManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Operations);
         }
     }

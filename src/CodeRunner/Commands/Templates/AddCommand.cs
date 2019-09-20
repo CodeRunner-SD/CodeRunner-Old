@@ -1,5 +1,4 @@
 ﻿using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
 using CodeRunner.Templates;
@@ -8,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace CodeRunner.Commands.Templates
 {
-    public class AddCommand : ItemManagers.AddCommand<TemplateManager, TemplatesSettings, TemplateItem, Package<BaseTemplate>?>
+    public class AddCommand : ItemManagers.AddCommand<ITemplateManager, TemplateSettings, Package<BaseTemplate>>
     {
-        public override Task<TemplateItem> GetItem(FileInfo file)
+        public override async Task<Package<BaseTemplate>> GetItem(FileInfo file)
         {
-            return Task.FromResult(new TemplateItem
-            {
-                FileName = file.FullName
-            });
+            using FileStream st = file.OpenRead();
+            return await Package.Load<BaseTemplate>(st);
         }
 
-        public override Task<TemplateManager> GetManager(PipelineContext pipeline)
+        public override Task<ITemplateManager> GetManager(PipelineContext pipeline)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             return Task.FromResult(workspace.Templates);
         }
     }

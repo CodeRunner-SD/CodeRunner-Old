@@ -1,11 +1,9 @@
 ﻿using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
-using CodeRunner.Managements.Configurations;
 using CodeRunner.Operations;
 using CodeRunner.Pipelines;
 using CodeRunner.Rendering;
-using CodeRunner.Templates;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -58,39 +56,21 @@ namespace CodeRunner.Commands
 
         public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            Workspace workspace = pipeline.Services.GetWorkspace();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             TextReader input = pipeline.Services.GetInput();
             ITerminal terminal = console.GetTerminal();
             string op = argument.Operation;
-            OperationItem? tplItem = await workspace.Operations.Get(op);
+            Packagings.Package<BaseOperation>? tplItem = await workspace.Operations.Get(op);
             if (tplItem == null)
             {
                 terminal.OutputErrorLine($"No this operation: {op}.");
                 return 1;
             }
-            BaseOperation? tpl = (await tplItem.Value)?.Data;
+            BaseOperation? tpl = tplItem.Data;
             if (tpl == null)
             {
                 terminal.OutputErrorLine($"Can not load this operation: {op}.");
                 return 1;
-            }
-
-            ResolveContext resolveContext = new ResolveContext().FromArgumentList(context.ParseResult.UnparsedTokens);
-            WorkspaceSettings settings = (await workspace.Settings)!;
-            _ = resolveContext
-                .SetShell(settings.DefaultShell)
-                .SetWorkingDirectory(workspace.PathRoot.FullName);
-
-            {
-                WorkItem? workItem = pipeline.Services.GetWorkItem();
-                if (workItem != null)
-                {
-                    _ = resolveContext.SetInputPath(workItem.RelativePath);
-                }
-            }
-            if (!terminal.FillVariables(input, tpl!.GetVariables(), resolveContext))
-            {
-                return -1;
             }
 
             /*switch (tpl)
@@ -140,10 +120,25 @@ namespace CodeRunner.Commands
                         break;
                     }
             }*/
-            PipelineBuilder<OperationWatcher, bool> builder = await tpl.Resolve(resolveContext);
-            Pipeline<OperationWatcher, bool> opp = await builder.Build(new OperationWatcher(), new ConsoleLogger(terminal));
-            PipelineResult<bool> pres = await opp.Consume();
-            bool res = pres.IsOk && pres.Result;
+
+            PipelineResult<bool>? item = null;
+            try
+            {
+                IWorkItem? workItem = pipeline.Services.GetWorkItem();
+                item = await workspace.Execute(workItem, tpl, (vars, resolveContext) =>
+                {
+                    _ = resolveContext.FromArgumentList(context.ParseResult.UnparsedTokens);
+                    if (!terminal.FillVariables(input, tpl.GetVariables(), resolveContext))
+                        throw new ArgumentException();
+                    return Task.CompletedTask;
+                }, new OperationWatcher(), new ConsoleLogger(terminal));
+            }
+            catch (ArgumentException)
+            {
+                return -1;
+            }
+
+            bool res = item.IsOk && item.Result;
             return res ? 0 : -1;
         }
 
