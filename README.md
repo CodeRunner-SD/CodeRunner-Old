@@ -10,8 +10,21 @@ Project Status:
 |-|-|
 |Repository|[![issue](https://img.shields.io/github/issues/StardustDL/CodeRunner.svg)](https://github.com/StardustDL/CodeRunner/issues/) [![pull requests](https://img.shields.io/github/issues-pr/StardustDL/CodeRunner.svg)](https://github.com/StardustDL/CodeRunner/pulls/)|
 |Dependencies|[![dependencies](https://img.shields.io/librariesio/github/StardustDL/CodeRunner.svg)](https://libraries.io/github/StardustDL/CodeRunner)|
-|Build|![master](https://github.com/StardustDL/CodeRunner/workflows/CI-Test/badge.svg)|
+|Build|![github](https://github.com/StardustDL/CodeRunner/workflows/CI-CD/badge.svg)|
 |Coverage|[![master](https://img.shields.io/codecov/c/github/StardustDL/CodeRunner/master.svg?label=master)](https://codecov.io/gh/StardustDL/CodeRunner) [![dev](https://img.shields.io/codecov/c/github/StardustDL/CodeRunner/dev.svg?label=dev)](https://codecov.io/gh/StardustDL/CodeRunner)|
+|Package|[![myget](https://img.shields.io/myget/stardustdl/v/cr?label=myget)](https://www.myget.org/feed/stardustdl/package/nuget/cr) [![myget](https://img.shields.io/myget/stardustdl/dt/cr)](https://www.myget.org/feed/stardustdl/package/nuget/cr)|
+
+## Install
+
+### .NET Tool
+
+CodeRunner is packed as a .NET Tool, and is pushed to MyGet. Use the following command to install it as global tool:
+
+```sh
+dotnet tool install -g cr --version 0.0.1-pre --add-source https://www.myget.org/F/stardustdl/api/v3/index.json
+```
+
+### Binary Files
 
 ## CLI Mode
 

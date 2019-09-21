@@ -1,4 +1,4 @@
-name: CI-Test
+name: CI-CD
 
 on: [push, pull_request]
 
@@ -23,7 +23,7 @@ jobs:
         python-version: '3.x'
         architecture: 'x64'
     - name: Restore
-      run: dotnet restore -s https://api.nuget.org/v3/index.json
+      run: dotnet restore
       shell: pwsh
     - name: Build
       env:
@@ -61,3 +61,44 @@ jobs:
       with:
         name: built
         path: ./artifacts
+  deploy:
+    needs: test
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        config: [Release]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-rc1-014190'
+    - name: Restore
+      run: dotnet restore
+      shell: pwsh
+    - name: Build
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: dotnet build -c $env:CONFIG
+      shell: pwsh
+    - name: Generate artifacts
+      env:
+        CONFIG: ${{ matrix.config }}
+      run: |
+        mkdir artifacts
+        dotnet pack -c $env:CONFIG -o ./packages
+      shell: pwsh
+    - name: Upload artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: packages
+        path: ./packages
+    - name: Deploy tools
+      if: github.event_name == 'push'
+      env:
+        MYGET_TOKEN: ${{ secrets.MYGET_TOKEN }}
+      run: dotnet nuget push ./packages/cr.0.0.1-pre.nupkg -k $env:MYGET_TOKEN -s https://www.myget.org/F/stardustdl/api/v2/package
+      shell: pwsh
