@@ -83,7 +83,7 @@ namespace CodeRunner.Managements.FSBased
             return res;
         }
 
-        public async Task<PipelineResult<bool>> Execute(IWorkItem? workItem, BaseOperation operation, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger)
+        public async Task<PipelineResult<Wrapper<bool>>> Execute(IWorkItem? workItem, BaseOperation operation, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger)
         {
             ResolveContext context = new ResolveContext();
             WorkspaceSettings? settings = await Settings;
@@ -98,8 +98,8 @@ namespace CodeRunner.Managements.FSBased
                 _ = context.SetInputPath(item.RelativePath);
             }
             await resolveCallback(operation.GetVariables(), context).ConfigureAwait(false);
-            PipelineBuilder<OperationWatcher, bool> builder = await operation.Resolve(context).ConfigureAwait(false);
-            Pipeline<OperationWatcher, bool> pipeline = await builder.Build(watcher, logger).ConfigureAwait(false);
+            PipelineBuilder<OperationWatcher, Wrapper<bool>> builder = await operation.Resolve(context).ConfigureAwait(false);
+            Pipeline<OperationWatcher, Wrapper<bool>> pipeline = await builder.Build(watcher, logger).ConfigureAwait(false);
             return await pipeline.Consume().ConfigureAwait(false);
         }
     }

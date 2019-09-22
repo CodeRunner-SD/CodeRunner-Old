@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,7 +9,7 @@ namespace CodeRunner.Pipelines
     {
         private Dictionary<Type, Dictionary<string, ServiceItem>> Pool { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
         internal ServiceScope(string name, Dictionary<Type, Dictionary<string, ServiceItem>> pool)
         {
@@ -29,10 +30,19 @@ namespace CodeRunner.Pipelines
 
         private Dictionary<string, ServiceItem>? FindSubDictionary<T>() => Pool.TryGetValue(typeof(T), out Dictionary<string, ServiceItem>? list) ? list : null;
 
-        public void Add<T>(T item, string id = "") where T : notnull => OpenOrCreateSubDictionary<T>().Add(id, new ServiceItem(item, Name));
+        public void Add<T>(T item, string id = "") where T : notnull
+        {
+            Assert.IsNotNull(item);
+            Assert.IsNotNull(id);
+
+            OpenOrCreateSubDictionary<T>().Add(id, new ServiceItem(item, Name));
+        }
 
         public void Replace<T>(T item, string id = "") where T : notnull
         {
+            Assert.IsNotNull(item);
+            Assert.IsNotNull(id);
+
             Dictionary<string, ServiceItem> list = OpenOrCreateSubDictionary<T>();
             if (list.ContainsKey(id))
             {
@@ -46,6 +56,8 @@ namespace CodeRunner.Pipelines
 
         public void Remove<T>(string id = "")
         {
+            Assert.IsNotNull(id);
+
             Dictionary<string, ServiceItem>? list = FindSubDictionary<T>();
             if (list != null)
             {
@@ -59,12 +71,21 @@ namespace CodeRunner.Pipelines
             }
         }
 
-        public T Get<T>(string id = "") where T : notnull => (T)FindSubDictionary<T>()![id].Value;
-
-        public string GetSource<T>(string id = "") where T : notnull => FindSubDictionary<T>()![id].Source;
-
-        public bool TryGet<T>([MaybeNull] out T value, string id = "") where T : notnull
+        public T Get<T>(string id = "") where T : notnull
         {
+            Assert.IsNotNull(id);
+            return (T)FindSubDictionary<T>()![id].Value;
+        }
+
+        public string GetSource<T>(string id = "") where T : notnull
+        {
+            Assert.IsNotNull(id);
+            return FindSubDictionary<T>()![id].Source;
+        }
+
+        public bool TryGet<T>([NotNullWhen(true), MaybeNullWhen(false)] out T value, string id = "") where T : notnull
+        {
+            Assert.IsNotNull(id);
             try
             {
                 value = Get<T>(id);

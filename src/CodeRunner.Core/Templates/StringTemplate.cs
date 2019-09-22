@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,10 +8,17 @@ namespace CodeRunner.Templates
 {
     public class StringTemplate : BaseTemplate<string>
     {
-        public static string GetVariableTemplate(string name) => $"{{{name}}}";
+        public static string GetVariableTemplate(string name)
+        {
+            Assert.IsNotNull(name);
+
+            return $"{{{name}}}";
+        }
 
         public StringTemplate(string content = "", IList<Variable>? variables = null)
         {
+            Assert.IsNotNull(content);
+
             Content = content;
             UsedVariables = new List<Variable>(variables ?? Array.Empty<Variable>());
         }
@@ -25,6 +33,8 @@ namespace CodeRunner.Templates
 
         public override Task<string> Resolve(ResolveContext context)
         {
+            Assert.IsNotNull(context);
+
             StringBuilder sb = new StringBuilder(Content);
             foreach (Variable v in UsedVariables)
             {

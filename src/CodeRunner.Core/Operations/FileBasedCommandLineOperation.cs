@@ -1,4 +1,5 @@
-﻿using CodeRunner.IO;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.IO;
 using CodeRunner.Templates;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,8 @@ namespace CodeRunner.Operations
 
         protected override async Task<CommandLineOperationSettings> GetSettings(ResolveContext context)
         {
+            Assert.IsNotNull(context);
+
             string inputPath = context.GetInputPath();
             string workingDir = context.GetWorkingDirectory();
             string path = Path.Join(workingDir, inputPath, FileName);
@@ -46,6 +49,8 @@ namespace CodeRunner.Operations
 
         public static DirectoryTemplate GetDirectoryTemplate(string fileName = DefaultFileName)
         {
+            Assert.IsNotNull(fileName);
+
             FileBasedCommandLineOperationSettings settings = new FileBasedCommandLineOperationSettings();
             PackageDirectoryTemplate res = new PackageDirectoryTemplate(new StringTemplate(StringTemplate.GetVariableTemplate("name"),
                 new Variable[] { new Variable("name").Required() }));

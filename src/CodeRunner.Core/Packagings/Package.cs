@@ -1,4 +1,5 @@
-﻿using CodeRunner.IO;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.IO;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,7 +14,11 @@ namespace CodeRunner.Packagings
     {
         public Package() { }
 
-        public Package(T data) : this() => Data = data;
+        public Package(T data) : this()
+        {
+            Assert.IsNotNull(data);
+            Data = data;
+        }
 
         public T? Data { get; set; }
 

@@ -63,7 +63,7 @@ namespace CodeRunner.Commands
 
             if (argument.Command != "")
             {
-                Parser repl = CommandLines.CreateParser(pipeline.Services.GetReplCommand(), pipeline);
+                Parser repl = CommandLines.CreateDefaultParser(pipeline.Services.GetReplCommand(), pipeline);
                 pipeline.IsEnd = true;
                 return await repl.InvokeAsync(argument.Command, console);
             }

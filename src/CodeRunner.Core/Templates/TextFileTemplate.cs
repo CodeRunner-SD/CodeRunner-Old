@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using CodeRunner.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
@@ -9,12 +10,20 @@ namespace CodeRunner.Templates
         {
         }
 
-        public TextFileTemplate(StringTemplate content) => Content = content;
+        public TextFileTemplate(StringTemplate content)
+        {
+            Assert.IsNotNull(content);
+
+            Content = content;
+        }
 
         public StringTemplate Content { get; set; }
 
         public override async Task<FileInfo> ResolveTo(ResolveContext context, string path)
         {
+            Assert.IsNotNull(context);
+            Assert.IsNotNull(path);
+
             string content = await Content.Resolve(context).ConfigureAwait(false);
             FileInfo res = new FileInfo(path);
             using (FileStream fs = res.Open(FileMode.Create))

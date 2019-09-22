@@ -1,4 +1,5 @@
-﻿using CodeRunner.Packagings;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.Packagings;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace CodeRunner.IO
 
         public override async Task Save(Package<T> value)
         {
+            Assert.IsNotNull(value);
+
             using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
             await value.Save(st).ConfigureAwait(false);
             File.LastWriteTime = DateTime.Now;

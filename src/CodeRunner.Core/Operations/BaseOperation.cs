@@ -3,7 +3,7 @@ using CodeRunner.Templates;
 
 namespace CodeRunner.Operations
 {
-    public abstract class BaseOperation : BaseTemplate<PipelineBuilder<OperationWatcher, bool>>
+    public abstract class BaseOperation : BaseTemplate<PipelineBuilder<OperationWatcher, Wrapper<bool>>>
     {
 
     }

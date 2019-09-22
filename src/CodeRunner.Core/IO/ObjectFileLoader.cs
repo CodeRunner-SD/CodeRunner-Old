@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,7 +9,11 @@ namespace CodeRunner.IO
     {
         private T? data;
 
-        protected ObjectFileLoader(FileInfo file) => File = file;
+        protected ObjectFileLoader(FileInfo file)
+        {
+            Assert.IsNotNull(file);
+            File = file;
+        }
 
         public FileInfo File { get; }
 

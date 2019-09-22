@@ -32,7 +32,7 @@ namespace CodeRunner
 
             ILogger logger = new Logger();
 
-            PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>();
+            PipelineBuilder<string[], Wrapper<int>> builder = new PipelineBuilder<string[], Wrapper<int>>();
 
             _ = builder.ConfigureLogger(logger)
                 .ConfigureCliCommand()
@@ -61,11 +61,11 @@ namespace CodeRunner
 
             _ = builder.UseReplCommand();
 
-            Pipeline<string[], int> pipeline = await builder.Build(args, logger);
-            PipelineResult<int> result = await pipeline.Consume();
+            Pipeline<string[], Wrapper<int>> pipeline = await builder.Build(args, logger);
+            PipelineResult<Wrapper<int>> result = await pipeline.Consume();
             if (result.IsOk)
             {
-                return result.Result;
+                return result.Result!;
             }
             else
             {

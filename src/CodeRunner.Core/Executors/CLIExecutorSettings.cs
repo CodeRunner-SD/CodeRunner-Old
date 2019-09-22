@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -8,6 +9,9 @@ namespace CodeRunner.Executors
     {
         public CLIExecutorSettings(string filePath, IList<string> arguments)
         {
+            Assert.IsNotNull(filePath);
+            Assert.IsNotNull(arguments);
+
             FilePath = filePath;
             Arguments = arguments;
         }

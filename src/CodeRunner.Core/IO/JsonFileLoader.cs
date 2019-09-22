@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace CodeRunner.IO
 
         public override async Task Save(T value)
         {
+            Assert.IsNotNull(value);
+
             using FileStream st = File.Open(FileMode.Create, FileAccess.Write);
             await JsonFormatter.Serialize(value, st).ConfigureAwait(false);
             File.LastWriteTime = DateTime.Now;

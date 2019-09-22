@@ -15,20 +15,20 @@ namespace Test.App.Commands
 {
     public static class Utils
     {
-        public static readonly PipelineOperation<string[], int> InitializeWorkspace = async context =>
+        public static readonly PipelineOperation<string[], Wrapper<int>> InitializeWorkspace = async context =>
         {
             IWorkspace workspace = context.Services.GetWorkspace();
             await workspace.Initialize();
             return 0;
         };
 
-        public static async Task<PipelineResult<int>> UseSampleCommandInvoker(Command command, string[] origin, string input = "", PipelineOperation<string[], int>? before = null, PipelineOperation<string[], int>? after = null)
+        public static async Task<PipelineResult<Wrapper<int>>> UseSampleCommandInvoker(Command command, string[] origin, string input = "", PipelineOperation<string[], Wrapper<int>>? before = null, PipelineOperation<string[], Wrapper<int>>? after = null)
         {
             using TempDirectory dir = new TempDirectory();
             IWorkspace workspace = new Workspace(dir.Directory);
             using MemoryStream ms = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input));
             using StreamReader sr = new StreamReader(ms);
-            PipelineBuilder<string[], int> builder = CreatePipelineBuilder(new TestTerminal(), sr, workspace);
+            PipelineBuilder<string[], Wrapper<int>> builder = CreatePipelineBuilder(new TestTerminal(), sr, workspace);
             if (before != null)
             {
                 _ = builder.Use("before", async context =>
@@ -40,7 +40,7 @@ namespace Test.App.Commands
             }
             _ = builder.Use("main", async context =>
               {
-                  Parser parser = CommandLines.CreateParser(command, context);
+                  Parser parser = CommandLines.CreateDefaultParser(command, context);
                   return await parser.InvokeAsync(context.Origin, context.Services.GetConsole());
               });
             if (after != null)
@@ -55,9 +55,9 @@ namespace Test.App.Commands
             return await ConsumePipelineBuilder(builder, new Logger(), origin);
         }
 
-        public static PipelineBuilder<string[], int> CreatePipelineBuilder(IConsole console, TextReader input, IWorkspace? workspace)
+        public static PipelineBuilder<string[], Wrapper<int>> CreatePipelineBuilder(IConsole console, TextReader input, IWorkspace? workspace)
         {
-            PipelineBuilder<string[], int> builder = new PipelineBuilder<string[], int>()
+            PipelineBuilder<string[], Wrapper<int>> builder = new PipelineBuilder<string[], Wrapper<int>>()
                 .ConfigureConsole(console, input);
             if (workspace != null)
             {
@@ -67,9 +67,9 @@ namespace Test.App.Commands
             return builder;
         }
 
-        public static async Task<PipelineResult<int>> ConsumePipelineBuilder(PipelineBuilder<string[], int> builder, Logger logger, string[] origin)
+        public static async Task<PipelineResult<Wrapper<int>>> ConsumePipelineBuilder(PipelineBuilder<string[], Wrapper<int>> builder, Logger logger, string[] origin)
         {
-            Pipeline<string[], int> pipeline = await builder
+            Pipeline<string[], Wrapper<int>> pipeline = await builder
                 .ConfigureLogger(logger)
                 .Build(origin, logger);
             return await pipeline.Consume();

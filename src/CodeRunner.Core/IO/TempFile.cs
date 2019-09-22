@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.IO;
 
 namespace CodeRunner.IO
@@ -7,6 +8,8 @@ namespace CodeRunner.IO
     {
         public TempFile(string ext = "")
         {
+            Assert.IsNotNull(ext);
+
             string path = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
             if (!string.IsNullOrEmpty(ext))
             {

@@ -1,4 +1,4 @@
-﻿namespace CodeRunner.Managements
+﻿namespace CodeRunner.Managements.Configurations
 {
     public class OperationSettings
     {

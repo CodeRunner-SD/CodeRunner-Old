@@ -14,7 +14,7 @@ namespace CodeRunner.Commands
     {
         public override Command Configure()
         {
-            Command res = new Command("init", "Initialize code-runner directory.");
+            Command res = new Command("init", "Initialize or uninitialize code-runner directory.");
             {
                 Argument<bool> arg = new Argument<bool>(nameof(CArgument.Delete), false)
                 {

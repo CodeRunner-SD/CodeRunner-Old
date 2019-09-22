@@ -1,6 +1,7 @@
 ﻿using CodeRunner;
 using CodeRunner.Commands;
 using CodeRunner.Managements.FSBased;
+using CodeRunner.Pipelines;
 using CodeRunner.Resources.Programming;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -14,7 +15,7 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            CodeRunner.Pipelines.PipelineResult<int> result = await Utils.UseSampleCommandInvoker(
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
                 new NewCommand().Build(),
                 new string[] { "new", "c", "a" },
                 before: async context =>
@@ -27,11 +28,11 @@ namespace Test.App.Commands
                 {
                     Workspace workspace = (Workspace)context.Services.GetWorkspace();
                     Assert.IsTrue(File.Exists(Path.Join(workspace.PathRoot.FullName, "a.c")));
-                    return Task.FromResult(0);
+                    return Task.FromResult<Wrapper<int>>(0);
                 });
 
             Assert.IsTrue(result.IsOk);
-            Assert.AreEqual(0, result.Result);
+            Assert.AreEqual<int>(0, result.Result!);
         }
     }
 }

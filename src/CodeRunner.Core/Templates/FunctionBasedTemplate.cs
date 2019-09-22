@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace CodeRunner.Templates
     {
         public FunctionBasedTemplate(Func<ResolveContext, Task> func, IList<Variable>? variables = null)
         {
+            Assert.IsNotNull(func);
             Func = func;
             UsedVariables = new List<Variable>(variables ?? Array.Empty<Variable>());
         }
@@ -16,7 +18,11 @@ namespace CodeRunner.Templates
 
         protected List<Variable> UsedVariables { get; }
 
-        public override Task DoResolve(ResolveContext context) => Func(context);
+        public override Task DoResolve(ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return Func(context);
+        }
 
         public override VariableCollection GetVariables()
         {

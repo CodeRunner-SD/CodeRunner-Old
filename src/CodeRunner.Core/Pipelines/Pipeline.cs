@@ -1,18 +1,23 @@
-﻿using CodeRunner.Loggings;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.Loggings;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Pipelines
 {
-    public delegate Task<TResult> PipelineOperation<TOrigin, TResult>(PipelineContext<TOrigin, TResult> context);
+    public delegate Task<TResult> PipelineOperation<TOrigin, TResult>(PipelineContext<TOrigin, TResult> context) where TResult : class;
 
-    public class Pipeline<TOrigin, TResult>
+    public class Pipeline<TOrigin, TResult> where TResult : class
     {
         public Pipeline(TOrigin origin, ILogger logger, ServiceProvider services, IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> ops)
         {
+            Assert.IsNotNull(origin);
+            Assert.IsNotNull(logger);
+            Assert.IsNotNull(services);
+            Assert.IsNotNull(ops);
+
             Origin = origin;
             Logger = logger;
             Services = services;
@@ -30,10 +35,7 @@ namespace CodeRunner.Pipelines
 
         private Exception? Exception { get; set; }
 
-        [MaybeNull]
-#pragma warning disable CS8653 // 默认表达式为类型参数引入了 null 值。
-        private TResult Result { get; set; } = default;
-#pragma warning restore CS8653 // 默认表达式为类型参数引入了 null 值。
+        private TResult? Result { get; set; } = default;
 
         public int Position { get; private set; } = 0;
 

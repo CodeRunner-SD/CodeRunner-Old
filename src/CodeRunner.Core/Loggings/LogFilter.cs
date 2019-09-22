@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 
 namespace CodeRunner.Loggings
 {
@@ -10,11 +11,19 @@ namespace CodeRunner.Loggings
 
             private Func<LogItem, bool> Func { get; }
 
-            public override bool Filter(LogItem item) => Func(item);
+            public override bool Filter(LogItem item)
+            {
+                Assert.IsNotNull(item);
+                return Func(item);
+            }
         }
 
         public abstract bool Filter(LogItem item);
 
-        public static LogFilter Create(Func<LogItem, bool> filter) => new FunctionalFilter(filter);
+        public static LogFilter Create(Func<LogItem, bool> filter)
+        {
+            Assert.IsNotNull(filter);
+            return new FunctionalFilter(filter);
+        }
     }
 }

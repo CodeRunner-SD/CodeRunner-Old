@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CodeRunner.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CodeRunner.IO
@@ -11,6 +12,8 @@ namespace CodeRunner.IO
 
         public TLoader Get(FileInfo file)
         {
+            Assert.IsNotNull(file);
+
             if (Pool.TryGetValue(file.FullName, out TLoader? value))
             {
                 return value;

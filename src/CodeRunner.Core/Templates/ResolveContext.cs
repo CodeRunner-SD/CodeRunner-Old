@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -10,10 +11,18 @@ namespace CodeRunner.Templates
 
         private IDictionary<string, object> Variables { get; }
 
-        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull => WithVariable(variable.Name, value);
+        public ResolveContext WithVariable<T>(Variable variable, T value) where T : notnull
+        {
+            Assert.IsNotNull(variable);
+
+            return WithVariable(variable.Name, value);
+        }
 
         public ResolveContext WithVariable<T>(string name, T value) where T : notnull
         {
+            Assert.IsNotNull(name);
+            Assert.IsNotNull(value);
+
             if (Variables.ContainsKey(name))
             {
                 Variables[name] = value;
@@ -28,12 +37,16 @@ namespace CodeRunner.Templates
 
         public ResolveContext WithoutVariable(string name)
         {
+            Assert.IsNotNull(name);
+
             _ = Variables.Remove(name);
             return this;
         }
 
         public T GetVariable<T>(Variable variable)
         {
+            Assert.IsNotNull(variable);
+
             if (Variables.TryGetValue(variable.Name, out object? val))
             {
                 return (T)val;
@@ -48,8 +61,10 @@ namespace CodeRunner.Templates
             }
         }
 
-        public bool TryGetVariable<T>(Variable variable, [MaybeNull] out T value)
+        public bool TryGetVariable<T>(Variable variable, [NotNullWhen(true), MaybeNullWhen(false)] out T value)
         {
+            Assert.IsNotNull(variable);
+
             try
             {
                 value = GetVariable<T>(variable);
@@ -64,6 +79,10 @@ namespace CodeRunner.Templates
             }
         }
 
-        public bool HasVariable(string name) => Variables.ContainsKey(name);
+        public bool HasVariable(string name)
+        {
+            Assert.IsNotNull(name);
+            return Variables.ContainsKey(name);
+        }
     }
 }

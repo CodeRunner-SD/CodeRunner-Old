@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CodeRunner.Diagnostics;
+using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ namespace CodeRunner.IO
     {
         public static string Serialize(object value, JsonSerializerSettings? settings = null)
         {
+            Assert.IsNotNull(value);
+
             return JsonConvert.SerializeObject(value, Formatting.Indented, settings ?? new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
@@ -16,6 +19,8 @@ namespace CodeRunner.IO
 
         public static T Deserialize<T>(string json)
         {
+            Assert.IsNotNull(json);
+
             return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All

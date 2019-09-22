@@ -52,16 +52,7 @@ namespace CodeRunner.Managements.FSBased
         public async Task<Package<TValue>?> Get(string id)
         {
             Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
-            if (list == null)
-                return null;
-            if (list.TryGetValue(id, out FileItemValue? item))
-            {
-                return await Load(item);
-            }
-            else
-            {
-                return null;
-            }
+            return list == null ? null : (list.TryGetValue(id, out FileItemValue? item) ? await Load(item) : null);
         }
 
         public async IAsyncEnumerable<string> GetKeys()
@@ -87,9 +78,7 @@ namespace CodeRunner.Managements.FSBased
         public async Task<bool> Has(string id)
         {
             Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
-            if (list == null)
-                return false;
-            return list.ContainsKey(id);
+            return list == null ? false : list.ContainsKey(id);
         }
 
         public async Task Set(string id, Package<TValue>? value)

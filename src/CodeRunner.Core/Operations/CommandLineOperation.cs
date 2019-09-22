@@ -1,4 +1,5 @@
-﻿using CodeRunner.Executors;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.Executors;
 using CodeRunner.Pipelines;
 using CodeRunner.Templates;
 using System;
@@ -10,14 +11,16 @@ namespace CodeRunner.Operations
     {
         protected abstract Task<CommandLineOperationSettings> GetSettings(ResolveContext context);
 
-        public override async Task<PipelineBuilder<OperationWatcher, bool>> Resolve(ResolveContext context)
+        public override async Task<PipelineBuilder<OperationWatcher, Wrapper<bool>>> Resolve(ResolveContext context)
         {
+            Assert.IsNotNull(context);
+
             CommandLineOperationSettings settings = await GetSettings(context).ConfigureAwait(false);
             string shell = string.IsNullOrEmpty(settings.Shell) ? context.GetShell() : settings.Shell;
             string workingDirectory = string.IsNullOrEmpty(settings.WorkingDirectory) ? context.GetWorkingDirectory() : settings.WorkingDirectory;
-            PipelineBuilder<OperationWatcher, bool> builder = new PipelineBuilder<OperationWatcher, bool>();
+            PipelineBuilder<OperationWatcher, Wrapper<bool>> builder = new PipelineBuilder<OperationWatcher, Wrapper<bool>>();
             _ = builder.Configure("service", scope => scope.Add<CommandLineOperationSettings>(settings))
-                .Use("init", context => Task.FromResult(true));
+                .Use("init", context => Task.FromResult<Wrapper<bool>>(true));
             foreach (CommandLineTemplate item in settings.Scripts)
             {
                 CLIExecutorSettings res = new CLIExecutorSettings(shell, new string[]

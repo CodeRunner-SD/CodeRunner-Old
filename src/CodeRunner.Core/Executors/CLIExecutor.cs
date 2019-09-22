@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -45,10 +46,7 @@ namespace CodeRunner.Executors
 
         private async Task GetMemory()
         {
-            if (Result == null)
-            {
-                throw new NullReferenceException("Result is null");
-            }
+            Assert.IsNotNull(Result);
 
             Result.MaximumMemory = 0;
             while (Result.State == ExecutorState.Running && Process?.HasExited == false)
@@ -74,15 +72,8 @@ namespace CodeRunner.Executors
 
         private async Task Running()
         {
-            if (Process == null)
-            {
-                throw new NullReferenceException("Process is null");
-            }
-
-            if (Result == null)
-            {
-                throw new NullReferenceException("Result is null");
-            }
+            Assert.IsNotNull(Process);
+            Assert.IsNotNull(Result);
 
             _ = Process.Start();
 
@@ -130,7 +121,9 @@ namespace CodeRunner.Executors
                 Initialize();
             }
 
-            if (Result!.State != ExecutorState.Pending)
+            Assert.IsNotNull(Result);
+
+            if (Result.State != ExecutorState.Pending)
             {
                 throw new Exception("Can't run before initialized.");
             }
@@ -140,10 +133,7 @@ namespace CodeRunner.Executors
 
             await Task.WhenAll(Running(), GetMemory()).ConfigureAwait(false);
 
-            if (Process == null)
-            {
-                throw new NullReferenceException("Process is null.");
-            }
+            Assert.IsNotNull(Process);
 
             Process.Refresh();
 

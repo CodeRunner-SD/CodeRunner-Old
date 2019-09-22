@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CodeRunner.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,18 +19,26 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate UseCommand(StringTemplate command)
         {
+            Assert.IsNotNull(command);
+
             Commands.Add(command);
             return this;
         }
 
         public CommandLineTemplate UseArgument(StringTemplate argument)
         {
+            Assert.IsNotNull(argument);
+
             Arguments.Add(argument);
             return this;
         }
 
         public CommandLineTemplate WithOption(StringTemplate id, StringTemplate value, string prefix = "")
         {
+            Assert.IsNotNull(id);
+            Assert.IsNotNull(value);
+            Assert.IsNotNull(prefix);
+
             id.Content = prefix + id.Content;
             StringTemplate f = Options.Where(x => x.Key.Content == id.Content).Select(x => x.Key).FirstOrDefault();
             if (f == null)
@@ -48,6 +57,8 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate WithoutOption(string fullContent)
         {
+            Assert.IsNotNull(fullContent);
+
             StringTemplate f = Options.Where(x => x.Key.Content == fullContent).Select(x => x.Key).FirstOrDefault();
             if (f != null)
             {
@@ -59,6 +70,9 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate WithFlag(StringTemplate id, string prefix = "")
         {
+            Assert.IsNotNull(id);
+            Assert.IsNotNull(prefix);
+
             id.Content = prefix + id.Content;
             Flags.Add(id);
             return this;
@@ -66,6 +80,8 @@ namespace CodeRunner.Templates
 
         public CommandLineTemplate WithoutFlag(string fullContent)
         {
+            Assert.IsNotNull(fullContent);
+
             StringTemplate f = Flags.Where(x => x.Content == fullContent).FirstOrDefault();
             if (f != null)
             {
@@ -77,6 +93,8 @@ namespace CodeRunner.Templates
 
         public override async Task<string[]> Resolve(ResolveContext context)
         {
+            Assert.IsNotNull(context);
+
             List<string> items = new List<string>();
             foreach (StringTemplate v in Commands)
             {

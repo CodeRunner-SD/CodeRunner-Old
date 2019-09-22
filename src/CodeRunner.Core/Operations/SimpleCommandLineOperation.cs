@@ -1,4 +1,5 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.Templates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace CodeRunner.Operations
 
         public BaseOperation Use(CommandLineTemplate command)
         {
+            Assert.IsNotNull(command);
+
             Items.Add(command);
             return this;
         }

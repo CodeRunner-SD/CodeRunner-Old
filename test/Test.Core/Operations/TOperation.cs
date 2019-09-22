@@ -1,6 +1,7 @@
 ﻿using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Operations;
+using CodeRunner.Pipelines;
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -40,8 +41,8 @@ namespace Test.Core.Operations
 
             // op.CommandExecuting += Op_CommandExecuting;
             // op.CommandExecuted += Op_CommandExecuted;
-            CodeRunner.Pipelines.Pipeline<OperationWatcher, bool> pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
-            CodeRunner.Pipelines.PipelineResult<bool> res = await pipeline.Consume();
+            Pipeline<OperationWatcher, Wrapper<bool>> pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
+            PipelineResult<Wrapper<bool>> res = await pipeline.Consume();
             Assert.IsTrue(res.IsOk && res.Result);
         }
 

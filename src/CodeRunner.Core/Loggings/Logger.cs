@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CodeRunner.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CodeRunner.Loggings
@@ -18,6 +19,8 @@ namespace CodeRunner.Loggings
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
+            Assert.IsNotNull(item);
+
             foreach (LogFilter v in Filters)
             {
                 if (!v.Filter(item))
@@ -37,6 +40,8 @@ namespace CodeRunner.Loggings
 
         public ILogger UseFilter(LogFilter filter)
         {
+            Assert.IsNotNull(filter);
+
             Filters.Add(filter);
             return this;
         }

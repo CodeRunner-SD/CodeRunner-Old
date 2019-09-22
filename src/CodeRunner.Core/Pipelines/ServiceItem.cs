@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CodeRunner.Pipelines
 {
-    public readonly struct ServiceItem : IEquatable<ServiceItem>
+    internal readonly struct ServiceItem : IEquatable<ServiceItem>
     {
         public ServiceItem(object value, string source)
         {

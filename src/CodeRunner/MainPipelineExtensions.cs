@@ -11,7 +11,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
 using System.IO;
 using System.Threading.Tasks;
-using Builder = CodeRunner.Pipelines.PipelineBuilder<string[], int>;
+using Builder = CodeRunner.Pipelines.PipelineBuilder<string[], CodeRunner.Pipelines.Wrapper<int>>;
 
 namespace CodeRunner
 {
@@ -50,15 +50,20 @@ namespace CodeRunner
                 TestView.Console = context.Services.GetConsole();
                 TestView.Workspace = context.Services.GetWorkspace();
                 context.IgnoreResult = true;
-                return Task.FromResult(0);
+                return Task.FromResult<Wrapper<int>>(0);
             });
 
         public static Builder UseCliCommand(this Builder builder) => builder.Use(nameof(UseCliCommand),
             async context =>
             {
-                Parser cliCommand = CommandLines.CreateParser(context.Services.GetCliCommand(), context);
+                Parser cliCommand = CommandLines.CreateDefaultParser(context.Services.GetCliCommand(), context);
                 IConsole console = context.Services.GetConsole();
-                return await cliCommand.InvokeAsync(context.Origin, console);
+                int exitCode = await cliCommand.InvokeAsync(context.Origin, console);
+                if (!context.Services.TryGet<IWorkspace>(out _)) // No workspace, cliCommand interrupt
+                {
+                    context.IsEnd = true;
+                }
+                return exitCode;
             });
 
         private static bool Prompt(PipelineContext context, ITerminal terminal)
@@ -85,7 +90,7 @@ namespace CodeRunner
             async context =>
             {
                 ITerminal terminal = context.Services.GetConsole().GetTerminal();
-                Parser replCommand = CommandLines.CreateParser(context.Services.GetReplCommand(), context);
+                Parser replCommand = CommandLines.CreateDefaultParser(context.Services.GetReplCommand(), context);
                 TextReader input = context.Services.GetInput();
 
                 terminal.OutputLine(Environment.CurrentDirectory);
@@ -95,12 +100,11 @@ namespace CodeRunner
                     string? line = input.InputLine();
                     if (line != null)
                     {
-                        if (line == "quit")
+                        int exitCode = await replCommand.InvokeAsync(line, terminal);
+                        if (exitCode == ReplCommand.ExitReplCode)
                         {
                             break;
                         }
-
-                        int exitCode = await replCommand.InvokeAsync(line, terminal);
                         if (exitCode != 0)
                         {
                             terminal.OutputErrorLine($"Executed with code {exitCode}.");

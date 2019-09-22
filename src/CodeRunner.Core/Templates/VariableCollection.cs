@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using CodeRunner.Diagnostics;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace CodeRunner.Templates
@@ -27,6 +28,8 @@ namespace CodeRunner.Templates
 
         public void Collect(BaseTemplate from)
         {
+            Assert.IsNotNull(from);
+
             foreach (Variable v in from.GetVariables())
             {
                 Add(v);
@@ -35,6 +38,8 @@ namespace CodeRunner.Templates
 
         public void Collect(IEnumerable<BaseTemplate> from)
         {
+            Assert.IsNotNull(from);
+
             foreach (BaseTemplate item in from)
             {
                 Collect(item);

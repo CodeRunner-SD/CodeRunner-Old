@@ -121,7 +121,7 @@ namespace CodeRunner.Commands
                     }
             }*/
 
-            PipelineResult<bool>? item = null;
+            PipelineResult<Wrapper<bool>>? item = null;
             try
             {
                 IWorkItem? workItem = pipeline.Services.GetWorkItem();
@@ -138,7 +138,7 @@ namespace CodeRunner.Commands
                 return -1;
             }
 
-            bool res = item.IsOk && item.Result;
+            bool res = item.IsOk && item.Result!;
             return res ? 0 : -1;
         }
 

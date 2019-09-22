@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 using System.Collections.Generic;
 
 namespace CodeRunner.Templates
@@ -11,6 +12,8 @@ namespace CodeRunner.Templates
 
         public Variable(string name = "")
         {
+            Assert.IsNotNull(name);
+
             Name = name;
             _ = Required();
         }
@@ -40,6 +43,8 @@ namespace CodeRunner.Templates
 
         public Variable NotRequired(object value)
         {
+            Assert.IsNotNull(value);
+
             IsRequired = false;
             DefaultValue = value;
             return this;

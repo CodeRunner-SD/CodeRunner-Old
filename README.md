@@ -4,15 +4,13 @@
 
 A CLI tool to run code. Inspired by [edl-cr](https://github.com/eXceediDeaL/edl-coderunner).
 
-Project Status:
-
-|||
+|Item|Status|
 |-|-|
 |Repository|[![issue](https://img.shields.io/github/issues/StardustDL/CodeRunner.svg)](https://github.com/StardustDL/CodeRunner/issues/) [![pull requests](https://img.shields.io/github/issues-pr/StardustDL/CodeRunner.svg)](https://github.com/StardustDL/CodeRunner/pulls/)|
 |Dependencies|[![dependencies](https://img.shields.io/librariesio/github/StardustDL/CodeRunner.svg)](https://libraries.io/github/StardustDL/CodeRunner)|
 |Build|![github](https://github.com/StardustDL/CodeRunner/workflows/CI-CD/badge.svg)|
 |Coverage|[![master](https://img.shields.io/codecov/c/github/StardustDL/CodeRunner/master.svg?label=master)](https://codecov.io/gh/StardustDL/CodeRunner) [![dev](https://img.shields.io/codecov/c/github/StardustDL/CodeRunner/dev.svg?label=dev)](https://codecov.io/gh/StardustDL/CodeRunner)|
-|Package|[![myget](https://img.shields.io/myget/stardustdl/v/cr?label=myget)](https://www.myget.org/feed/stardustdl/package/nuget/cr) [![myget](https://img.shields.io/myget/stardustdl/dt/cr)](https://www.myget.org/feed/stardustdl/package/nuget/cr)|
+|Package|[![myget](https://img.shields.io/myget/stardustdl/v/CodeRunner?label=myget)](https://www.myget.org/feed/stardustdl/package/nuget/CodeRunner) [![myget](https://img.shields.io/myget/stardustdl/dt/CodeRunner)](https://www.myget.org/feed/stardustdl/package/nuget/CodeRunner)|
 
 ## Install
 
@@ -21,10 +19,12 @@ Project Status:
 CodeRunner is packed as a .NET Tool, and is pushed to MyGet. Use the following command to install it as global tool:
 
 ```sh
-dotnet tool install -g cr --version 0.0.1-pre --add-source https://www.myget.org/F/stardustdl/api/v3/index.json
+dotnet tool install -g CodeRunner --version 0.0.1-pre --add-source https://www.myget.org/F/stardustdl/api/v3/index.json
 ```
 
 ### Binary Files
+
+See the latest action CI-CD, and download the artifacts `built` for your OS.
 
 ## CLI Mode
 
@@ -58,10 +58,7 @@ If you want to clear CR data, use this command:
 Create a new item:
 
 ```sh
-> new cpp -- name=a
-
-# input name interactively
-> new cpp
+> new cpp a
 ```
 
 It will use templates in `.cr/templates/` to create item.
@@ -85,7 +82,7 @@ Not only use files, you can also use directories to create a unique environment 
 
 ```sh
 # Create a new directory env
-> new dir -- name=a
+> new dir a
 
 # Set a directory env for current
 > now -d a
@@ -106,13 +103,13 @@ When you meet some errors, for example, CR data loading failing, use `debug` com
 |-|-|
 |`init [--delete]`|Initialize or delete CR data|
 |`clear`|Clear screen|
-|`new [Template]`|Create new item by template|
+|`new [Template] [Name]`|Create new item by template|
 |`now -f [file] -d [directory]`|Change current work-item|
 |`run [Operation]`|Run operation|
 |`template [list add remove]`|Manage templates|
 |`operation [list add remove]`|Manage operations|
 |`debug`|Show debug data|
-|`quit`|Quit CR|
+|`exit`|Exit CR|
 |`--help`|Get help|
 |`--version`|Get version|
 

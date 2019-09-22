@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeRunner.Diagnostics;
+using System;
 
 namespace CodeRunner.Loggings
 {
@@ -6,6 +7,9 @@ namespace CodeRunner.Loggings
     {
         public LoggerScope(ILogger source, string name, LogLevel level)
         {
+            Assert.IsNotNull(source);
+            Assert.IsNotNull(name);
+
             Source = source;
             Name = name;
             Level = level;
@@ -22,6 +26,7 @@ namespace CodeRunner.Loggings
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
+            Assert.IsNotNull(content);
             if (level >= Level)
             {
                 Source.Log(new LogItem
@@ -37,12 +42,20 @@ namespace CodeRunner.Loggings
         public void Error(Exception exception,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Error(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Assert.IsNotNull(exception);
+            Error(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
+        }
 
         public void Fatal(Exception exception,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0) => Fatal(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Assert.IsNotNull(exception);
+            Fatal(exception.ToString(), memberName, sourceFilePath, sourceLineNumber);
+        }
 
         public void Error(string content,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
