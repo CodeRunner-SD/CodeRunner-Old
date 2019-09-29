@@ -20,9 +20,9 @@ namespace CodeRunner.Managements.FSBased.Templates
 
         public WorkspaceTemplate()
         {
-            PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.P_CRRoot).WithAttributes(FileAttributes.Hidden);
-            _ = crRoot.AddDirectory(Workspace.P_TemplatesRoot);
-            _ = crRoot.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new WorkspaceSettings
+            PackageDirectoryTemplate crRoot = Package.AddDirectory(Workspace.PCRRoot).WithAttributes(FileAttributes.Hidden);
+            _ = crRoot.AddDirectory(Workspace.PTemplatesRoot);
+            _ = crRoot.AddFile(Workspace.PSettings).UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(new WorkspaceSettings
             {
                 Version = new Version(0, 0, 1, 0)
             }))));

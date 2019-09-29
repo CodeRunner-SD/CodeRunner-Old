@@ -1,7 +1,9 @@
 ﻿using CodeRunner.Commands;
+using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using Test.App.Mocks;
 
 namespace Test.App.Commands
 {
@@ -11,11 +13,12 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
+            TestWorkspace workspace = new TestWorkspace();
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
                 new InitCommand().Build(),
                 new string[] { "init" },
                 after: context => Task.FromResult<Wrapper<int>>(0));
-
+            workspace.AssertInvoked(nameof(IWorkspace.Initialize));
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual<int>(0, result.Result!);
         }
@@ -23,11 +26,13 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Delete()
         {
-            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
+            TestWorkspace workspace = new TestWorkspace();
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
                 new InitCommand().Build(),
                 new string[] { "init", "--delete" },
                 after: context => Task.FromResult<Wrapper<int>>(0));
 
+            workspace.AssertInvoked(nameof(IWorkspace.Clear));
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual<int>(0, result.Result!);
         }

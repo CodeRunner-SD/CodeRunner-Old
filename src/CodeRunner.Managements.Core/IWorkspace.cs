@@ -15,8 +15,8 @@ namespace CodeRunner.Managements
         IOperationManager Operations { get; }
 
         // register when template is null
-        Task<IWorkItem?> Create(string name, BaseTemplate? template, Func<VariableCollection, ResolveContext, Task> resolveCallback);
+        Task<IWorkItem?> Create(string name, BaseTemplate? from, Func<VariableCollection, ResolveContext, Task> resolveCallback);
 
-        Task<PipelineResult<Wrapper<bool>>> Execute(IWorkItem? workItem, BaseOperation operation, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger);
+        Task<PipelineResult<Wrapper<bool>>> Execute(IWorkItem? workItem, BaseOperation from, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger);
     }
 }

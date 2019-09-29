@@ -1,4 +1,5 @@
-﻿using CodeRunner.IO;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Managements.Configurations;
 using CodeRunner.Managements.FSBased.Templates;
@@ -13,17 +14,19 @@ namespace CodeRunner.Managements.FSBased
 {
     public class Workspace : Manager<WorkspaceSettings>, IWorkspace
     {
-        public const string P_CRRoot = ".cr";
-        public const string P_Settings = "settings.json";
-        public const string P_TemplatesRoot = "templates";
-        public const string P_OperatorsRoot = "operations";
+        public const string PCRRoot = ".cr";
+        public const string PSettings = "settings.json";
+        public const string PTemplatesRoot = "templates";
+        public const string POperatorsRoot = "operations";
 
         public Workspace(DirectoryInfo pathRoot) : base(pathRoot, new Lazy<DirectoryTemplate>(() => new WorkspaceTemplate()))
         {
-            CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, P_CRRoot));
-            Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_TemplatesRoot)));
-            Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, P_OperatorsRoot)));
-            SettingsLoader = new JsonFileLoader<WorkspaceSettings>(new FileInfo(Path.Join(CRRoot.FullName, P_Settings)));
+            Assert.IsNotNull(pathRoot);
+
+            CRRoot = new DirectoryInfo(Path.Join(pathRoot.FullName, PCRRoot));
+            Templates = new TemplateManager(new DirectoryInfo(Path.Join(CRRoot.FullName, PTemplatesRoot)));
+            Operations = new OperationManager(new DirectoryInfo(Path.Join(CRRoot.FullName, POperatorsRoot)));
+            SettingsLoader = new JsonFileLoader<WorkspaceSettings>(new FileInfo(Path.Join(CRRoot.FullName, PSettings)));
         }
 
         private DirectoryInfo CRRoot { get; set; }
@@ -34,8 +37,8 @@ namespace CodeRunner.Managements.FSBased
 
         public override async Task Clear()
         {
-            await Templates.Clear();
-            await Operations.Clear();
+            await Templates.Clear().ConfigureAwait(false);
+            await Operations.Clear().ConfigureAwait(false);
 
             if (CRRoot.Exists)
             {
@@ -50,19 +53,20 @@ namespace CodeRunner.Managements.FSBased
             await Operations.Initialize().ConfigureAwait(false);
         }
 
-        public async Task<IWorkItem?> Create(string name, BaseTemplate? template, Func<VariableCollection, ResolveContext, Task> resolveCallback)
+        public async Task<IWorkItem?> Create(string name, BaseTemplate? from, Func<VariableCollection, ResolveContext, Task> resolveCallback)
         {
+            Assert.IsNotNull(resolveCallback);
             ResolveContext context = new ResolveContext()
                 .WithVariable(nameof(name), name)
                 .WithVariable(DirectoryTemplate.Var, PathRoot.FullName);
-            if (template == null)
+            if (from == null)
             {
-                template = new RegisterWorkItemTemplate();
+                from = new RegisterWorkItemTemplate();
                 _ = context.WithVariable(RegisterWorkItemTemplate.Workspace, this);
             }
-            await resolveCallback(template.GetVariables(), context).ConfigureAwait(false);
+            await resolveCallback(from.GetVariables(), context).ConfigureAwait(false);
             IWorkItem? res;
-            switch (template)
+            switch (from)
             {
                 case FileTemplate ft:
                     FileInfo f = await ft.Resolve(context).ConfigureAwait(false);
@@ -76,17 +80,20 @@ namespace CodeRunner.Managements.FSBased
                     res = await rt.Resolve(context).ConfigureAwait(false);
                     break;
                 default:
-                    await template.DoResolve(context).ConfigureAwait(false);
+                    await from.DoResolve(context).ConfigureAwait(false);
                     res = null;
                     break;
             }
             return res;
         }
 
-        public async Task<PipelineResult<Wrapper<bool>>> Execute(IWorkItem? workItem, BaseOperation operation, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger)
+        public async Task<PipelineResult<Wrapper<bool>>> Execute(IWorkItem? workItem, BaseOperation from, Func<VariableCollection, ResolveContext, Task> resolveCallback, OperationWatcher watcher, ILogger logger)
         {
+            Assert.IsNotNull(from);
+            Assert.IsNotNull(resolveCallback);
+
             ResolveContext context = new ResolveContext();
-            WorkspaceSettings? settings = await Settings;
+            WorkspaceSettings? settings = await Settings.ConfigureAwait(false);
             if (settings != null)
             {
                 _ = context.SetShell(settings.DefaultShell);
@@ -97,8 +104,8 @@ namespace CodeRunner.Managements.FSBased
             {
                 _ = context.SetInputPath(item.RelativePath);
             }
-            await resolveCallback(operation.GetVariables(), context).ConfigureAwait(false);
-            PipelineBuilder<OperationWatcher, Wrapper<bool>> builder = await operation.Resolve(context).ConfigureAwait(false);
+            await resolveCallback(from.GetVariables(), context).ConfigureAwait(false);
+            PipelineBuilder<OperationWatcher, Wrapper<bool>> builder = await from.Resolve(context).ConfigureAwait(false);
             Pipeline<OperationWatcher, Wrapper<bool>> pipeline = await builder.Build(watcher, logger).ConfigureAwait(false);
             return await pipeline.Consume().ConfigureAwait(false);
         }

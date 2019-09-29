@@ -60,7 +60,7 @@ namespace CodeRunner.Commands
             TextReader input = pipeline.Services.GetInput();
             ITerminal terminal = console.GetTerminal();
             string op = argument.Operation;
-            Packagings.Package<BaseOperation>? tplItem = await workspace.Operations.Get(op);
+            Packagings.Package<BaseOperation>? tplItem = await workspace.Operations.GetValue(op);
             if (tplItem == null)
             {
                 terminal.OutputErrorLine($"No this operation: {op}.");

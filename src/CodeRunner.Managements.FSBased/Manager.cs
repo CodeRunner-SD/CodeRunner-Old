@@ -26,7 +26,7 @@ namespace CodeRunner.Managements.FSBased
         {
             if (DirectoryTemplate != null)
             {
-                _ = await DirectoryTemplate.Value.ResolveTo(new ResolveContext(), PathRoot.FullName);
+                _ = await DirectoryTemplate.Value.ResolveTo(new ResolveContext(), PathRoot.FullName).ConfigureAwait(false);
             }
         }
 

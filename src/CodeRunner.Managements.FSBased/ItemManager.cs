@@ -14,15 +14,15 @@ namespace CodeRunner.Managements.FSBased
         public ItemManager(DirectoryInfo pathRoot, Lazy<DirectoryTemplate>? directoryTemplate = null) : base(pathRoot, directoryTemplate)
         {
             SettingsLoader = new JsonFileLoader<TSettings>(
-                new FileInfo(Path.Join(PathRoot.FullName, Workspace.P_Settings)));
+                new FileInfo(Path.Join(PathRoot.FullName, Workspace.PSettings)));
             ListLoader = new JsonFileLoader<Dictionary<string, FileItemValue>>(
                 new FileInfo(Path.Join(PathRoot.FullName, "list.json")));
         }
 
         public override async Task Initialize()
         {
-            await base.Initialize();
-            await ListLoader.Save(new Dictionary<string, FileItemValue>());
+            await base.Initialize().ConfigureAwait(false);
+            await ListLoader.Save(new Dictionary<string, FileItemValue>()).ConfigureAwait(false);
         }
 
         protected IObjectLoader<Dictionary<string, FileItemValue>> ListLoader { get; set; }
@@ -49,15 +49,15 @@ namespace CodeRunner.Managements.FSBased
             }
         }
 
-        public async Task<Package<TValue>?> Get(string id)
+        public async Task<Package<TValue>?> GetValue(string id)
         {
-            Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
-            return list == null ? null : (list.TryGetValue(id, out FileItemValue? item) ? await Load(item) : null);
+            Dictionary<string, FileItemValue>? list = await ListLoader.GetData().ConfigureAwait(false);
+            return list == null ? null : (list.TryGetValue(id, out FileItemValue? item) ? await Load(item).ConfigureAwait(false) : null);
         }
 
         public async IAsyncEnumerable<string> GetKeys()
         {
-            Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
+            Dictionary<string, FileItemValue>? list = await ListLoader.GetData().ConfigureAwait(false);
             if (list != null)
             {
                 foreach (string v in list.Keys)
@@ -67,40 +67,40 @@ namespace CodeRunner.Managements.FSBased
 
         public async IAsyncEnumerable<Package<TValue>?> GetValues()
         {
-            Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
+            Dictionary<string, FileItemValue>? list = await ListLoader.GetData().ConfigureAwait(false);
             if (list != null)
             {
                 foreach (FileItemValue v in list.Values)
-                    yield return await Load(v);
+                    yield return await Load(v).ConfigureAwait(false);
             }
         }
 
-        public async Task<bool> Has(string id)
+        public async Task<bool> HasKey(string id)
         {
-            Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
+            Dictionary<string, FileItemValue>? list = await ListLoader.GetData().ConfigureAwait(false);
             return list == null ? false : list.ContainsKey(id);
         }
 
-        public async Task Set(string id, Package<TValue>? value)
+        public async Task SetValue(string id, Package<TValue>? value)
         {
-            Dictionary<string, FileItemValue>? list = await ListLoader.GetData();
+            Dictionary<string, FileItemValue>? list = await ListLoader.GetData().ConfigureAwait(false);
             if (list == null)
                 return;
             if (list.TryGetValue(id, out FileItemValue? item))
             {
-                await Set(item, value);
+                await Set(item, value).ConfigureAwait(false);
                 if (value == null)
                 {
                     _ = list.Remove(id);
-                    await ListLoader.Save(list);
+                    await ListLoader.Save(list).ConfigureAwait(false);
                 }
             }
             else if (value != null)
             {
                 FileItemValue nitem = new FileItemValue { FileName = id };
-                await Set(nitem, value);
+                await Set(nitem, value).ConfigureAwait(false);
                 list.Add(id, nitem);
-                await ListLoader.Save(list);
+                await ListLoader.Save(list).ConfigureAwait(false);
             }
         }
     }

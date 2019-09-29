@@ -31,7 +31,7 @@ namespace Test.Core.Pipelines
                 PipelineResult<Wrapper<int>> res = await pipeline.Consume();
                 Assert.AreEqual<int>(4, res.Result);
                 Assert.IsTrue(res.IsError);
-                Assert.IsInstanceOfType(res.Exception, typeof(NotImplementedException));
+                Assert.IsInstanceOfType(res.Exception.InnerException, typeof(NotImplementedException));
                 Assert.AreEqual(CodeRunner.Loggings.LogLevel.Error, res.Logs.Last().Level);
             }
         }

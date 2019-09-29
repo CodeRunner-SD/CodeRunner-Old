@@ -1,4 +1,6 @@
-﻿namespace CodeRunner.Pipelines
+﻿using CodeRunner.Diagnostics;
+
+namespace CodeRunner.Pipelines
 {
     public class Wrapper<T> where T : struct
     {
@@ -8,7 +10,11 @@
 
         public static implicit operator Wrapper<T>(T value) => new Wrapper<T>(value);
 
-        public static implicit operator T(Wrapper<T> value) => value.Value;
+        public static implicit operator T(Wrapper<T> value)
+        {
+            Assert.IsNotNull(value);
+            return value.Value;
+        }
 
         public Wrapper<T> ToWrapper(in T value)
         {

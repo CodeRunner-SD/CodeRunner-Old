@@ -35,7 +35,7 @@ namespace CodeRunner.Commands.ItemManagers
             {
                 await foreach (string key in manager.GetKeys())
                 {
-                    yield return (key, await manager.Get(key));
+                    yield return (key, await manager.GetValue(key));
                 }
             }
 

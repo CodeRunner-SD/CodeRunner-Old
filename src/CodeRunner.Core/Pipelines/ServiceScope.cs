@@ -86,18 +86,24 @@ namespace CodeRunner.Pipelines
         public bool TryGet<T>([NotNullWhen(true), MaybeNullWhen(false)] out T value, string id = "") where T : notnull
         {
             Assert.IsNotNull(id);
-            try
-            {
-                value = Get<T>(id);
-                return true;
-            }
-            catch
-            {
+
 #pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
-                value = default;
+            value = default;
 #pragma warning restore CS8653 // 默认表达式会为类型参数引入 null 值。
+
+            Dictionary<string, ServiceItem>? dict = FindSubDictionary<T>();
+
+            if (dict == null)
                 return false;
+            if (dict.TryGetValue(id, out ServiceItem item))
+            {
+                if (item.Value is T res)
+                {
+                    value = res;
+                    return true;
+                }
             }
+            return false;
         }
     }
 }

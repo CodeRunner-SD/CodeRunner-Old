@@ -26,15 +26,15 @@ namespace Test.Managements
                         Name = nameof(sample)
                     }
                 };
-                await manager.Set(nameof(sample), sample);
-                Assert.IsTrue(await manager.Has(nameof(sample)));
-                Package<BaseOperation>? reget = await manager.Get(nameof(sample));
+                await manager.SetValue(nameof(sample), sample);
+                Assert.IsTrue(await manager.HasKey(nameof(sample)));
+                Package<BaseOperation>? reget = await manager.GetValue(nameof(sample));
                 Assert.IsNotNull(reget);
                 Assert.AreEqual(nameof(sample), reget?.Metadata?.Name);
                 Assert.IsInstanceOfType(reget!.Data, typeof(SimpleCommandLineOperation));
 
-                await manager.Set(nameof(sample), null);
-                Assert.IsFalse(await manager.Has(nameof(sample)));
+                await manager.SetValue(nameof(sample), null);
+                Assert.IsFalse(await manager.HasKey(nameof(sample)));
             }
         }
 

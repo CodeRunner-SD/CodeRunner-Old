@@ -12,7 +12,7 @@ namespace CodeRunner.Templates
         public BinaryFileTemplate(byte[] content)
         {
             Assert.IsNotNull(content);
-            Content = Convert.ToBase64String(content);
+            this.content = Convert.ToBase64String(content);
         }
 
         public string Content

@@ -17,16 +17,16 @@ namespace Test.Managements
             await manager.Initialize();
             Assert.IsNotNull(await manager.Settings);
             {
-                Package<BaseTemplate> c = Templates.C;
-                await manager.Set(nameof(c), c);
-                Assert.IsTrue(await manager.Has(nameof(c)));
-                Package<BaseTemplate>? reget = await manager.Get(nameof(c));
+                Package<BaseTemplate> c = FileTemplates.C;
+                await manager.SetValue(nameof(c), c);
+                Assert.IsTrue(await manager.HasKey(nameof(c)));
+                Package<BaseTemplate>? reget = await manager.GetValue(nameof(c));
                 Assert.IsNotNull(reget);
                 Assert.AreEqual(nameof(c), reget?.Metadata?.Name);
                 Assert.IsInstanceOfType(reget!.Data, typeof(BaseTemplate));
 
-                await manager.Set(nameof(c), null);
-                Assert.IsFalse(await manager.Has(nameof(c)));
+                await manager.SetValue(nameof(c), null);
+                Assert.IsFalse(await manager.HasKey(nameof(c)));
             }
         }
 

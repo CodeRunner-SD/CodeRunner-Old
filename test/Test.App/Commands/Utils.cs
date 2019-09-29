@@ -1,9 +1,7 @@
 ﻿using CodeRunner;
 using CodeRunner.Helpers;
-using CodeRunner.IO;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
-using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -22,10 +20,8 @@ namespace Test.App.Commands
             return 0;
         };
 
-        public static async Task<PipelineResult<Wrapper<int>>> UseSampleCommandInvoker(Command command, string[] origin, string input = "", PipelineOperation<string[], Wrapper<int>>? before = null, PipelineOperation<string[], Wrapper<int>>? after = null)
+        public static async Task<PipelineResult<Wrapper<int>>> UseSampleCommandInvoker(IWorkspace workspace, Command command, string[] origin, string input = "", PipelineOperation<string[], Wrapper<int>>? before = null, PipelineOperation<string[], Wrapper<int>>? after = null)
         {
-            using TempDirectory dir = new TempDirectory();
-            IWorkspace workspace = new Workspace(dir.Directory);
             using MemoryStream ms = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input));
             using StreamReader sr = new StreamReader(ms);
             PipelineBuilder<string[], Wrapper<int>> builder = CreatePipelineBuilder(new TestTerminal(), sr, workspace);

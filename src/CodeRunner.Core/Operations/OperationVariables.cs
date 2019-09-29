@@ -1,4 +1,5 @@
-﻿using CodeRunner.Templates;
+﻿using CodeRunner.Diagnostics;
+using CodeRunner.Templates;
 
 namespace CodeRunner.Operations
 {
@@ -12,20 +13,52 @@ namespace CodeRunner.Operations
 
         public static Variable VarWorkingDirectory => new Variable("workingDirectory").NotRequired("");
 
-        public static string GetInputPath(this ResolveContext context) => context.GetVariable<string>(VarInputPath);
+        public static string GetInputPath(this ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return context.GetVariable<string>(VarInputPath);
+        }
 
-        public static string GetOutputPath(this ResolveContext context) => context.GetVariable<string>(VarOutputPath);
+        public static string GetOutputPath(this ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return context.GetVariable<string>(VarOutputPath);
+        }
 
-        public static string GetShell(this ResolveContext context) => context.GetVariable<string>(VarShell);
+        public static string GetShell(this ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return context.GetVariable<string>(VarShell);
+        }
 
-        public static string GetWorkingDirectory(this ResolveContext context) => context.GetVariable<string>(VarWorkingDirectory);
+        public static string GetWorkingDirectory(this ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return context.GetVariable<string>(VarWorkingDirectory);
+        }
 
-        public static ResolveContext SetInputPath(this ResolveContext context, string value) => context.WithVariable(VarInputPath.Name, value);
+        public static ResolveContext SetInputPath(this ResolveContext context, string value)
+        {
+            Assert.IsNotNull(context);
+            return context.WithVariable(VarInputPath.Name, value);
+        }
 
-        public static ResolveContext SetOutputPath(this ResolveContext context, string value) => context.WithVariable(VarOutputPath.Name, value);
+        public static ResolveContext SetOutputPath(this ResolveContext context, string value)
+        {
+            Assert.IsNotNull(context);
+            return context.WithVariable(VarOutputPath.Name, value);
+        }
 
-        public static ResolveContext SetWorkingDirectory(this ResolveContext context, string value) => context.WithVariable(VarWorkingDirectory.Name, value);
+        public static ResolveContext SetWorkingDirectory(this ResolveContext context, string value)
+        {
+            Assert.IsNotNull(context);
+            return context.WithVariable(VarWorkingDirectory.Name, value);
+        }
 
-        public static ResolveContext SetShell(this ResolveContext context, string value) => context.WithVariable(VarShell.Name, value);
+        public static ResolveContext SetShell(this ResolveContext context, string value)
+        {
+            Assert.IsNotNull(context);
+            return context.WithVariable(VarShell.Name, value);
+        }
     }
 }

@@ -65,18 +65,24 @@ namespace CodeRunner.Templates
         {
             Assert.IsNotNull(variable);
 
-            try
+#pragma warning disable CS8653 // 默认表达式为类型参数引入了 null 值。
+            value = default;
+#pragma warning restore CS8653 // 默认表达式为类型参数引入了 null 值。
+
+            if (Variables.TryGetValue(variable.Name, out object? val))
             {
-                value = GetVariable<T>(variable);
+                if (val is T res)
+                {
+                    value = res;
+                    return true;
+                }
+            }
+            else if (!variable.IsRequired)
+            {
+                value = variable.GetDefault<T>();
                 return true;
             }
-            catch
-            {
-#pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
-                value = default;
-#pragma warning restore CS8653 // 默认表达式会为类型参数引入 null 值。
-                return false;
-            }
+            return false;
         }
 
         public bool HasVariable(string name)

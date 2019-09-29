@@ -2,6 +2,7 @@
 using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using Test.App.Mocks;
 
 namespace Test.App.Commands
 {
@@ -11,7 +12,8 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
+            TestWorkspace workspace = new TestWorkspace();
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
                 new ClearCommand().Build(),
                 new string[] { "clear" });
 

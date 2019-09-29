@@ -22,15 +22,8 @@ namespace CodeRunner.IO
 
         protected override async Task<T?> OnLoading()
         {
-            try
-            {
-                using FileStream st = File.OpenRead();
-                return await JsonFormatter.Deserialize<T>(st).ConfigureAwait(false);
-            }
-            catch
-            {
-                return null;
-            }
+            using FileStream st = File.OpenRead();
+            return await JsonFormatter.Deserialize<T>(st).ConfigureAwait(false);
         }
     }
 }

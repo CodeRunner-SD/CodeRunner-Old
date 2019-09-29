@@ -5,11 +5,11 @@ namespace CodeRunner.Managements
 {
     public interface IItemManager<TSettings, TItem> : IManager<TSettings> where TItem : class where TSettings : class
     {
-        Task<bool> Has(string id);
+        Task<bool> HasKey(string id);
 
-        Task<TItem?> Get(string id);
+        Task<TItem?> GetValue(string id);
 
-        Task Set(string id, TItem? value);
+        Task SetValue(string id, TItem? value);
 
         IAsyncEnumerable<string> GetKeys();
 

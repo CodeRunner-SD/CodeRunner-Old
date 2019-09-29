@@ -53,7 +53,11 @@ namespace CodeRunner.Templates
             return this;
         }
 
-        public CommandLineTemplate WithOption(StringTemplate id, object value, string prefix = "") => WithOption(id, value.ToString() ?? string.Empty, prefix);
+        public CommandLineTemplate WithOption(StringTemplate id, object value, string prefix = "")
+        {
+            Assert.IsNotNull(value);
+            return WithOption(id, value.ToString() ?? string.Empty, prefix);
+        }
 
         public CommandLineTemplate WithoutOption(string fullContent)
         {

@@ -24,7 +24,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeRunner.Core\CodeRunner.Core.csproj" />
-    <ProjectReference Include="..\CodeRunner.Managements\CodeRunner.Managements.csproj" />
+    <ProjectReference Include="..\CodeRunner.Extensions.Core\CodeRunner.Extensions.Core.csproj" />
+    <ProjectReference Include="..\CodeRunner.Managements.Core\CodeRunner.Managements.Core.csproj" />
+    <ProjectReference Include="..\CodeRunner.Managements.FSBased\CodeRunner.Managements.FSBased.csproj" />
     <ProjectReference Include="..\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
   </ItemGroup>
 

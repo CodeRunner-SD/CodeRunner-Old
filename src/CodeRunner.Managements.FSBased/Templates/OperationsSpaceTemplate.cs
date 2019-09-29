@@ -26,7 +26,7 @@ namespace CodeRunner.Managements.FSBased.Templates
         {
             Metadata = new PackageMetadata
             {
-                Name = nameof(Hello).ToLower(),
+                Name = "hello",
                 Author = nameof(CodeRunner),
                 CreationTime = DateTimeOffset.Now,
                 Version = Assembly.GetAssembly(typeof(OperationsSpaceTemplate))?.GetName().Version ?? new Version()
@@ -37,7 +37,7 @@ namespace CodeRunner.Managements.FSBased.Templates
         {
             OperationSettings settings = new OperationSettings();
 
-            _ = Package.AddFile(Workspace.P_Settings)
+            _ = Package.AddFile(Workspace.PSettings)
                 .UseTemplate(new TextFileTemplate(new StringTemplate(JsonFormatter.Serialize(settings))));
         }
 

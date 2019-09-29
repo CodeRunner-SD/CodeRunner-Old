@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeRunner.Diagnostics
 {
@@ -20,9 +21,21 @@ namespace CodeRunner.Diagnostics
             }
         }
 
-        public static void IsNotNull([NotNull] object? value) => IsFalse(value == null);
+        public static void IsNotNull([ValidatedNotNull][NotNull] object? value)
+        {
+            if (value == null)
+            {
+                throw new AssertFailedException(nameof(IsNotNull));
+            }
+        }
 
-        public static void IsNull([MaybeNull] object? value) => IsTrue(value == null);
+        public static void IsNull([MaybeNull] object? value)
+        {
+            if (value != null)
+            {
+                throw new AssertFailedException(nameof(IsNull));
+            }
+        }
 
         [DoesNotReturn]
         public static void Fail() => throw new AssertFailedException(nameof(Fail));

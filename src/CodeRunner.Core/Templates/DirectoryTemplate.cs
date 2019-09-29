@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using CodeRunner.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeRunner.Templates
@@ -9,7 +10,11 @@ namespace CodeRunner.Templates
 
         public static Variable Var => new Variable(VarDirectoryPath).Required();
 
-        public override Task<DirectoryInfo> Resolve(ResolveContext context) => ResolveTo(context, context.GetVariable<string>(Var));
+        public override Task<DirectoryInfo> Resolve(ResolveContext context)
+        {
+            Assert.IsNotNull(context);
+            return ResolveTo(context, context.GetVariable<string>(Var));
+        }
 
         public abstract Task<DirectoryInfo> ResolveTo(ResolveContext context, string path);
 

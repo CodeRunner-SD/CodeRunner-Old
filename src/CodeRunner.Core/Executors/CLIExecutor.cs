@@ -33,15 +33,12 @@ namespace CodeRunner.Executors
                 return;
             }
 
-            Process.Kill(true);
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    Process.WaitForExit();
-                }
-                catch { }
-            }).ConfigureAwait(false);
+                Process.Kill(true);
+                await Task.Run(() => Process.WaitForExit()).ConfigureAwait(false);
+            }
+            catch (InvalidOperationException) { }
         }
 
         private async Task GetMemory()
@@ -51,21 +48,17 @@ namespace CodeRunner.Executors
             Result.MaximumMemory = 0;
             while (Result.State == ExecutorState.Running && Process?.HasExited == false)
             {
-                try
+                Process.Refresh();
+                long mem = Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64);
+                mem = Math.Max(mem, Process.WorkingSet64);
+                mem = Math.Max(mem, Process.PeakWorkingSet64);
+                mem = Math.Max(mem, Process.PrivateMemorySize64);
+                Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
+                if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
                 {
-                    Process.Refresh();
-                    long mem = Math.Max(Process.PagedMemorySize64, Process.PeakPagedMemorySize64);
-                    mem = Math.Max(mem, Process.WorkingSet64);
-                    mem = Math.Max(mem, Process.PeakWorkingSet64);
-                    mem = Math.Max(mem, Process.PrivateMemorySize64);
-                    Result.MaximumMemory = Math.Max(Result.MaximumMemory, mem);
-                    if (Settings.MemoryLimit.HasValue && Result.MaximumMemory > Settings.MemoryLimit)
-                    {
-                        Result.State = ExecutorState.OutOfMemory;
-                        await Kill().ConfigureAwait(false);
-                    }
+                    Result.State = ExecutorState.OutOfMemory;
+                    await Kill().ConfigureAwait(false);
                 }
-                catch { }
                 await Task.Delay(5).ConfigureAwait(false);
             }
         }

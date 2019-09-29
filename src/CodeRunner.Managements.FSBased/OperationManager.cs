@@ -14,8 +14,8 @@ namespace CodeRunner.Managements.FSBased
 
         public override async Task Initialize()
         {
-            await base.Initialize();
-            await Set("hello", Templates.OperationsSpaceTemplate.Hello);
+            await base.Initialize().ConfigureAwait(false);
+            await SetValue("hello", OperationsSpaceTemplate.Hello).ConfigureAwait(false);
         }
     }
 }

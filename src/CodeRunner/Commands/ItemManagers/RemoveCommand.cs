@@ -36,7 +36,7 @@ namespace CodeRunner.Commands.ItemManagers
 
         public override async Task<int> Handle(RemoveCommand.CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
         {
-            await (await GetManager(operation)).Set(argument.Name, null);
+            await (await GetManager(operation)).SetValue(argument.Name, null);
             return 0;
         }
     }

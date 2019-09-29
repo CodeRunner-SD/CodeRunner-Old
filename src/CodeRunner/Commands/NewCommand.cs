@@ -44,7 +44,7 @@ namespace CodeRunner.Commands
             TextReader input = operation.Services.GetInput();
             ITerminal terminal = console.GetTerminal();
             string template = argument.Template;
-            Packagings.Package<BaseTemplate>? tplItem = await workspace.Templates.Get(template);
+            Packagings.Package<BaseTemplate>? tplItem = await workspace.Templates.GetValue(template);
             if (tplItem == null)
             {
                 terminal.OutputErrorLine($"No this template: {template}.");

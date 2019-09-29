@@ -1,8 +1,12 @@
 ﻿using CodeRunner;
 using CodeRunner.Commands;
+using CodeRunner.Loggings;
+using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading.Tasks;
+using Test.App.Mocks;
 
 namespace Test.App.Commands
 {
@@ -12,16 +16,19 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
+            TestWorkspace workspace = new TestWorkspace(onExecute: (item, op, call, watcher, logger) => Task.FromResult(new PipelineResult<Wrapper<bool>>(true, null, Array.Empty<LogItem>())));
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
                 new RunCommand().Build(),
                 new string[] { "hello", "--", "name=a" },
-                before: Utils.InitializeWorkspace,
-                after: context =>
+                before: async context =>
                 {
-                    StringAssert.Contains(context.Services.GetConsole().Out.ToString(), "hello");
-                    return Task.FromResult<Wrapper<int>>(0);
-                });
+                    _ = await Utils.InitializeWorkspace(context);
+                    await context.Services.GetWorkspace().Operations.SetValue("hello", CodeRunner.Managements.FSBased.Templates.OperationsSpaceTemplate.Hello);
+                    return 0;
+                },
+                after: context => Task.FromResult<Wrapper<int>>(0));
 
+            workspace.AssertInvoked(nameof(IWorkspace.Execute));
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual<int>(0, result.Result!);
         }

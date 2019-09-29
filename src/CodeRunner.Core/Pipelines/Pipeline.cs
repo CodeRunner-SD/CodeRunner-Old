@@ -33,7 +33,7 @@ namespace CodeRunner.Pipelines
 
         private IReadOnlyList<(string, PipelineOperation<TOrigin, TResult>)> Ops { get; }
 
-        private Exception? Exception { get; set; }
+        private PipelineStepException? Exception { get; set; }
 
         private TResult? Result { get; set; } = default;
 
@@ -59,7 +59,16 @@ namespace CodeRunner.Pipelines
             try
             {
                 PipelineContext<TOrigin, TResult> context = new PipelineContext<TOrigin, TResult>(await Services.CreateScope(op.Item1).ConfigureAwait(false), Origin, Result, subLogScope);
-                TResult result = await op.Item2.Invoke(context).ConfigureAwait(false);
+                TResult result;
+                try
+                {
+                    result = await op.Item2.Invoke(context).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    throw new PipelineStepException($"Pipeline failed at step {Position}: {op.Item1}", ex);
+                }
+
                 if (!context.IgnoreResult)
                 {
                     Result = result;
@@ -68,10 +77,9 @@ namespace CodeRunner.Pipelines
                 if (context.IsEnd)
                 {
                     HasEnd = true;
-                    return false;
                 }
             }
-            catch (Exception ex)
+            catch (PipelineStepException ex)
             {
                 Exception = ex;
                 subLogScope.Error(ex);

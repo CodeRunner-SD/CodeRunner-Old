@@ -12,7 +12,7 @@ namespace CodeRunner.Managements.FSBased.Templates
         {
             TemplateSettings settings = new TemplateSettings();
 
-            _ = Package.AddFile(Workspace.P_Settings).UseTemplate(new TextFileTemplate(new StringTemplate(
+            _ = Package.AddFile(Workspace.PSettings).UseTemplate(new TextFileTemplate(new StringTemplate(
                 JsonFormatter.Serialize(settings))));
         }
 

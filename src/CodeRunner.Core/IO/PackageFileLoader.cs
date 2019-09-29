@@ -14,15 +14,8 @@ namespace CodeRunner.IO
 
         protected override async Task<Package<T>?> OnLoading()
         {
-            try
-            {
-                using FileStream st = File.OpenRead();
-                return await Package.Load<T>(st).ConfigureAwait(false);
-            }
-            catch
-            {
-                return null;
-            }
+            using FileStream st = File.OpenRead();
+            return await Package.Load<T>(st).ConfigureAwait(false);
         }
 
         public override async Task Save(Package<T> value)

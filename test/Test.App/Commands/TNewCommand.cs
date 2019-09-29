@@ -1,11 +1,11 @@
 ﻿using CodeRunner;
 using CodeRunner.Commands;
-using CodeRunner.Managements.FSBased;
+using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using CodeRunner.Resources.Programming;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Threading.Tasks;
+using Test.App.Mocks;
 
 namespace Test.App.Commands
 {
@@ -15,19 +15,19 @@ namespace Test.App.Commands
         [TestMethod]
         public async Task Basic()
         {
-            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(
+            TestWorkspace workspace = new TestWorkspace();
+            PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
                 new NewCommand().Build(),
                 new string[] { "new", "c", "a" },
                 before: async context =>
                 {
                     _ = await Utils.InitializeWorkspace(context);
-                    await context.Services.GetWorkspace().Templates.Set("c", Templates.C);
+                    await context.Services.GetWorkspace().Templates.SetValue("c", FileTemplates.C);
                     return 0;
                 },
                 after: context =>
                 {
-                    Workspace workspace = (Workspace)context.Services.GetWorkspace();
-                    Assert.IsTrue(File.Exists(Path.Join(workspace.PathRoot.FullName, "a.c")));
+                    workspace.AssertInvoked(nameof(IWorkspace.Create));
                     return Task.FromResult<Wrapper<int>>(0);
                 });
 

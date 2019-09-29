@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="2.6.3">
+    <PackageReference Include="coverlet.msbuild" Version="2.7.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -18,7 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CodeRunner.Core\CodeRunner.Core.csproj" />
-    <ProjectReference Include="..\..\src\CodeRunner.Managements\CodeRunner.Managements.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Managements.Core\CodeRunner.Managements.Core.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Managements.FSBased\CodeRunner.Managements.FSBased.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace CodeRunner.Resources.Programming
 {
-    public static class Operations
+    public static class FileOperations
     {
         private static Package<BaseOperation> Create(string name, params CommandLineTemplate[] items) => new Package<BaseOperation>(new SimpleCommandLineOperation(items))
         {
@@ -15,7 +15,7 @@ namespace CodeRunner.Resources.Programming
                 Name = name,
                 Author = nameof(CodeRunner),
                 CreationTime = DateTimeOffset.Now,
-                Version = Assembly.GetAssembly(typeof(Operations))?.GetName().Version ?? new Version()
+                Version = Assembly.GetAssembly(typeof(FileOperations))?.GetName().Version ?? new Version()
             }
         };
 
@@ -33,7 +33,7 @@ namespace CodeRunner.Resources.Programming
                 }
         );
 
-        public static Package<BaseOperation> C => Create(nameof(C).ToLower(),
+        public static Package<BaseOperation> C => Create("c",
                     new CommandLineTemplate()
                         .UseCommand("gcc")
                         .UseArgument(source)
@@ -43,7 +43,7 @@ namespace CodeRunner.Resources.Programming
                     new CommandLineTemplate()
                         .UseCommand(output));
 
-        public static Package<BaseOperation> Cpp => Create(nameof(Cpp).ToLower(),
+        public static Package<BaseOperation> Cpp => Create("cpp",
                     new CommandLineTemplate()
                         .UseCommand("g++")
                         .UseArgument(source)
@@ -53,7 +53,7 @@ namespace CodeRunner.Resources.Programming
                     new CommandLineTemplate()
                         .UseCommand(output));
 
-        public static Package<BaseOperation> CSharp => Create(nameof(CSharp).ToLower(),
+        public static Package<BaseOperation> CSharp => Create("csharp",
                    new CommandLineTemplate()
                        .UseCommand("csc")
                        .UseArgument(source)
@@ -62,23 +62,23 @@ namespace CodeRunner.Resources.Programming
                    new CommandLineTemplate()
                        .UseCommand(output));
 
-        public static Package<BaseOperation> Python => Create(nameof(Python).ToLower(),
+        public static Package<BaseOperation> Python => Create("python",
                     new CommandLineTemplate()
                         .UseCommand("python")
                         .UseArgument(source));
 
-        public static Package<BaseOperation> Ruby => Create(nameof(Ruby).ToLower(),
+        public static Package<BaseOperation> Ruby => Create("ruby",
                     new CommandLineTemplate()
                         .UseCommand("ruby")
                         .UseArgument(source));
 
-        public static Package<BaseOperation> Go => Create(nameof(Go).ToLower(),
+        public static Package<BaseOperation> Go => Create("go",
                     new CommandLineTemplate()
                         .UseCommand("go")
                         .UseCommand("run")
                         .UseArgument(source));
 
-        public static Package<BaseOperation> JavaScript => Create(nameof(JavaScript).ToLower(),
+        public static Package<BaseOperation> JavaScript => Create("javascript",
                     new CommandLineTemplate()
                         .UseCommand("node")
                         .UseArgument(source));

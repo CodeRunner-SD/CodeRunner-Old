@@ -54,7 +54,7 @@ namespace CodeRunner.Commands.ItemManagers
 
             try
             {
-                await (await GetManager(operation)).Set(
+                await (await GetManager(operation)).SetValue(
                     argument.Name, item);
                 return 0;
             }
