@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Diagnostics;
 using CodeRunner.Loggings;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeRunner.Pipelines
 {
@@ -18,9 +19,7 @@ namespace CodeRunner.Pipelines
 
         public LoggerScope Logs { get; }
 
-        public bool IsEnd { get; set; } = false;
-
-        public bool IgnoreResult { get; set; } = false;
+        public bool IsStopped { get; set; }
     }
 
     public class PipelineContext<TOrigin, TResult> : PipelineContext where TResult : class
@@ -38,5 +37,12 @@ namespace CodeRunner.Pipelines
         public TOrigin Origin { get; }
 
         public TResult? Result { get; }
+
+        [DoesNotReturn]
+        public TResult IgnoreResult()
+        {
+            Logs.Log("Pipeline ignore result.", LogLevel.Debug);
+            throw new PipelineResultIgnoreException();
+        }
     }
 }

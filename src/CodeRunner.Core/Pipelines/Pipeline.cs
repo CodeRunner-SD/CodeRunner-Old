@@ -59,22 +59,20 @@ namespace CodeRunner.Pipelines
             try
             {
                 PipelineContext<TOrigin, TResult> context = new PipelineContext<TOrigin, TResult>(await Services.CreateScope(op.Item1).ConfigureAwait(false), Origin, Result, subLogScope);
-                TResult result;
                 try
                 {
-                    result = await op.Item2.Invoke(context).ConfigureAwait(false);
+                    TResult result = await op.Item2.Invoke(context).ConfigureAwait(false);
+                    Result = result;
+                }
+                catch (PipelineResultIgnoreException)
+                {
                 }
                 catch (Exception ex)
                 {
                     throw new PipelineStepException($"Pipeline failed at step {Position}: {op.Item1}", ex);
                 }
 
-                if (!context.IgnoreResult)
-                {
-                    Result = result;
-                }
-
-                if (context.IsEnd)
+                if (context.IsStopped)
                 {
                     HasEnd = true;
                 }

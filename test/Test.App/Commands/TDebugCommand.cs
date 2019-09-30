@@ -1,5 +1,4 @@
-﻿using CodeRunner;
-using CodeRunner.Commands;
+﻿using CodeRunner.Extensions.Helpers;
 using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace Test.App.Commands
         {
             TestWorkspace workspace = new TestWorkspace();
             PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
-                new DebugCommand().Build(),
+                new CodeRunner.Extensions.Builtin.Console.Commands.DebugCommand().Build(),
                 new string[] { "debug" },
                 after: context =>
                  {

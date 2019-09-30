@@ -23,14 +23,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\extension\CodeRunner.Extensions.Builtin.Console\CodeRunner.Extensions.Builtin.Console.csproj" />
+    <ProjectReference Include="..\..\extension\CodeRunner.Extensions.Builtin.Workspace\CodeRunner.Extensions.Builtin.Workspace.csproj" />
     <ProjectReference Include="..\CodeRunner.Core\CodeRunner.Core.csproj" />
     <ProjectReference Include="..\CodeRunner.Extensions.Core\CodeRunner.Extensions.Core.csproj" />
+    <ProjectReference Include="..\CodeRunner.Extensions.Helpers\CodeRunner.Extensions.Helpers.csproj" />
     <ProjectReference Include="..\CodeRunner.Managements.Core\CodeRunner.Managements.Core.csproj" />
+    <ProjectReference Include="..\CodeRunner.Managements.Extensions\CodeRunner.Managements.Extensions.csproj" />
     <ProjectReference Include="..\CodeRunner.Managements.FSBased\CodeRunner.Managements.FSBased.csproj" />
-    <ProjectReference Include="..\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Commands\Extensions\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

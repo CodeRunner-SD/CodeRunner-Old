@@ -42,7 +42,7 @@ namespace CodeRunner.Operations
                     ExecutorResult result = await exe.Run().ConfigureAwait(false);
                     if (result.ExitCode != 0)
                     {
-                        context.IsEnd = true;
+                        context.IsStopped = true;
                     }
 
                     if (!string.IsNullOrEmpty(result.Output))

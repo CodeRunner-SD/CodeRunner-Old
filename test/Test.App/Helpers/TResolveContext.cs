@@ -1,4 +1,4 @@
-﻿using CodeRunner.Helpers;
+﻿using CodeRunner.Extensions.Helpers;
 using CodeRunner.Templates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

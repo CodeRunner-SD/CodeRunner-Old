@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <RootNamespace>CodeRunner.Extensions</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,10 +11,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19405.1" />
+    <PackageReference Include="System.CommandLine.Rendering" Version="0.3.0-alpha.19405.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CodeRunner.Core\CodeRunner.Core.csproj" />
+    <ProjectReference Include="..\CodeRunner.Managements.Core\CodeRunner.Managements.Core.csproj" />
   </ItemGroup>
 
 </Project>

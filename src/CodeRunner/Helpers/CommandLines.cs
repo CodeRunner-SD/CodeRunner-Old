@@ -2,11 +2,14 @@
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
+using System.IO;
 
 namespace CodeRunner.Helpers
 {
     public static class CommandLines
     {
+        public static bool IsEndOfInput(this TextReader input) => Program.Environment == EnvironmentType.Test && input.Peek() == -1;
+
         public static Parser CreateDefaultParser(Command command, PipelineContext context) => CreateParserBuilder(command, context)
             .UseDefaults()
             .Build();

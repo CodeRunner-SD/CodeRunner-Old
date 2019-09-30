@@ -1,5 +1,5 @@
-﻿using CodeRunner;
-using CodeRunner.Commands;
+﻿using CodeRunner.Extensions.Builtin.Workspace;
+using CodeRunner.Extensions.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;

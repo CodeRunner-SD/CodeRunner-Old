@@ -1,4 +1,4 @@
-﻿using CodeRunner.Rendering;
+﻿using CodeRunner.Extensions.Helpers.Rendering;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.CommandLine.Rendering;
 

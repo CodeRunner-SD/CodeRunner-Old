@@ -1,4 +1,5 @@
 ﻿using CodeRunner;
+using CodeRunner.Extensions.Helpers;
 using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
@@ -30,8 +31,7 @@ namespace Test.App.Commands
                 _ = builder.Use("before", async context =>
                   {
                       _ = await before(context);
-                      context.IgnoreResult = true;
-                      return 0;
+                      return context.IgnoreResult();
                   });
             }
             _ = builder.Use("main", async context =>
@@ -44,8 +44,7 @@ namespace Test.App.Commands
                 _ = builder.Use("after", async context =>
                   {
                       _ = await after(context);
-                      context.IgnoreResult = true;
-                      return 0;
+                      return context.IgnoreResult();
                   });
             }
             return await ConsumePipelineBuilder(builder, new Logger(), origin);

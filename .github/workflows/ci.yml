@@ -54,12 +54,12 @@ jobs:
         CONFIG: ${{ matrix.config }}
       run: |
         mkdir artifacts
-        dotnet build -c $env:CONFIG -o ./artifacts
+        dotnet publish -c $env:CONFIG -o ./artifacts
       shell: pwsh
     - name: Upload artifacts
       uses: actions/upload-artifact@master
       with:
-        name: built
+        name: published
         path: ./artifacts
   deploy:
     needs: test

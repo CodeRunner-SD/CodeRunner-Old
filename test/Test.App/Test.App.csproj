@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\extension\CodeRunner.Extensions.Builtin.Workspace\CodeRunner.Extensions.Builtin.Workspace.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Managements.Core\CodeRunner.Managements.Core.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner\CodeRunner.csproj" />
   </ItemGroup>

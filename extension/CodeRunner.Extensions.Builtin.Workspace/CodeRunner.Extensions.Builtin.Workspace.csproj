@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CodeRunner.Core\CodeRunner.Core.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Extensions.Core\CodeRunner.Extensions.Core.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Extensions.Helpers\CodeRunner.Extensions.Helpers.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Managements.FSBased\CodeRunner.Managements.FSBased.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
+  </ItemGroup>
+
+</Project>

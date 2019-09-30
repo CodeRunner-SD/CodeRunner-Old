@@ -1,4 +1,6 @@
-﻿using CodeRunner.Helpers;
+﻿using CodeRunner.Extensions.Commands;
+using CodeRunner.Extensions.Helpers;
+using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;
@@ -55,7 +57,7 @@ namespace CodeRunner.Commands
             return res;
         }
 
-        public override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
+        protected override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
             Environment.CurrentDirectory = argument.Directory!.FullName;
             pipeline.Services.Add<IWorkspace>(new Managements.FSBased.Workspace(argument.Directory));
@@ -64,7 +66,7 @@ namespace CodeRunner.Commands
             if (argument.Command != "")
             {
                 Parser repl = CommandLines.CreateDefaultParser(pipeline.Services.GetReplCommand(), pipeline);
-                pipeline.IsEnd = true;
+                pipeline.IsStopped = true;
                 return await repl.InvokeAsync(argument.Command, console);
             }
 

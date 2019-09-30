@@ -1,5 +1,6 @@
 ﻿using CodeRunner.Helpers;
 using CodeRunner.Loggings;
+using CodeRunner.Managements.Extensions;
 using CodeRunner.Pipelines;
 using System;
 using System.CommandLine;
@@ -31,12 +32,18 @@ namespace CodeRunner
             Console.OutputEncoding = Encoding.UTF8;
 
             ILogger logger = new Logger();
+            ExtensionCollection extensions = new ExtensionCollection();
+            {
+                extensions.Load(new ExtensionLoader(typeof(Extensions.Builtin.Console.ConsoleExtension).Assembly));
+                extensions.Load(new ExtensionLoader(typeof(Extensions.Builtin.Workspace.WorkspaceExtension).Assembly));
+            }
 
             PipelineBuilder<string[], Wrapper<int>> builder = new PipelineBuilder<string[], Wrapper<int>>();
 
             _ = builder.ConfigureLogger(logger)
-                .ConfigureCliCommand()
-                .ConfigureReplCommand();
+                .ConfigureExtensions(extensions)
+                .ConfigureHost(new ExtensionHost())
+                .ConfigureCliCommand();
 
             if (Environment == EnvironmentType.Test)
             {
@@ -51,6 +58,8 @@ namespace CodeRunner
             {
                 _ = builder.ConfigureConsole(new SystemConsole(), Console.In);
             }
+
+            _ = builder.UseCommandsService().UseReplCommandService();
 
             _ = builder.UseCliCommand();
 

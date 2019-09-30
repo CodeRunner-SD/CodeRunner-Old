@@ -87,9 +87,9 @@ namespace CodeRunner.Pipelines
         {
             Assert.IsNotNull(id);
 
-#pragma warning disable CS8653 // 默认表达式会为类型参数引入 null 值。
+#pragma warning disable CS8653 // 默认表达式为类型参数引入了 null 值。
             value = default;
-#pragma warning restore CS8653 // 默认表达式会为类型参数引入 null 值。
+#pragma warning restore CS8653 // 默认表达式为类型参数引入了 null 值。
 
             Dictionary<string, ServiceItem>? dict = FindSubDictionary<T>();
 
