@@ -1,4 +1,4 @@
-﻿using CodeRunner.Extensions.Builtin.Workspace;
+﻿using CodeRunner.Extensions.Builtin.Workspace.Commands;
 using CodeRunner.Extensions.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Test.App.Mocks;
 
-namespace Test.App.Commands
+namespace Test.Extensions.Builtin
 {
     [TestClass]
     public class TRunCommand

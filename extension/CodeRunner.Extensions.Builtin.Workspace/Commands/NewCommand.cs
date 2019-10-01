@@ -8,11 +8,10 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Rendering;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands
 {
     [Export]
     public class NewCommand : BaseCommand<NewCommand.CArgument>
@@ -40,10 +39,9 @@ namespace CodeRunner.Extensions.Builtin.Workspace
             return res;
         }
 
-        protected override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        protected override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            IWorkspace workspace = operation.Services.GetWorkspace();
-            TextReader input = operation.Services.GetInput();
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
             ITerminal terminal = console.GetTerminal();
             string template = argument.Template;
             Packagings.Package<BaseTemplate>? tplItem = await workspace.Templates.GetValue(template);
@@ -62,13 +60,8 @@ namespace CodeRunner.Extensions.Builtin.Workspace
             IWorkItem? item = null;
             try
             {
-                item = await workspace.Create(argument.Name, tpl, (vars, resolveContext) =>
-                {
-                    _ = resolveContext.FromArgumentList(context.ParseResult.UnparsedTokens);
-                    if (!terminal.FillVariables(input, tpl.GetVariables(), resolveContext))
-                        throw new ArgumentException();
-                    return Task.CompletedTask;
-                });
+                item = await workspace.Create(argument.Name, tpl,
+                    (vars, resolveContext) => Utils.ResolveCallback(vars, resolveContext, context, pipeline));
             }
             catch (ArgumentException)
             {

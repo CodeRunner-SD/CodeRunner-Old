@@ -18,7 +18,7 @@ namespace Test.Core.Pipelines
                 Pipeline<int, Wrapper<int>> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger());
                 PipelineResult<Wrapper<int>> res = await pipeline.Consume();
                 Assert.IsTrue(res.IsOk);
-                Assert.AreEqual<int>(8, res.Result);
+                Assert.AreEqual<int>(8, res.Result!);
             }
         }
 
@@ -29,9 +29,9 @@ namespace Test.Core.Pipelines
             {
                 Pipeline<int, Wrapper<int>> pipeline = await builder.Build(0, new CodeRunner.Loggings.Logger());
                 PipelineResult<Wrapper<int>> res = await pipeline.Consume();
-                Assert.AreEqual<int>(4, res.Result);
+                Assert.AreEqual<int>(4, res.Result!);
                 Assert.IsTrue(res.IsError);
-                Assert.IsInstanceOfType(res.Exception.InnerException, typeof(NotImplementedException));
+                Assert.IsInstanceOfType(res.Exception!.InnerException, typeof(NotImplementedException));
                 Assert.AreEqual(CodeRunner.Loggings.LogLevel.Error, res.Logs.Last().Level);
             }
         }

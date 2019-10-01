@@ -5,7 +5,7 @@ using System.CommandLine.Invocation;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.ItemManagers
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.ItemManagers
 {
     public static class RemoveCommand
     {

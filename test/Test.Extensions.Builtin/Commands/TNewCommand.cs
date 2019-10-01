@@ -1,4 +1,4 @@
-﻿using CodeRunner.Extensions.Builtin.Workspace;
+﻿using CodeRunner.Extensions.Builtin.Workspace.Commands;
 using CodeRunner.Extensions.Helpers;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;
@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Test.App.Mocks;
 
-namespace Test.App.Commands
+namespace Test.Extensions.Builtin
 {
     [TestClass]
     public class TNewCommand

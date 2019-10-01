@@ -10,7 +10,7 @@ using System.CommandLine.Rendering;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Test.App.Commands
+namespace Test.Extensions.Builtin
 {
     public static class Utils
     {

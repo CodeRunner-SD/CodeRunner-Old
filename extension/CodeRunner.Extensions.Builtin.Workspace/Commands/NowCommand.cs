@@ -1,15 +1,15 @@
 ﻿using CodeRunner.Extensions.Commands;
 using CodeRunner.Extensions.Helpers;
+using CodeRunner.Extensions.Helpers.Rendering;
 using CodeRunner.Managements;
-using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.IO;
+using System.CommandLine.Rendering;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands
 {
     [Export]
     public class NowCommand : BaseCommand<NowCommand.CArgument>
@@ -21,72 +21,48 @@ namespace CodeRunner.Extensions.Builtin.Workspace
                 TreatUnmatchedTokensAsErrors = true
             };
             {
-                Argument<FileInfo> arg = new Argument<FileInfo>(nameof(CArgument.File))
+                Argument<bool> arg = new Argument<bool>(nameof(CArgument.Clear), false)
                 {
-                    Arity = ArgumentArity.ExactlyOne
+                    Arity = ArgumentArity.ZeroOrOne
                 };
-                Option optCommand = new Option($"--{nameof(CArgument.File)}".ToLower(), "Set working directory.")
-                {
-                    Argument = arg
-                };
-                optCommand.AddAlias("-f");
-                res.AddOption(optCommand);
-            }
-            {
-                Argument<DirectoryInfo> arg = new Argument<DirectoryInfo>(nameof(CArgument.Directory))
-                {
-                    Arity = ArgumentArity.ExactlyOne
-                };
-                Option optCommand = new Option($"--{nameof(CArgument.Directory)}".ToLower(), "Set working directory.")
+                Option optCommand = new Option($"--{nameof(CArgument.Clear)}".ToLower(), "Clear current work-item.")
                 {
                     Argument = arg
                 };
-                optCommand.AddAlias("-d");
-                optCommand.AddAlias("--dir");
+                optCommand.AddAlias("-c");
                 res.AddOption(optCommand);
             }
             return res;
         }
 
-        protected override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext operation, CancellationToken cancellationToken)
+        protected override async Task<int> Handle(CArgument argument, IConsole console, InvocationContext context, PipelineContext pipeline, CancellationToken cancellationToken)
         {
-            IWorkspace workspace = operation.Services.GetWorkspace();
-            if (argument.File != null)
+            IWorkspace workspace = pipeline.Services.GetWorkspace();
+            ITerminal terminal = console.GetTerminal();
+            if (!argument.Clear)
             {
-                IWorkItem? res = await workspace.Create("", null, (vars, context) =>
-                 {
-                     _ = context.WithVariable<FileSystemInfo>(RegisterWorkItemTemplate.Target, argument.File);
-                     return Task.CompletedTask;
-                 });
+                IWorkItem? res = await workspace.Create("", null,
+                    (vars, resolveContext) => Utils.ResolveCallback(vars, resolveContext, context, pipeline));
                 if (res != null)
                 {
-                    operation.Services.Replace<IWorkItem>(res);
+                    pipeline.Services.Replace<IWorkItem>(res);
                 }
-            }
-            else if (argument.Directory != null)
-            {
-                IWorkItem? res = await workspace.Create("", null, (vars, context) =>
+                else
                 {
-                    _ = context.WithVariable<FileSystemInfo>(RegisterWorkItemTemplate.Target, argument.Directory);
-                    return Task.CompletedTask;
-                });
-                if (res != null)
-                {
-                    operation.Services.Replace<IWorkItem>(res);
+                    terminal.OutputErrorLine("Create work-item failed.");
+                    return -1;
                 }
             }
             else
             {
-                operation.Services.Remove<IWorkItem>();
+                pipeline.Services.Remove<IWorkItem>();
             }
             return 0;
         }
 
         public class CArgument
         {
-            public FileInfo? File { get; set; }
-
-            public DirectoryInfo? Directory { get; set; }
+            public bool Clear { get; set; }
         }
     }
 }

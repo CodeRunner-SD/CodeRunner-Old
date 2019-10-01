@@ -43,7 +43,7 @@ namespace Test.Core.Operations
             // op.CommandExecuted += Op_CommandExecuted;
             Pipeline<OperationWatcher, Wrapper<bool>> pipeline = await (await op.Resolve(context)).Build(new OperationWatcher(), new Logger());
             PipelineResult<Wrapper<bool>> res = await pipeline.Consume();
-            Assert.IsTrue(res.IsOk && res.Result);
+            Assert.IsTrue(res.IsOk && res.Result!);
         }
 
         /*private Task<bool> Op_CommandExecuting(BaseOperation sender, int index, CLIExecutorSettings settings, string[] commands)

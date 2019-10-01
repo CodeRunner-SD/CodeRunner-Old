@@ -32,6 +32,6 @@ namespace CodeRunner.Managements.FSBased
 
         public Guid Id { get; }
 
-        public string Name => Target.Name;
+        public string Name => Type == WorkItemType.File ? RelativePath : $"@{RelativePath}";
     }
 }

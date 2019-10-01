@@ -31,7 +31,7 @@ namespace Test.Core.Templates
             {
                 Variable[] arr = new Variable[variables.Count];
                 variables.CopyTo(arr, 0);
-                foreach (object v in ((IEnumerable)arr))
+                foreach (object? v in ((IEnumerable)arr))
                 {
                     Assert.IsTrue(arr.Contains(v));
                 }

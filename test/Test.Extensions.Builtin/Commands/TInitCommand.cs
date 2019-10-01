@@ -1,44 +1,38 @@
-﻿using CodeRunner.Extensions.Builtin.Workspace;
+﻿using CodeRunner.Extensions.Builtin.Workspace.Commands;
 using CodeRunner.Managements;
 using CodeRunner.Pipelines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Test.App.Mocks;
 
-namespace Test.App.Commands
+namespace Test.Extensions.Builtin
 {
     [TestClass]
-    public class TNowCommand
+    public class TInitCommand
     {
         [TestMethod]
-        public async Task File()
+        public async Task Basic()
         {
             TestWorkspace workspace = new TestWorkspace();
-
             PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
-                new NowCommand().Build(),
-                new string[] { "now", "-f", "a.c" },
-                before: Utils.InitializeWorkspace,
+                new InitCommand().Build(),
+                new string[] { "init" },
                 after: context => Task.FromResult<Wrapper<int>>(0));
-
-            workspace.AssertInvoked(nameof(IWorkspace.Create));
+            workspace.AssertInvoked(nameof(IWorkspace.Initialize));
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual<int>(0, result.Result!);
         }
 
         [TestMethod]
-        public async Task Directory()
+        public async Task Delete()
         {
             TestWorkspace workspace = new TestWorkspace();
-
             PipelineResult<Wrapper<int>> result = await Utils.UseSampleCommandInvoker(workspace,
-                new NowCommand().Build(),
-                new string[] { "now", "-d", "a" },
-                before: Utils.InitializeWorkspace,
+                new InitCommand().Build(),
+                new string[] { "init", "--delete" },
                 after: context => Task.FromResult<Wrapper<int>>(0));
 
-            workspace.AssertInvoked(nameof(IWorkspace.Create));
-
+            workspace.AssertInvoked(nameof(IWorkspace.Clear));
             Assert.IsTrue(result.IsOk);
             Assert.AreEqual<int>(0, result.Result!);
         }

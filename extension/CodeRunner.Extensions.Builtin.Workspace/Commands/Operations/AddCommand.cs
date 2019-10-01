@@ -7,7 +7,7 @@ using CodeRunner.Pipelines;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Operations
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Operations
 {
     public class AddCommand : ItemManagers.AddCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {

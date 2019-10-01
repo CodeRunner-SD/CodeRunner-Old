@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.CommandLine.Rendering;
 
-namespace Test.App.Rendering
+namespace Test.Extensions.Helpers.Rendering
 {
     [TestClass]
     public class TConsoleIO

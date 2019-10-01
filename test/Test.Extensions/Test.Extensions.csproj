@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CodeRunner.Core\CodeRunner.Core.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Extensions.Core\CodeRunner.Extensions.Core.csproj" />
+    <ProjectReference Include="..\..\src\CodeRunner.Extensions.Helpers\CodeRunner.Extensions.Helpers.csproj" />
   </ItemGroup>
 
 </Project>

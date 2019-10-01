@@ -10,7 +10,6 @@
     <ProjectReference Include="..\..\src\CodeRunner.Core\CodeRunner.Core.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Extensions.Core\CodeRunner.Extensions.Core.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Extensions.Helpers\CodeRunner.Extensions.Helpers.csproj" />
-    <ProjectReference Include="..\..\src\CodeRunner.Managements.FSBased\CodeRunner.Managements.FSBased.csproj" />
     <ProjectReference Include="..\..\src\CodeRunner.Resources.Programming\CodeRunner.Resources.Programming.csproj" />
   </ItemGroup>
 

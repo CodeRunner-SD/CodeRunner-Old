@@ -7,5 +7,7 @@ namespace CodeRunner.Managements
         Guid Id { get; }
 
         string Name { get; }
+
+
     }
 }

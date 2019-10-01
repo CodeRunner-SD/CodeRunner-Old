@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands
 {
     [Export]
     public class RunCommand : BaseCommand<RunCommand.CArgument>

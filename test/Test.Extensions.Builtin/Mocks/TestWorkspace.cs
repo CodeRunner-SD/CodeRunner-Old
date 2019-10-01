@@ -15,6 +15,14 @@ namespace Test.App.Mocks
 
     internal class OperationManager : ItemManager<OperationSettings, Package<BaseOperation>>, IOperationManager { }
 
+
+    internal class TestWorkItem : IWorkItem
+    {
+        public Guid Id => Guid.NewGuid();
+
+        public string Name => "";
+    }
+
     internal class TestWorkspace : IWorkspace
     {
         public TestWorkspace(WorkspaceSettings? settings = null,

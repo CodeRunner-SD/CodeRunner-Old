@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Test.App.Mocks;
 
-namespace Test.App.Commands
+namespace Test.Extensions.Builtin
 {
     [TestClass]
     public class TClearCommand

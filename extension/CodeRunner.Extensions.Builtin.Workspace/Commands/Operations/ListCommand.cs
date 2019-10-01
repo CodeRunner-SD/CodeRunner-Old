@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.CommandLine.Rendering;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Operations
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Operations
 {
     public class ListCommand : ItemManagers.ListCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {

@@ -6,7 +6,6 @@ using CodeRunner.Helpers;
 using CodeRunner.Loggings;
 using CodeRunner.Managements;
 using CodeRunner.Managements.Extensions;
-using CodeRunner.Managements.FSBased;
 using CodeRunner.Pipelines;
 using System;
 using System.CommandLine;
@@ -97,16 +96,7 @@ namespace CodeRunner
             IWorkItem? workItem = context.Services.GetWorkItem();
             if (workItem != null)
             {
-                if (workItem is WorkItem item)
-                {
-                    if (item.Type == WorkItemType.Directory)
-                        terminal.Output("@");
-                    terminal.Output(item.RelativePath);
-                }
-                else
-                {
-                    terminal.Output(workItem.Name);
-                }
+                terminal.Output(workItem.Name);
             }
             terminal.Output("> ");
             return true;

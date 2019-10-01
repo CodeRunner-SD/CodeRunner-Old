@@ -7,7 +7,7 @@ using CodeRunner.Templates;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Templates
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Templates
 {
     public class AddCommand : ItemManagers.AddCommand<ITemplateManager, TemplateSettings, Package<BaseTemplate>>
     {

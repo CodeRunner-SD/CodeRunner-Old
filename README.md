@@ -66,7 +66,7 @@ It will use templates in `.cr/templates/` to create item.
 If you want to set current work-item with an existed file, use this:
 
 ```sh
-> now -f a.cpp
+> now -- type=file target=a.cpp
 ```
 
 Then use `run` command to run code.
@@ -85,7 +85,7 @@ Not only use files, you can also use directories to create a unique environment 
 > new dir a
 
 # Set a directory env for current
-> now -d a
+> now -- type=dir target=a
 
 # Run
 @a> run dir
@@ -104,7 +104,7 @@ When you meet some errors, for example, CR data loading failing, use `debug` com
 |`init [--delete]`|Initialize or delete CR data|
 |`clear`|Clear screen|
 |`new [Template] [Name]`|Create new item by template|
-|`now -f [file] -d [directory]`|Change current work-item|
+|`now [--clear]`|Change current work-item|
 |`run [Operation]`|Run operation|
 |`template [list add remove]`|Manage templates|
 |`operation [list add remove]`|Manage operations|

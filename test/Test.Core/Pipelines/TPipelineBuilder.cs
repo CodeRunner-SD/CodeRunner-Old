@@ -17,13 +17,13 @@ namespace Test.Core.Pipelines
         {
             int arg = context.Services.Get<int>();
             context.Logs.Information($"plus with {arg}");
-            return Task.FromResult<Wrapper<int>>(context.Result + arg);
+            return Task.FromResult<Wrapper<int>>(context.Result! + arg);
         };
         public static readonly PipelineOperation<int, Wrapper<int>> multiply = context =>
         {
             int arg = context.Services.Get<int>();
             context.Logs.Information($"multiply with {arg}");
-            return Task.FromResult<Wrapper<int>>(context.Result * arg);
+            return Task.FromResult<Wrapper<int>>(context.Result! * arg);
         };
         public static readonly PipelineOperation<int, Wrapper<int>> expNotImp = context =>
         {

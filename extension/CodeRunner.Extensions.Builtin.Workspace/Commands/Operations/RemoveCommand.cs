@@ -6,7 +6,7 @@ using CodeRunner.Packagings;
 using CodeRunner.Pipelines;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Operations
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Operations
 {
     public class RemoveCommand : ItemManagers.RemoveCommand<IOperationManager, OperationSettings, Package<BaseOperation>>
     {

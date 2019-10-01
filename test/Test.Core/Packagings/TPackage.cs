@@ -33,7 +33,7 @@ namespace Test.Core.Packagings
             {
                 Package<string> rt = await Package.Load<string>(st);
                 Assert.AreEqual("content", rt.Data);
-                Assert.AreEqual("author", rt.Metadata.Author);
+                Assert.AreEqual("author", rt.Metadata!.Author);
             }
         }
     }

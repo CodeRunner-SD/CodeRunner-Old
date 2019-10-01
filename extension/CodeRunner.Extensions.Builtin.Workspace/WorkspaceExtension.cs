@@ -11,7 +11,7 @@ namespace CodeRunner.Extensions.Builtin.Workspace
 
         public string Publisher => "CodeRunner";
 
-        public string Description => "Add core generic workspace commands (now depends on FSBased-Workspace).";
+        public string Description => "Add core generic workspace commands.";
 
         public Version Version => new Version(1, 0);
     }

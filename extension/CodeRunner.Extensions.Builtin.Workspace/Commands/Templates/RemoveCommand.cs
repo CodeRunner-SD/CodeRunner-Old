@@ -6,7 +6,7 @@ using CodeRunner.Pipelines;
 using CodeRunner.Templates;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Templates
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Templates
 {
     public class RemoveCommand : ItemManagers.RemoveCommand<ITemplateManager, TemplateSettings, Package<BaseTemplate>>
     {

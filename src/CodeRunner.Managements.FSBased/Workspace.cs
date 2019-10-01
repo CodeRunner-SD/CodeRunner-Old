@@ -14,7 +14,7 @@ namespace CodeRunner.Managements.FSBased
 {
     public class Workspace : Manager<WorkspaceSettings>, IWorkspace
     {
-        public const string PCRRoot = ".cr";
+        public const string PCRRoot = ".crw";
         public const string PSettings = "settings.json";
         public const string PTemplatesRoot = "templates";
         public const string POperatorsRoot = "operations";

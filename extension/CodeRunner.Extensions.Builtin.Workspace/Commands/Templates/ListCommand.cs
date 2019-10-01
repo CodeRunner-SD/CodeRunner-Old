@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.CommandLine.Rendering;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace.Templates
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands.Templates
 {
     public class ListCommand : ItemManagers.ListCommand<ITemplateManager, TemplateSettings, Package<BaseTemplate>>
     {

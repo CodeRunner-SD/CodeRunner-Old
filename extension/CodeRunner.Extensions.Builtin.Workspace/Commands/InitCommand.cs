@@ -10,7 +10,7 @@ using System.CommandLine.Invocation;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeRunner.Extensions.Builtin.Workspace
+namespace CodeRunner.Extensions.Builtin.Workspace.Commands
 {
     [Export]
     public class InitCommand : BaseCommand<InitCommand.CArgument>
